@@ -1,0 +1,26 @@
+# Environment files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+*.local
+
+# Archive and Knowledge folders (local only)
+Archive/
+Knowledge/
+
+# AI/Agent Generated Folders
+education/
+research/
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+__pycache__/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

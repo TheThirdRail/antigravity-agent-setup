@@ -1,0 +1,13 @@
+{
+    "name": "searxng-mcp",
+    "version": "1.0.0",
+    "description": "MCP server for SearXNG self-hosted search engine",
+    "type": "module",
+    "main": "searxng-mcp.js",
+    "scripts": {
+        "start": "node searxng-mcp.js"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.0.0"
+    }
+}
