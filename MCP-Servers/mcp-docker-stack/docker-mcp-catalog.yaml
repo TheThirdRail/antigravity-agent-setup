@@ -1,0 +1,971 @@
+# MCP Docker Stack - Custom Catalog
+# Full Server Configuration
+# Following Docker MCP Gateway catalog format
+
+registry:
+  # ============================================
+  # CORE DEVELOPMENT
+  # ============================================
+  
+  filesystem:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: File system operations on D:/Coding directory
+    title: Filesystem
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-filesystem"
+      - /workspace
+    volumes:
+      - "D:/Coding:/workspace"
+    metadata:
+      category: development
+      owner: modelcontextprotocol
+      tags:
+        - filesystem
+        - files
+        - core
+    tools:
+      - name: read_file
+      - name: read_multiple_files
+      - name: write_file
+      - name: edit_file
+      - name: create_directory
+      - name: list_directory
+      - name: directory_tree
+      - name: move_file
+      - name: search_files
+      - name: get_file_info
+      - name: list_allowed_directories
+    source: https://github.com/modelcontextprotocol/servers
+
+  # NOTE: git server removed - use Docker native 'git' from docker-mcp catalog
+
+  github:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: GitHub API integration for repository management
+    title: GitHub
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-github"
+    secrets:
+      - name: github.token
+        env: GITHUB_PERSONAL_ACCESS_TOKEN
+        description: GitHub Personal Access Token for API access
+        example: ghp_xxxxxxxxxxxxxxxxxxxx
+    metadata:
+      category: development
+      owner: modelcontextprotocol
+      tags:
+        - github
+        - api
+        - core
+    tools:
+      - name: create_or_update_file
+      - name: search_repositories
+      - name: create_repository
+      - name: get_file_contents
+      - name: push_files
+      - name: create_issue
+      - name: create_pull_request
+      - name: fork_repository
+      - name: create_branch
+      - name: list_commits
+      - name: list_issues
+      - name: update_issue
+      - name: add_issue_comment
+      - name: search_code
+      - name: search_issues
+      - name: search_users
+      - name: get_issue
+      - name: get_pull_request
+      - name: list_pull_requests
+      - name: create_pull_request_review
+      - name: merge_pull_request
+      - name: get_pull_request_files
+      - name: get_pull_request_status
+      - name: update_pull_request_branch
+      - name: get_pull_request_comments
+      - name: get_pull_request_reviews
+    source: https://github.com/modelcontextprotocol/servers
+
+  # ============================================
+  # LANGUAGE SERVERS & CODE INTELLIGENCE
+  # ============================================
+  
+  lsmcp:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: TypeScript/JavaScript language server with framework awareness
+    title: LS MCP (TypeScript/JS)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@mizchi/lsmcp"
+    volumes:
+      - "D:/Coding:/workspace"
+    env:
+      - name: LSM_LANGUAGE
+        value: "{{lsmcp.language}}"
+      - name: LSM_FRAMEWORK
+        value: "{{lsmcp.framework}}"
+    config:
+      - name: lsmcp
+        description: Language server configuration
+        type: object
+        properties:
+          language:
+            type: string
+            description: "Target language (e.g., typescript, javascript)"
+          framework:
+            type: string
+            description: "Framework (e.g., react, vue, nextjs)"
+    metadata:
+      category: language-server
+      owner: mizchi
+      tags:
+        - typescript
+        - javascript
+        - lsp
+    source: https://github.com/mizchi/lsmcp
+
+  # NOTE: pylance, rust-analyzer, clangd removed - NPM packages don't exist
+
+  serena:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: AI-powered code understanding with LSP support for 20+ languages
+    title: Serena
+    type: server
+    image: ghcr.io/oraios/serena:latest
+    command:
+      - uv
+      - run
+      - --directory
+      - .
+      - serena-mcp-server
+      - --transport
+      - sse
+      - --port
+      - "9121"
+      - --host
+      - "0.0.0.0"
+      - --context
+      - ide
+      - --enable-web-dashboard
+      - "False"
+    ports:
+      - "9121:9121"
+    volumes:
+      - "D:/Coding:/workspace"
+    env:
+      - name: SERENA_DOCKER
+        value: "1"
+    metadata:
+      category: code-intelligence
+      owner: oraios
+      tags:
+        - ai
+        - code-understanding
+        - lsp
+    source: https://github.com/oraios/serena
+
+
+  context7:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Advanced context management for codebases
+    title: Context7
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@upstash/context7-mcp"
+    metadata:
+      category: code-intelligence
+      owner: upstash
+      tags:
+        - context
+        - codebase
+    source: https://github.com/upstash/context7
+
+  # ============================================
+  # COMMAND EXECUTION
+  # ============================================
+  
+  desktop-commander:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Secure terminal command execution with path/command restrictions
+    title: Desktop Commander
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@wonderwhy-er/desktop-commander"
+    volumes:
+      - "D:/Coding:/workspace"
+    env:
+      - name: ALLOWED_PATHS
+        value: "D:/Coding"
+      - name: SHELL_TYPE
+        value: "{{desktop-commander.shell_type}}"
+    config:
+      - name: desktop-commander
+        description: Command execution settings
+        type: object
+        properties:
+          shell_type:
+            type: string
+            description: "Shell type (powershell, bash, cmd)"
+    metadata:
+      category: execution
+      owner: wonderwhy-er
+      tags:
+        - terminal
+        - commands
+    source: https://github.com/wonderwhy-er/desktop-commander
+
+  # ============================================
+  # AI REASONING & MEMORY
+  # ============================================
+  
+  sequential-thinking:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Step-by-step reasoning framework
+    title: Sequential Thinking
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-sequential-thinking"
+    metadata:
+      category: reasoning
+      owner: modelcontextprotocol
+      tags:
+        - reasoning
+        - thinking
+    source: https://github.com/modelcontextprotocol/servers
+
+  memory:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Persistent memory across sessions
+    title: Memory
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-memory"
+    volumes:
+      - "mcp-memory-data:/data"
+    metadata:
+      category: memory
+      owner: modelcontextprotocol
+      tags:
+        - memory
+        - persistence
+    source: https://github.com/modelcontextprotocol/servers
+
+  # ============================================
+  # TASK MANAGEMENT
+  # ============================================
+  
+  shrimp-task-manager:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Local task manager (free, no API required)
+    title: Shrimp Task Manager
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - mcp-shrimp-task-manager
+    metadata:
+      category: tasks
+      owner: shrimp
+      tags:
+        - tasks
+        - local
+    source: https://github.com/shrimp-cloud/mcp-shrimp-task-manager
+
+  todoist:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Todoist task management integration
+    title: Todoist
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - todoist-mcp
+    env:
+      - name: API_KEY
+        value: "{{todoist.api_key}}"
+    secrets:
+      - name: todoist.api_key
+        env: API_KEY
+        description: Todoist API token
+        example: your_todoist_api_token
+    metadata:
+      category: tasks
+      owner: community
+      tags:
+        - tasks
+        - todoist
+    source: https://www.npmjs.com/package/todoist-mcp
+
+  # NOTE: linear removed - use Docker native 'linear' (OAuth-based)
+
+  # ============================================
+  # SEARCH ENGINES
+  # ============================================
+  
+  searxng:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Self-hosted meta-search engine (privacy-focused)
+    title: SearXNG
+    type: server
+    image: node:20-slim
+    command:
+      - sh
+      - -c
+      - "cd /app && npm install --quiet && node searxng-mcp.js"
+    volumes:
+      - "./mcp-servers:/app"
+    env:
+      - name: SEARXNG_HOST
+        value: "{{searxng.host}}"
+      - name: SEARXNG_PORT
+        value: "{{searxng.port}}"
+    config:
+      - name: searxng
+        description: SearXNG connection settings
+        type: object
+        properties:
+          host:
+            type: string
+            description: "SearXNG host (e.g., http://searxng-instance)"
+          port:
+            type: string
+            description: "SearXNG port (e.g., 8080)"
+    metadata:
+      category: search
+      owner: custom
+      tags:
+        - search
+        - privacy
+        - self-hosted
+    tools:
+      - name: search
+      - name: search_images
+      - name: search_news
+      - name: search_code
+      - name: search_stackoverflow
+      - name: search_docs
+      - name: search_packages
+      - name: search_github
+    source: local
+
+  brave-search:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Brave Search API integration
+    title: Brave Search
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-brave-search"
+    secrets:
+      - name: brave-search.api_key
+        env: BRAVE_API_KEY
+        description: Brave Search API key
+        example: BSA_xxxxxxxxxxxx
+    metadata:
+      category: search
+      owner: brave
+      tags:
+        - search
+        - brave
+    source: https://github.com/modelcontextprotocol/servers
+
+  # ============================================
+  # DATABASES - SQL
+  # ============================================
+  
+  # NOTE: postgres, sqlite removed - use Docker native versions
+
+  supabase:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Supabase platform integration
+    title: Supabase
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@supabase/mcp-server-supabase"
+    secrets:
+      - name: supabase.access_token
+        env: SUPABASE_ACCESS_TOKEN
+        description: Supabase personal access token
+        example: sbp_xxxxxxxxxxxx
+    metadata:
+      category: database
+      owner: supabase-community
+      tags:
+        - database
+        - supabase
+        - baas
+    source: https://github.com/supabase-community/supabase-mcp
+
+  # NOTE: neon, mongodb removed - use Docker native versions
+
+
+  # ============================================
+  # INFRASTRUCTURE & DEPLOYMENT
+  # ============================================
+  
+  docker-mcp:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Docker container management (Python-based)
+    title: Docker
+    type: server
+    image: python:3.11-slim
+    command:
+      - uvx
+      - "github:QuantGeekDev/docker-mcp"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    metadata:
+      category: infrastructure
+      owner: QuantGeekDev
+      tags:
+        - docker
+        - containers
+    source: https://github.com/QuantGeekDev/docker-mcp
+
+  cloudflare:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Cloudflare Workers and CDN management
+    title: Cloudflare
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@cloudflare/mcp-server-cloudflare"
+    secrets:
+      - name: cloudflare.api_token
+        env: CLOUDFLARE_API_TOKEN
+        description: Cloudflare API token
+        example: xxxxxxxxxxxxxxxxxxxxxx
+      - name: cloudflare.account_id
+        env: CLOUDFLARE_ACCOUNT_ID
+        description: Cloudflare account ID
+        example: xxxxxxxxxxxxxxxxxxxxxx
+    metadata:
+      category: infrastructure
+      owner: cloudflare
+      tags:
+        - cloudflare
+        - cdn
+        - workers
+    source: https://github.com/cloudflare/mcp-server-cloudflare
+
+  # ============================================
+  # SECURITY & TESTING
+  # ============================================
+  
+  snyk:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Vulnerability scanning and security analysis
+    title: Snyk
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "github:sammcj/mcp-snyk"
+    env:
+      - name: SNYK_API_KEY
+        value: "{{snyk.api_key}}"
+      - name: SNYK_ORG_ID
+        value: "{{snyk.org_id}}"
+    secrets:
+      - name: snyk.api_key
+        env: SNYK_API_KEY
+        description: Snyk API token
+        example: xxxxxxxxxxxxxxxxxxxxxx
+    config:
+      - name: snyk
+        description: Snyk configuration
+        type: object
+        properties:
+          org_id:
+            type: string
+            description: Snyk organization ID (optional)
+    metadata:
+      category: security
+      owner: sammcj
+      tags:
+        - security
+        - vulnerabilities
+    source: https://github.com/sammcj/mcp-snyk
+
+  # NOTE: gitguardian removed - no working npm package found
+
+  playwright:
+    dateAdded: "2025-12-28T00:00:00Z"
+    description: Browser automation and E2E testing
+    title: Playwright
+    type: server
+    image: mcr.microsoft.com/playwright:v1.40.0-jammy
+    command:
+      - npx
+      - -y
+      - "@playwright/mcp"
+    metadata:
+      category: testing
+      owner: microsoft
+      tags:
+        - testing
+        - browser
+        - e2e
+    source: https://github.com/microsoft/playwright
+
+  # ============================================
+  # ORCHESTRATION
+  # ============================================
+  
+  # NOTE: compass removed - NPM package doesn't exist
+
+  # --- Research & Search ---
+  firecrawl:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: AI-powered web scraping that converts websites to clean Markdown/JSON
+    title: Firecrawl
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - firecrawl-mcp
+    secrets:
+      - name: firecrawl.key
+        env: FIRECRAWL_API_KEY
+    metadata:
+      category: research
+      tags: [scraping, web, ai]
+    source: https://github.com/mendableai/firecrawl-mcp-server
+
+  # NOTE: tavily removed - use Docker native 'tavily'
+
+  nexus:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: AI-powered search using Perplexity Sonar models
+    title: Perplexity Nexus
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@adawalli/nexus"
+    secrets:
+      - name: nexus.key
+        env: NEXUS_API_KEY
+    metadata:
+      category: research
+      tags: [search, perplexity, citations]
+    source: https://github.com/adawalli/nexus
+
+  arxiv:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Search and retrieve academic papers from ArXiv
+    title: ArXiv Research
+    type: server
+    image: python:3.11-slim
+    command:
+      - sh
+      - -c
+      - "pip install mcp-simple-arxiv && mcp-simple-arxiv"
+    metadata:
+      category: research
+      tags: [academic, research, papers]
+    source: https://github.com/andybrandt/mcp-simple-arxiv
+
+  pubmed:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Search and retrieve medical/life sciences papers from PubMed
+    title: PubMed Research
+    type: server
+    image: python:3.11-slim
+    command:
+      - sh
+      - -c
+      - "pip install mcp-simple-pubmed && mcp-simple-pubmed"
+    metadata:
+      category: research
+      tags: [medical, science, research]
+    source: https://github.com/andybrandt/mcp-simple-pubmed
+
+  # --- Knowledge Management ---
+  notion:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Official Notion integration for workspace access
+    title: Notion
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-notion"
+    secrets:
+      - name: notion.key
+        env: NOTION_API_KEY
+    metadata:
+      category: knowledge
+      tags: [notes, workspace, productivity]
+    source: https://github.com/modelcontextprotocol/servers/tree/main/src/notion
+
+  obsidian:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Read and write access to local Obsidian vaults
+    title: Obsidian
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - mcp-obsidian
+      - /vault
+    volumes:
+      - "${OBSIDIAN_VAULT_PATH}:/vault"
+    metadata:
+      category: knowledge
+      tags: [notes, local, knowledge-base]
+    source: https://github.com/bitbonsai/mcp-obsidian
+
+  mem0:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Persistent memory for coding preferences and patterns
+    title: Mem0
+    type: server
+    image: python:3.11-slim
+    command:
+      - sh
+      - -c
+      - "pip install mem0ai-mcp && mem0-mcp"
+    secrets:
+      - name: mem0.key
+        env: MEM0_API_KEY
+    metadata:
+      category: knowledge
+      tags: [memory, personalization, coding]
+    source: https://github.com/mem0ai/mem0-mcp
+
+  ragdocs:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Retrieve technical documentation via vector search
+    title: RAGDocs
+    type: server
+    image: python:3.11-slim
+    command:
+      - sh
+      - -c
+      - "pip install mcp-ragdocs && mcp-ragdocs"
+    metadata:
+      category: knowledge
+      tags: [docs, rag, search]
+    source: https://github.com/hannesrudolph/mcp-ragdocs
+
+  # --- Frontend & Design ---
+  react:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Create and modify React applications via natural language
+    title: React Developer
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@anthropics/mcp-server-react"
+    metadata:
+      category: frontend
+      tags: [react, javascript, ui]
+    source: https://github.com/anthropics/mcp-servers/tree/main/react
+
+  vue:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Access Vue.js component tree, state, and Pinia stores
+    title: Vue Developer
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - vite-plugin-vue-mcp
+    metadata:
+      category: frontend
+      tags: [vue, javascript, ui]
+    source: https://github.com/vite-plugin-vue-mcp
+
+  shadcn:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Install Shadcn UI components via natural language
+    title: Shadcn UI
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - shadcn-vue-mcp
+    metadata:
+      category: frontend
+      tags: [ui, components, styling]
+    source: https://shadowcn-vue.com/mcp
+
+  magic:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Generate crafted UI components inspired by 21st.dev
+    title: Magic UI
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - magic-mcp
+    metadata:
+      category: frontend
+      tags: [ui, generation, design]
+    source: https://github.com/21st-dev/magic-mcp
+
+  # --- Developer Tools ---
+  registry:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Search NPM, PyPi, Cargo, and NuGet packages
+    title: Package Registry
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - package-registry-mcp
+    metadata:
+      category: devtools
+      tags: [packages, dependencies, search]
+    source: https://github.com/artmann/package-registry-mcp
+
+  augments:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Access documentation for 90+ frameworks (React, Next.js, etc.)
+    title: Augments Framework Docs
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@augmnt/augments-mcp-server"
+    metadata:
+      category: devtools
+      tags: [docs, frameworks, reference]
+    source: https://github.com/augmnt/augments-mcp-server
+
+  vscode:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Advanced VS Code integration (read workspace, linter, edits)
+    title: VS Code MCP
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - vscode-mcp-server
+    metadata:
+      category: devtools
+      tags: [ide, editor, vscode]
+    source: https://github.com/juehang/vscode-mcp-server
+
+  codegraph:
+    dateAdded: "2025-12-29T00:00:00Z"
+    description: Index local code into a graph DB for visualization
+    title: Code Graph Context
+    type: server
+    image: python:3.11-slim
+    command:
+      - sh
+      - -c
+      - "pip install code-graph-context && code-graph-context"
+    metadata:
+      category: devtools
+      tags: [visualization, graph, analysis]
+    source: https://github.com/Shashankss1205/CodeGraphContext
+
+  # ============================================
+  # NEW SERVERS (Added 2025-12-30)
+  # ============================================
+
+  semgrep:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Code security scanning - finds vulnerabilities and bugs
+    title: Semgrep
+    type: server
+    image: returntocorp/semgrep:latest
+    command:
+      - semgrep
+      - scan
+    metadata:
+      category: security
+      tags: [security, scanning, sast]
+    source: https://github.com/semgrep/semgrep
+
+  gitmcp:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Convert any GitHub repo to markdown for LLM context
+    title: GitMCP
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - gitmcp
+    metadata:
+      category: development
+      tags: [github, markdown, context]
+    source: https://github.com/nicholasGonzales/gitmcp
+
+  github-official:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Official GitHub MCP server with full API access
+    title: GitHub Official
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@github/mcp-server"
+    secrets:
+      - name: github.token
+        env: GITHUB_PERSONAL_ACCESS_TOKEN
+    metadata:
+      category: development
+      tags: [github, api, official]
+    source: https://github.com/github/github-mcp-server
+
+  fetch:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Fetches a URL and extracts its contents as markdown
+    title: Fetch
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - "@modelcontextprotocol/server-fetch"
+    metadata:
+      category: utility
+      tags: [web, fetch, scraping]
+    source: https://github.com/modelcontextprotocol/servers
+
+  # ============================================
+  # RECOMMENDED ADDITIONS (2025-12-30)
+  # Free/Freemium servers for enhanced coding
+  # ============================================
+
+  claude-faf-mcp:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Persistent project context with 33+ tools - maintains Project DNA across sessions
+    title: Claude FAF (Project Context)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - claude-faf-mcp
+    metadata:
+      category: development
+      tags: [context, memory, project, free]
+    source: https://github.com/Wolfe-Jam/claude-faf-mcp
+
+  filescopemcp:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Analyzes codebase identifying important files based on dependency relationships
+    title: FileScope (Dependency Analysis)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - filescopemcp
+    metadata:
+      category: development
+      tags: [analysis, dependencies, diagrams, free]
+    source: https://github.com/admica/FileScopeMCP
+
+  repomapper:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Aider-style dynamic map of relevant files with function prototypes
+    title: RepoMapper
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - repomapper-mcp
+    metadata:
+      category: development
+      tags: [mapping, context, aider, free]
+    source: https://github.com/pdavis68/RepoMapper
+
+  mcp-security-audit:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: NPM vulnerability scanning with CVE references and fix recommendations
+    title: Security Audit (NPM)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - mcp-security-audit
+    metadata:
+      category: security
+      tags: [npm, vulnerabilities, audit, free]
+    source: https://github.com/qianniuspace/mcp-security-audit
+
+  octocode:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: AI-powered GitHub ecosystem research, analysis and discovery
+    title: OctoCode (GitHub Research)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - octocode-mcp
+    metadata:
+      category: development
+      tags: [github, research, discovery, free]
+    source: https://github.com/bgauryy/octocode-mcp
+
+  mindpilot:
+    dateAdded: "2025-12-30T00:00:00Z"
+    description: Visualizes code and architecture as Mermaid diagrams in a local web app
+    title: MindPilot (Diagrams)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - mindpilot-mcp
+    metadata:
+      category: development
+      tags: [diagrams, mermaid, visualization, free]
+    source: https://github.com/abrinsmead/mindpilot-mcp
+

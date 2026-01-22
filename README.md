@@ -1,97 +1,191 @@
-# 🚀 MCP Docker Stack: The "For Dummies" Guide
+# Antigravity Agent Setup
 
-## 🌟 What is this project? (The "Why")
+A comprehensive toolkit for configuring Google Antigravity AI agents with custom skills, workflows, rules, and MCP (Model Context Protocol) servers.
 
-Have you ever wished your AI assistant (like me, Antigravity) could actually *do* things instead of just talking about them? 
+## 🎯 What This Repo Does
 
-This project is a **"Universal Adapter"** for AI. It connects me to a massive toolbox of over 33 different "servers" that allow me to:
-- **Search the web** (Brave, SearXNG, Google).
-- **Read and write files** on your computer.
-- **Manage your tasks** (Todoist, Linear).
-- **Access databases** (PostgreSQL, MongoDB).
-- **Check code for bugs** (Snyk, Semgrep).
+This repository provides everything you need to supercharge your Antigravity AI coding assistant:
 
-### The Secret Sauce: Rigid Instructions
-For you (the non-coder), the biggest benefit is that this project uses **strict, rigid instruction sets** (Workflows). Instead of me guessing what to do, I follow a "flight manual" for every task. This ensures I stay on track, don't make rookie mistakes, and deliver high-quality results every single time. 
+| Component | Purpose |
+|-----------|---------|
+| **Skills** | Reusable AI capabilities (test generation, API building, etc.) |
+| **Workflows** | Step-by-step automation sequences (TDD, research, etc.) |
+| **Rules** | Behavioral constraints and guardrails for the agent |
+| **MCP Servers** | External tools via Docker MCP Gateway (databases, search, etc.) |
+
+## 📁 Folder Structure
+
+```
+antigravity-agent-setup/
+├── Agent/                    # Source files for agent configuration
+│   ├── Skills/              # AI skill definitions (XML-in-Markdown)
+│   ├── Workflows/           # Workflow definitions (XML-in-Markdown)
+│   └── Rules/               # Rule definitions (XML-in-Markdown)
+├── MCP-Servers/             # Docker MCP server catalog
+│   └── mcp-docker-stack/    # Custom MCP server definitions
+├── Scripts/                 # PowerShell installation scripts
+├── .agent/                  # Local workspace copy (gitignored)
+├── example.env              # Template for API keys and secrets
+└── README.md
+```
+
+## 🚀 Quick Start
+
+### 1. Clone and Configure
+```powershell
+git clone https://github.com/YourUsername/antigravity-agent-setup.git
+cd antigravity-agent-setup
+
+# Copy and fill in your API keys
+Copy-Item example.env .env
+# Edit .env with your actual credentials
+```
+
+### 2. Install Components
+```powershell
+# Install skills globally
+.\Scripts\install-skills.ps1
+
+# Install workflows globally
+.\Scripts\install-workflows.ps1
+
+# Install rules globally
+.\Scripts\install-rules.ps1
+
+# Set MCP secrets from .env
+.\Scripts\set-mcp-secrets.ps1
+```
+
+### 3. Restart Antigravity
+Close and reopen Antigravity to load the new skills and workflows.
+
+## 📜 Scripts Reference
+
+| Script | Purpose |
+|--------|---------|
+| `install-skills.ps1` | Copies skills to `%LOCALAPPDATA%\Google\Antigravity\User Data\User\skills` |
+| `install-workflows.ps1` | Copies workflows to `%LOCALAPPDATA%\Google\Antigravity\User Data\User\workflows` |
+| `install-rules.ps1` | Copies rules to `~\.gemini\rules` |
+| `set-mcp-secrets.ps1` | Sets Docker MCP secrets from `.env` file |
+| `setup_lazy_load.ps1` | Enables MCP servers in Docker MCP Gateway |
+| `install-mcp-servers.ps1` | Adds MCP server entries to Antigravity config |
+
+All scripts support `-DryRun` to preview changes without making them.
+
+## 🛠️ Included Skills
+
+| Skill | Description |
+|-------|-------------|
+| `api-builder` | Design and build RESTful/GraphQL APIs |
+| `architecture-planner` | Create system architecture diagrams |
+| `docker-ops` | Docker container management |
+| `git-commit-generator` | Generate conventional commit messages |
+| `mcp-manager` | Manage Docker MCP servers efficiently |
+| `rule-builder` | Create agent behavioral rules |
+| `skill-builder` | Create new AI skills |
+| `test-generator` | Generate unit tests (TDD) |
+| `tool-creator` | Create custom MCP tools |
+| `workflow-builder` | Create agent workflows |
+
+## 🔄 Included Workflows
+
+| Workflow | Slash Command | Description |
+|----------|---------------|-------------|
+| `/analyze` | Debug mode | Maximum reasoning for problem diagnosis |
+| `/architect` | Planning mode | Design new features/systems |
+| `/code` | Execution mode | Implement with minimal discussion |
+| `/research` | Research mode | Deep web research and analysis |
+| `/refactor` | Refactor mode | Safe code refactoring |
+| `/tutor` | Learning mode | Generate educational documentation |
+| `/tdd` | TDD mode | Test-driven development cycle |
+
+## 🐳 MCP Servers
+
+The `docker-mcp-catalog.yaml` includes these custom servers:
+
+- **Development**: filesystem, github, git, desktop-commander
+- **Search**: brave-search, context7, firecrawl
+- **Databases**: postgres, mongodb, sqlite, supabase, neon
+- **Task Management**: todoist, linear, shrimp-task-manager
+- **AI Tools**: memory, sequential-thinking, playwright
+
+### Setting Up MCP
+
+1. Ensure Docker Desktop is running with MCP Toolkit enabled
+2. Run `.\Scripts\set-mcp-secrets.ps1` to configure API keys
+3. Add the catalog: `docker mcp catalog add mcp-docker-stack local "path\to\docker-mcp-catalog.yaml"`
+
+## 📝 File Format
+
+All skills, workflows, and rules use **Embedded XML in Markdown** format:
+
+```markdown
+---
+name: component-name
+description: |
+  Brief description of the component
+---
+
+<skill name="component-name" version="1.0.0">
+  <goal>What this component does</goal>
+  
+  <workflow>
+    <step number="1" name="Step Name">
+      <instruction>What to do</instruction>
+    </step>
+  </workflow>
+</skill>
+```
+
+This format provides:
+- **YAML frontmatter** for discovery and metadata
+- **XML body** for structured, parseable instructions
+
+## 🔐 Environment Variables
+
+Copy `example.env` to `.env` and fill in your credentials:
+
+| Variable | Service |
+|----------|---------|
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub API access |
+| `BRAVE_API_KEY` | Brave Search API |
+| `POSTGRES_URL` | PostgreSQL connection |
+| `SUPABASE_ACCESS_TOKEN` | Supabase management |
+| `TAVILY_API_KEY` | Tavily search |
+| `FIRECRAWL_API_KEY` | Web scraping |
+
+See `example.env` for the complete list.
+
+## 🔧 Customization
+
+### Adding a New Skill
+1. Create folder: `Agent/Skills/my-skill/`
+2. Create `SKILL.md` using the embedded XML format
+3. Run `.\Scripts\install-skills.ps1`
+
+### Adding a New Workflow
+1. Create file: `Agent/Workflows/my-workflow.md`
+2. Use embedded XML format with `<workflow>` root
+3. Run `.\Scripts\install-workflows.ps1`
+
+### Adding a New Rule
+1. Create file: `Agent/Rules/my-rule.md`
+2. Use embedded XML format with `<rule>` root
+3. Run `.\Scripts\install-rules.ps1`
+
+Use the `skill-builder`, `workflow-builder`, and `rule-builder` skills for guided creation.
+
+## 📄 License
+
+MIT License - feel free to use, modify, and distribute.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ---
 
-## 🛠️ Step 1: Install Docker Desktop
-
-Think of **Docker** as a "shipping container" system for software. It lets all these 33+ tools run on your computer without you having to install them one by one.
-
-1.  **Download**: Go to [Docker Desktop](https://www.docker.com/products/docker-desktop/) and download the Windows version.
-2.  **Install**: Run the installer. Just click "Next" or "OK" on everything.
-3.  **Start**: Open Docker Desktop. If it asks you to log in, you can usually skip it. Just make sure the little whale icon in your taskbar stays green!
-
----
-
-## 🔑 Step 2: Set Up Your "Keys" (Secrets)
-
-Most of the tools (like GitHub or Search) need a "key" (an API key) to work. Think of these as passwords for the tools.
-
-1.  Find the file named `example.env` in this folder.
-2.  **Duplicate it** and rename the copy to exactly `.env`.
-3.  Open `.env` in Notepad or any text editor.
-4.  Fill in the keys you want to use. You don't need *all* of them—just the ones you care about (like GitHub or Search).
-    - *Tip: The links to where you get these keys are right there inside the `example.env` file!*
-
----
-
-## 🪄 Step 3: Run the Magic Script
-
-Now we need to tell Docker what those keys are. We have a script for that!
-
-1.  Find the file named `set-mcp-secrets.ps1`.
-2.  **Right-click** it and select **"Run with PowerShell"**.
-3.  A blue window will pop up, "sign" all your keys into the system, and then close. You're done!
-
----
-
-## 🚢 Step 4: Start the Engines
-
-1.  Open your terminal (search for "PowerShell" in your Start menu).
-2.  Type this command and hit Enter:
-    ```powershell
-    docker compose up -d
-    ```
-3.  Docker will start downloading and running all your tools. This might take a few minutes the first time, but afterward, it starts instantly!
-
----
-
-## 🛸 Step 5: Setting up the Antigravity App
-
-To make me (Antigravity) work with this stack, you need to "load" my brain and my flight manuals into the Antigravity Windows App.
-
-1.  **System Instructions**:
-    - Go to the **System Prompt** folder in this project.
-    - Find the file `system_instructions.xml`.
-    - Open it, copy all the text, and paste it into the **"System Instructions"** or **"Custom Instructions"** box in your Antigravity App settings.
-2.  **Workflows**:
-    - In your Antigravity App, look for a **"Workflows"** tab or folder.
-    - Copy all the files from the `System Prompt/Workflows` folder in this project into that App's workflow location.
-    - *Note: These are the `.xml` files—they are the most important ones!*
-
----
-
-## 📑 How to Use Workflows
-
-Once I have my workflows loaded, you can trigger them by typing a slash command. Here is what each one is for:
-
-- **`/architect`**: Use this when you have a **new idea**. I will help you design the plan before we write any code.
-- **`/code`**: Use this when the plan is ready and you want me to **start building**. I'll focus on working fast with minimal talk.
-- **`/analyze`**: Use this when **something is broken**. I'll put on my detective hat and find the bug.
-- **`/tutor`**: Use this when you want to **learn**. I'll explain how things work in plain English.
-- **`/research`**: Use this when you need me to **dig deep** for information on the web.
-- **`/refactor`**: Use this when you want me to **clean up** old code to make it "professional."
-
----
-
-## ✅ Final Checklist
-- [x] Docker Desktop is running (Green whale).
-- [x] `.env` file is created and filled out.
-- [x] `set-mcp-secrets.ps1` script has been run.
-- [x] `docker compose up -d` was run in PowerShell.
-- [x] System Instructions and Workflows are pasted into the Antigravity App.
-
-**Now you have a 10X Engineer at your fingertips! What should we build first?**
+**Built for Google Antigravity** | Supercharge your AI coding assistant

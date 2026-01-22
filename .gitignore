@@ -4,11 +4,12 @@
 .env.*.local
 *.local
 
-# Archive and Knowledge folders (local only)
+# Internal folders (local only, not for sharing)
 Archive/
-Knowledge/
+Info/
 
-# AI/Agent Generated Folders
+# AI/Agent Generated Folders (local only)
+.agent/
 education/
 research/
 
