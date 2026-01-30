@@ -9,6 +9,11 @@ description: Daily startup routine - sync code, check status, prepare for work
     <trigger>When returning to a project after a break</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>shrimp-task-manager</server>
+    <reason>Sync daily plan and priorities</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Sync with Remote" turbo="true">
       <command>git fetch --all</command>

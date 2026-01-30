@@ -54,13 +54,42 @@ temp/
     </step>
 
     <step number="2" name="Create Project Structure">
+      <skill ref="architecture-planner">Use for structure decisions</skill>
       <instruction>Based on the tech stack from /architect, create appropriate folders</instruction>
       <template type="Web/Node">src/components/, src/pages/, src/utils/, public/, tests/, docs/</template>
       <template type="Python">src/, tests/, docs/, scripts/</template>
     </step>
 
-    <step number="3" name="Generate project_rules.md">
-      <content>Tech stack, coding conventions, linting, git workflow, testing requirements</content>
+    <step number="3" name="Generate Workspace Rules">
+      <skill ref="rule-builder">Use to create project-specific rules</skill>
+      <instruction>Create `.agent/rules/project-rules.md` using the rule-builder format</instruction>
+      <content><![CDATA[
+---
+name: project-rules
+description: |
+  Workspace-specific rules for this project.
+  Includes stack conventions and testing requirements.
+activation: always_on
+---
+
+<rule name="project-rules" version="1.0.0">
+  <metadata>
+    <category>project-specific</category>
+    <severity>error</severity>
+  </metadata>
+
+  <conventions>
+    <stack>[Tech Stack identified in Architect]</stack>
+    <style>Standard linter rules</style>
+  </conventions>
+
+  <constraints>
+    <must>Run tests before commit</must>
+    <must>Follow architecture patterns defined in /architect</must>
+  </constraints>
+</rule>
+      ]]></content>
+      <action>Ensure it fits within 12,000 char limit</action>
     </step>
 
     <step number="4" name="Initialize Git" optional="true">

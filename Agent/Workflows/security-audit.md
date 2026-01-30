@@ -9,8 +9,14 @@ description: Scan codebase for security vulnerabilities, exposed secrets, and ri
     <trigger>Regular monthly security check</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>snyk</server>
+    <reason>Automated vulnerability scanning</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Check for Exposed Secrets">
+      <skill ref="security-checker">Use for comprehensive security analysis</skill>
       <action>Look for patterns like api_key =, password =, secret =</action>
       <action>Check .env files are in .gitignore</action>
     </step>

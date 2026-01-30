@@ -40,6 +40,7 @@ description: Refactor Mode - Refactor code with full database context to prevent
     </step>
 
     <step number="3" name="Plan the Refactor">
+      <skill ref="code-reviewer">Use to identify code smells</skill>
       <action>Identify the code smell (why refactor?)</action>
       <action>Propose strategy before executing</action>
       <action>Plan for backwards compatibility if needed</action>

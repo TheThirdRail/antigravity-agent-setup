@@ -12,6 +12,12 @@ description: Archive Mode - Index the project to databases for AI context preser
     <trigger>After significant refactoring</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>mem0</server>
+    <server>codegraph</server>
+    <server>serena</server>
+  </recommended_mcp>
+
   <databases>
     <database name="mem0" alias="memory">Function signatures, file purposes, architectural decisions</database>
     <database name="codegraph">Code relationships, call graphs, dependencies</database>
@@ -20,8 +26,9 @@ description: Archive Mode - Index the project to databases for AI context preser
 
   <steps>
     <step number="1" name="Gather Project Information">
+      <tool>serena (semantic_search, file_summary)</tool>
       <collect>All source file paths and their purposes</collect>
-      <collect>Key function/class signatures</collect>
+      <collect>Key function/class signatures (use Serena to extract)</collect>
       <collect>Architectural decisions made</collect>
       <collect>Dependencies and their roles</collect>
       <collect>Important patterns used</collect>

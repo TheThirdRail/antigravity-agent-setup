@@ -136,6 +136,13 @@ describe('FunctionName', () => {
     </category>
   </commands>
 
+  <resources>
+    <script name="scaffold_tests.ps1" purpose="Automates test file scaffolding">
+      <usage>.\scripts\scaffold_tests.ps1 -SourceFile "src/utils.ts"</usage>
+      <description>Analyzes source file, extracts functions/classes, generates test boilerplate for Jest/pytest/Go</description>
+    </script>
+  </resources>
+
   <related_skills>
     <skill>code-reviewer</skill>
     <skill>ci-cd-debugger</skill>

@@ -1,9 +1,8 @@
 ---
 name: mcp-manager
 description: |
-  Manages Docker MCP servers efficiently to minimize context usage in Antigravity.
-  Uses lazy-loading pattern (mcp-find → mcp-add → work → mcp-remove) and leverages
-  code-mode for 90% context reduction. Keeps tool count under 50 for optimal performance.
+  Orchestrate MCP servers: load, unload, and optimize context usage.
+  For container troubleshooting (logs, health), use docker-ops instead.
 ---
 
 <skill name="mcp-manager" version="1.0.0">
@@ -11,7 +10,14 @@ description: |
     <keywords>mcp, docker, context, lazy-load, optimization</keywords>
   </metadata>
 
-  <goal>Maintain optimal Antigravity context by managing Docker MCP servers dynamically with lazy-loading.</goal>
+  <when_to_use>
+    <trigger>Need a capability from an MCP server</trigger>
+    <trigger>Reducing context usage or tool count</trigger>
+    <trigger>Creating composite tools with code-mode</trigger>
+    <not_for>Container failures or logs (use docker-ops)</not_for>
+  </when_to_use>
+
+  <goal>Maintain optimal Antigravity context by managing MCP servers with lazy-loading.</goal>
 
   <core_principles>
     <principle name="Pure Lazy-Load Default">

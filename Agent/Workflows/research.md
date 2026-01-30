@@ -12,6 +12,14 @@ description: Research Mode - Deep research with maximum thinking using all searc
     <trigger>Gathering information before /architect mode</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>sequential-thinking</server>
+    <server>brave-search</server>
+    <server>tavily</server>
+    <server>firecrawl</server>
+    <reason>Deep reasoning and comprehensive web search/scraping</reason>
+  </recommended_mcp>
+
   <output>
     <location>research/</location>
     <format>[topic]-research.md</format>
@@ -26,6 +34,7 @@ description: Research Mode - Deep research with maximum thinking using all searc
     </step>
 
     <step number="2" name="Use ALL Search Tools">
+      <skill ref="context-gatherer">Use for documentation and code examples</skill>
       <tools category="Web Search">
         <tool name="searxng">Meta-search across multiple engines</tool>
         <tool name="brave-search">Web search with privacy</tool>

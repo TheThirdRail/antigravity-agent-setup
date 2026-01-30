@@ -1,18 +1,22 @@
 ---
-name: tool-creator
+name: mcp-builder
 description: |
-  Create custom MCP tools and servers for Antigravity. Guides the process of
-  defining tool schemas, implementing handlers, and registering tools with the
-  MCP gateway. Useful for extending capabilities with project-specific or
-  domain-specific tools.
+  Create custom MCP tools from scratch. For combining existing MCP tools,
+  use mcp-manager's code-mode feature instead.
 ---
 
-<skill name="tool-creator" version="1.0.0">
+<skill name="mcp-builder" version="1.0.0">
   <metadata>
     <keywords>mcp, tools, custom, schema, handlers, development</keywords>
   </metadata>
 
-  <goal>Enable creation of custom MCP tools to extend Antigravity's capabilities.</goal>
+  <when_to_use>
+    <trigger>Need a capability no existing MCP server provides</trigger>
+    <trigger>Building reusable custom tools (not one-off scripts)</trigger>
+    <not_for>Combining existing tools (use mcp-manager code-mode)</not_for>
+  </when_to_use>
+
+  <goal>Create custom MCP tools to extend Antigravity's capabilities.</goal>
 
   <core_principles>
     <principle name="Schema-First Design">
@@ -157,6 +161,12 @@ async function handler(input) {
     <dont>Create mega-tools</dont>
     <dont>Skip input validation</dont>
   </best_practices>
+
+  <resource_folders>
+    <folder name="scripts/" purpose="Utility scripts">
+      <file>set-mcp-secrets.ps1</file>
+    </folder>
+  </resource_folders>
 
   <related_skills>
     <skill>mcp-manager</skill>

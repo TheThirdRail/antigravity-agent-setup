@@ -124,6 +124,14 @@ Fixes #892
     <dont>Combine unrelated changes</dont>
   </best_practices>
 
+  <resources>
+    <script name="generate_commit.ps1" purpose="Automates commit message generation">
+      <usage>.\scripts\generate_commit.ps1</usage>
+      <usage>.\scripts\generate_commit.ps1 -Execute</usage>
+      <description>Analyzes staged changes, detects type/scope, generates conventional commit message</description>
+    </script>
+  </resources>
+
   <related_skills>
     <skill>code-reviewer</skill>
     <skill>ci-cd-debugger</skill>

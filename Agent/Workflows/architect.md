@@ -11,6 +11,14 @@ description: Architect Mode - Plan and design a new feature or project from scra
     <trigger>Designing system architecture</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>sequential-thinking</server>
+    <server>shrimp-task-manager</server>
+    <server>mem0</server>
+    <server>codegraph</server>
+    <reason>Design reasoning, task planning, preference memory, and code visualization</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Clarify Requirements">
       <action>Ask questions about scope, requirements, and constraints</action>
@@ -19,17 +27,20 @@ description: Architect Mode - Plan and design a new feature or project from scra
     </step>
 
     <step number="2" name="Research Best Practices">
-      <action>Use web search to find current best practices for the relevant tech stack</action>
+      <skill ref="research-capability">Use this skill for contextual information gathering</skill>
+      <action>Research current best practices for the relevant tech stack</action>
       <action>Research project structure conventions</action>
       <action>Research security and performance best practices</action>
       <action>Document findings for reference</action>
     </step>
 
     <step number="3" name="Design Architecture">
+      <skill ref="architecture-planner">Use this skill for diagrams and ADRs</skill>
       <action>Create high-level architecture including tech stack decisions</action>
       <action>Define file/folder structure</action>
-      <action>Create data flow diagrams</action>
+      <action>Create data flow diagrams (using Mermaid via architecture-planner)</action>
       <action>Identify dependencies and integration points</action>
+      <action>Document architectural decisions using ADR template</action>
     </step>
 
     <step number="4" name="Generate Documentation">

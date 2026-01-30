@@ -10,6 +10,11 @@ description: End-of-session summary for handing off work to yourself tomorrow or
     <trigger>Any time you need to "save your mental state"</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>shrimp-task-manager</server>
+    <reason>Save session state and next steps</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Summarize What Was Done">
       <question>What features were added?</question>

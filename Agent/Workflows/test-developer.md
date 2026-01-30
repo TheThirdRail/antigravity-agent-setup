@@ -2,12 +2,17 @@
 description: Test-Driven Development workflow - write tests first, then implement code to pass them
 ---
 
-<workflow name="tdd" thinking="Normal">
+<workflow name="test-developer" thinking="Normal">
   <when_to_use>
     <trigger>Building new features that need to be reliable</trigger>
     <trigger>Fixing bugs (reproduce with test first)</trigger>
     <trigger>When you want confidence the code works</trigger>
   </when_to_use>
+
+  <recommended_mcp>
+    <server>playwright</server>
+    <reason>End-to-end browser testing</reason>
+  </recommended_mcp>
 
   <concept><![CDATA[
 Write Test → Run (Fails) → Write Code → Run (Passes) → Refactor → Repeat
@@ -20,6 +25,7 @@ Write Test → Run (Fails) → Write Code → Run (Passes) → Refactor → Repe
     </step>
 
     <step number="2" name="Write a Failing Test">
+      <skill ref="test-generator">Use for test structure and patterns</skill>
       <action>Test the simplest case first</action>
       <action>Use descriptive test names</action>
     </step>

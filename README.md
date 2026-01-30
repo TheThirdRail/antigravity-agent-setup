@@ -9,7 +9,7 @@ This repository provides everything you need to supercharge your Antigravity AI 
 | Component | Purpose |
 |-----------|---------|
 | **Skills** | Reusable AI capabilities (test generation, API building, etc.) |
-| **Workflows** | Step-by-step automation sequences (TDD, research, etc.) |
+| **Workflows** | Step-by-step automation sequences (Test Developer, research, etc.) |
 | **Rules** | Behavioral constraints and guardrails for the agent |
 | **MCP Servers** | External tools via Docker MCP Gateway (databases, search, etc.) |
 
@@ -97,7 +97,7 @@ All scripts support `-DryRun` to preview changes without making them.
 | `/research` | Research mode | Deep web research and analysis |
 | `/refactor` | Refactor mode | Safe code refactoring |
 | `/tutor` | Learning mode | Generate educational documentation |
-| `/tdd` | TDD mode | Test-driven development cycle |
+| `/test-developer` | TDD mode | Test-driven development cycle |
 
 ## 🐳 MCP Servers
 

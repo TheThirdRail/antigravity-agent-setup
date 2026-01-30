@@ -11,6 +11,12 @@ description: Analyze Mode - Debug issues and diagnose problems with maximum reas
     <trigger>Need to diagnose a problem before fixing</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>sequential-thinking</server>
+    <server>serena</server>
+    <reason>Deep root cause analysis and experimentation</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Assess the Issue">
       <condition type="obvious">Proceed directly to research</condition>
@@ -18,6 +24,7 @@ description: Analyze Mode - Debug issues and diagnose problems with maximum reas
     </step>
 
     <step number="2" name="Research and Gather Context">
+      <skill ref="context-gatherer">Use for documentation and code examples</skill>
       <tool>File search and code inspection</tool>
       <tool>Web search for similar issues</tool>
       <tool>Log analysis</tool>

@@ -114,6 +114,18 @@ description: Brief description of what this workflow does
         <item>Error handling/rollback included</item>
       </checklist>
     </step>
+
+    <step number="8" name="Install Workflow">
+      <instruction>Move the workflow to the appropriate location.</instruction>
+      <decision_tree>
+        <branch condition="Global Workflow (Apply to ALL projects)">
+          <action>Run: scripts/move-global-workflow.ps1 -Name "workflow-name.md"</action>
+        </branch>
+        <branch condition="Workspace Workflow (Apply to THIS project only)">
+          <action>Run: scripts/move-local-workflow.ps1 -Name "workflow-name.md"</action>
+        </branch>
+      </decision_tree>
+    </step>
   </workflow>
 
   <patterns>

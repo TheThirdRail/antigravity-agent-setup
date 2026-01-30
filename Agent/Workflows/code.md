@@ -1,5 +1,5 @@
 ---
-description: Code Mode - Execute implementation with focus on building, minimal discussion
+description: Code with Context - Execute implementation with focus on building, minimal discussion
 ---
 
 <workflow name="code" thinking="Normal">
@@ -11,6 +11,13 @@ description: Code Mode - Execute implementation with focus on building, minimal 
     <trigger>Ready to execute on an existing plan</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>shrimp-task-manager</server>
+    <server>serena</server>
+    <server>mem0</server>
+    <reason>Task tracking, codebase context, and user preferences</reason>
+  </recommended_mcp>
+
   <prerequisites>
     <prerequisite>prd.md exists (or clear requirements understood)</prerequisite>
     <prerequisite>checklist.md exists (or clear task list)</prerequisite>
@@ -19,6 +26,7 @@ description: Code Mode - Execute implementation with focus on building, minimal 
 
   <steps>
     <step number="1" name="Load Context">
+      <skill ref="context-gatherer">Use for API docs and implementation patterns</skill>
       <action>Read checklist.md to understand current progress</action>
       <action>Read prd.md for requirements</action>
       <action>Check project_rules.md for conventions</action>
@@ -34,6 +42,7 @@ description: Code Mode - Execute implementation with focus on building, minimal 
     </step>
 
     <step number="3" name="Code Quality Checks">
+      <skill ref="code-reviewer">Use for self-review of changes</skill>
       <check>Edge cases handled?</check>
       <check>Error handling complete?</check>
       <check>No hardcoded secrets or paths?</check>

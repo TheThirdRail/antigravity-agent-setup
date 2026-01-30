@@ -10,6 +10,11 @@ argument-hint: <issue-number>
     <trigger>Usage: /fix-issue 123 where 123 is the issue number</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>github</server>
+    <reason>Link fixes to issues automatically</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Fetch Issue Details">
       <action>Read the issue description</action>
@@ -42,6 +47,7 @@ argument-hint: <issue-number>
     </step>
 
     <step number="6" name="Write a Test">
+      <skill ref="test-generator">Use for creating regression test</skill>
       <instruction>Write a test that fails with the bug</instruction>
       <instruction>This prevents regression later</instruction>
     </step>
@@ -57,6 +63,7 @@ argument-hint: <issue-number>
     </step>
 
     <step number="9" name="Commit with Reference">
+      <skill ref="git-commit-generator">Use for conventional commit message</skill>
       <command>git add .</command>
       <command>git commit -m "fix: [description]
 

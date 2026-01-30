@@ -1,9 +1,8 @@
 ---
 name: docker-ops
 description: |
-  Direct Docker container management operations for MCP servers. Provides patterns
-  for starting, stopping, inspecting, and debugging Docker containers that host
-  MCP servers. Essential for troubleshooting and maintaining the Docker MCP stack.
+  Troubleshoot Docker containers for MCP servers. Use when containers fail,
+  need logs, or require health checks. For loading/unloading servers, use mcp-manager.
 ---
 
 <skill name="docker-ops" version="1.0.0">
@@ -11,7 +10,14 @@ description: |
     <keywords>docker, containers, debugging, logs, health-checks</keywords>
   </metadata>
 
-  <goal>Provide systematic troubleshooting and operational management for Docker containers hosting MCP servers.</goal>
+  <when_to_use>
+    <trigger>Container won't start or is unhealthy</trigger>
+    <trigger>Need to check logs or debug errors</trigger>
+    <trigger>Running health checks or diagnostics</trigger>
+    <not_for>Loading/unloading MCP servers (use mcp-manager)</not_for>
+  </when_to_use>
+
+  <goal>Systematic troubleshooting for Docker containers hosting MCP servers.</goal>
 
   <core_principles>
     <principle name="Logs Before Restart">
@@ -92,6 +98,14 @@ description: |
     <dont>Ignore health check failures</dont>
     <dont>Use docker run for stack containers (use compose)</dont>
   </best_practices>
+
+  <resources>
+    <script name="health_check.ps1" purpose="Automated container diagnostics">
+      <usage>.\scripts\health_check.ps1</usage>
+      <usage>.\scripts\health_check.ps1 -ContainerFilter "github" -LogLines 50</usage>
+      <description>Checks all MCP containers, shows logs for unhealthy ones, reports resource usage</description>
+    </script>
+  </resources>
 
   <related_skills>
     <skill>mcp-manager</skill>

@@ -46,6 +46,12 @@ description: |
     <trigger>Preparing technical specifications</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>sequential-thinking</server>
+    <server>codegraph</server>
+    <reason>Structured reasoning and graph visualization of codebase</reason>
+  </recommended_mcp>
+
   <workflow>
     <step number="1" name="Understand Requirements">
       <question>What problem does this solve?</question>
@@ -117,6 +123,13 @@ What is the change we're making?
     <dont>Skip documentation of trade-offs</dont>
     <dont>Design in isolation without feedback</dont>
   </best_practices>
+
+  <resources>
+    <reference name="mermaid-templates.md" purpose="Copy-paste diagram templates">
+      <location>references/mermaid-templates.md</location>
+      <description>Complete Mermaid templates: C4 Context/Container, Sequence, Class, ER, State, Gantt, Flowchart</description>
+    </reference>
+  </resources>
 
   <related_skills>
     <skill>code-reviewer</skill>

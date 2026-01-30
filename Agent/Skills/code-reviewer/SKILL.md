@@ -36,6 +36,12 @@ description: |
     <trigger>Auditing existing code for issues</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>snyk</server>
+    <server>serena</server>
+    <reason>Vulnerability scanning and semantic code context</reason>
+  </recommended_mcp>
+
   <workflow>
     <step number="1" name="Understand Context">
       <question>What is this PR trying to accomplish?</question>
@@ -49,6 +55,7 @@ description: |
     </step>
 
     <step number="3" name="Security Review">
+      <skill ref="security-checker">Use for detailed security analysis</skill>
       <vulnerability name="Injection">Unsanitized user input in queries</vulnerability>
       <vulnerability name="Auth Issues">Missing auth/authz checks</vulnerability>
       <vulnerability name="Secrets">Hardcoded API keys, passwords</vulnerability>
@@ -117,6 +124,7 @@ description: |
   </best_practices>
 
   <related_skills>
+    <skill ref="security-checker" auto-invoke="true">Invoke for auth, input handling, or API changes</skill>
     <skill>git-commit-generator</skill>
     <skill>test-generator</skill>
     <skill>architecture-planner</skill>

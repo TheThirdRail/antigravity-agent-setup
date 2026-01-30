@@ -103,6 +103,13 @@ description: |
     <dont>Expose internal errors</dont>
   </best_practices>
 
+  <resources>
+    <asset name="openapi-template.yaml" purpose="Starter OpenAPI 3.0 template">
+      <location>assets/openapi-template.yaml</location>
+      <description>Complete template with CRUD endpoints, auth schemes, error responses, and pagination</description>
+    </asset>
+  </resources>
+
   <related_skills>
     <skill>test-generator</skill>
     <skill>code-reviewer</skill>

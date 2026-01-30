@@ -3,16 +3,18 @@ name: skill-builder
 description: |
   Meta-skill for creating new AI agent skills following best practices. Guides
   the process of defining skill structure, writing effective YAML frontmatter,
-  crafting discoverable descriptions, and organizing resources. Produces skills
-  compatible with Claude Code, GitHub Copilot, Cursor, and Antigravity.
+  crafting discoverable descriptions, and organizing resources. Use when:
+  (1) Creating a new skill from scratch, (2) Updating an existing skill,
+  (3) Converting workflows to skills, (4) Packaging skills for distribution.
+  Produces skills compatible with Claude Code, GitHub Copilot, Cursor, and Antigravity.
 ---
 
-<skill name="skill-builder" version="1.0.0">
+<skill name="skill-builder" version="2.0.0">
   <metadata>
-    <keywords>skills, meta, template, builder, creation</keywords>
+    <keywords>skills, meta, template, builder, creation, packaging</keywords>
   </metadata>
 
-  <goal>Guide creation of AI agent skills with progressive disclosure, clear descriptions, and proper structure.</goal>
+  <goal>Guide creation of AI agent skills with progressive disclosure, clear descriptions, proper structure, and automation scripts.</goal>
 
   <core_principles>
     <principle name="Progressive Disclosure">
@@ -29,33 +31,103 @@ description: |
 
     <principle name="Discovery-First Design">
       <rule>Description must explain WHEN to use (not just what)</rule>
-      <rule>Include trigger conditions</rule>
+      <rule>Include trigger conditions in description, NOT in body</rule>
       <rule>Use keywords for searchability</rule>
     </principle>
+
+    <principle name="Degrees of Freedom">
+      <level name="High Freedom" use="text-based instructions">
+        Use when multiple approaches are valid or decisions depend on context
+      </level>
+      <level name="Medium Freedom" use="pseudocode or scripts with parameters">
+        Use when a preferred pattern exists but some variation is acceptable
+      </level>
+      <level name="Low Freedom" use="specific scripts, few parameters">
+        Use when operations are fragile, consistency is critical, or a specific sequence must be followed
+      </level>
+      <note>Narrow bridge with cliffs → low freedom; open field → high freedom</note>
+    </principle>
   </core_principles>
+
+  <resource_folders>
+    <folder name="scripts/" purpose="Executable code">
+      <when>Same code is rewritten repeatedly OR deterministic reliability needed</when>
+      <examples>rotate_pdf.py, validate_yaml.ps1, lint_schema.sh</examples>
+      <benefit>Token efficient, deterministic, can execute without loading into context</benefit>
+    </folder>
+
+    <folder name="references/" purpose="Documentation for context">
+      <when>Claude needs to reference while working (schemas, APIs, policies)</when>
+      <examples>schema.md, api_docs.md, company_policies.md</examples>
+      <benefit>Keeps SKILL.md lean; loaded only when needed</benefit>
+      <tip>For files >10k words, include grep search patterns in SKILL.md</tip>
+    </folder>
+
+    <folder name="assets/" purpose="Output resources">
+      <when>Files used in final output (not loaded into context)</when>
+      <examples>logo.png, template.pptx, frontend-boilerplate/</examples>
+      <benefit>Separates output resources from documentation</benefit>
+    </folder>
+
+    <decision_guide>
+      <case trigger="Rotating a PDF">scripts/rotate_pdf.py — same code every time</case>
+      <case trigger="Building frontend app">assets/hello-world/ — boilerplate template</case>
+      <case trigger="Querying database">references/schema.md — needs schema knowledge</case>
+    </decision_guide>
+  </resource_folders>
+
+  <anti_patterns>
+    <rule severity="critical">Do NOT create extraneous documentation files:</rule>
+    <forbidden>README.md</forbidden>
+    <forbidden>INSTALLATION_GUIDE.md</forbidden>
+    <forbidden>QUICK_REFERENCE.md</forbidden>
+    <forbidden>CHANGELOG.md</forbidden>
+    <forbidden>CONTRIBUTING.md</forbidden>
+    <reason>Skills are for AI agents, not humans. Extra docs add clutter and confusion.</reason>
+    <rule>Information lives in SKILL.md OR references/, never both</rule>
+    <rule>Keep references one level deep (no nested directories)</rule>
+  </anti_patterns>
 
   <workflow>
     <step number="1" name="Define the Skill">
       <question>What capability does this skill provide?</question>
-      <question>When should an agent use this skill?</question>
-      <question>What triggers would activate this skill?</question>
+      <question>When should an agent use this skill? (triggers)</question>
       <question>What inputs does it need?</question>
       <question>What outputs does it produce?</question>
+      <question>Can you give concrete examples of how it would be used?</question>
+      <tip>Ask 2-3 questions at a time; don't overwhelm the user</tip>
     </step>
 
-    <step number="2" name="Create Folder Structure">
-      <structure><![CDATA[
-.agent/skills/<skill-name>/
-├── SKILL.md          # Required: Main instructions
-├── scripts/          # Optional: Helper scripts
-├── examples/         # Optional: Usage examples
-└── resources/        # Optional: Templates, assets
-      ]]></structure>
-      <naming>Use kebab-case: git-commit-generator, max 64 chars</naming>
+    <step number="2" name="Plan Resource Types">
+      <instruction>For each example, decide: script, reference, or asset?</instruction>
+      <decision_tree>
+        <if condition="Same code rewritten repeatedly">→ scripts/</if>
+        <if condition="Needs documentation while working">→ references/</if>
+        <if condition="File used in output (not in context)">→ assets/</if>
+      </decision_tree>
     </step>
 
-    <step number="3" name="Write SKILL.md File">
-      <format>Embedded XML in Markdown (YAML frontmatter + XML body)</format>
+    <step number="3" name="Initialize Skill Structure">
+      <instruction>Run the init script to scaffold the skill</instruction>
+      <command>scripts/init_skill.ps1 -Name "skill-name" -Path ".agent/skills"</command>
+      <generates>
+        <item>skill-name/SKILL.md — template with frontmatter</item>
+        <item>skill-name/scripts/ — example script</item>
+        <item>skill-name/references/ — example reference</item>
+        <item>skill-name/assets/ — example asset</item>
+      </generates>
+      <note>Delete unused example files after initialization</note>
+    </step>
+
+    <step number="4" name="Implement Resources">
+      <instruction>Create scripts, references, and assets identified in Step 2</instruction>
+      <rule>Test all scripts by running them</rule>
+      <rule>If many similar scripts, test representative sample</rule>
+      <rule>Delete example files not needed</rule>
+    </step>
+
+    <step number="5" name="Write SKILL.md">
+      <format>YAML frontmatter + XML body</format>
       <template><![CDATA[
 ---
 name: skill-name
@@ -90,35 +162,48 @@ description: |
   </best_practices>
 </skill>
       ]]></template>
-      <note>The YAML frontmatter is for discovery; the XML body contains structured instructions</note>
+
+      <frontmatter_rules>
+        <rule>name: The skill name (kebab-case)</rule>
+        <rule>description: Primary trigger mechanism — explain WHEN to use</rule>
+        <rule>Do NOT include "When to Use" in body (loaded after trigger)</rule>
+        <rule>No other fields in frontmatter</rule>
+      </frontmatter_rules>
     </step>
 
-    <step number="4" name="Write Skill Body">
-      <sections>
-        <section>Goal - One sentence</section>
-        <section>Core Principles - Key rules</section>
-        <section>When To Use - Trigger conditions</section>
-        <section>Workflow Instructions - Step-by-step</section>
-        <section>Decision Tree - For complex logic</section>
-        <section>Examples - Input → Output format</section>
-        <section>Best Practices - DO/DON'T lists</section>
-        <section>Related Skills - Cross-references</section>
-      </sections>
+    <step number="6" name="Package for Distribution">
+      <instruction>Validate and package the skill</instruction>
+      <command>scripts/package_skill.ps1 -Path "skill-name" -OutputDir "./dist"</command>
+      <validates>
+        <check>YAML frontmatter format and required fields</check>
+        <check>Skill naming conventions (kebab-case, max 64 chars)</check>
+        <check>Description completeness</check>
+        <check>File organization and resource references</check>
+      </validates>
+      <output>Creates skill-name.skill (zip with .skill extension)</output>
     </step>
 
-    <step number="5" name="Add Supporting Files">
-      <instruction>Keep references one level deep (agent may not read deeply nested files)</instruction>
+    <step number="7" name="Install Skill">
+      <instruction>Move the skill to the appropriate location.</instruction>
+      <decision_tree>
+        <branch condition="Global Skill (Apply to ALL projects)">
+          <action>Run: scripts/move-global-skill.ps1 -Name "skill-name"</action>
+        </branch>
+        <branch condition="Workspace Skill (Apply to THIS project only)">
+          <action>Run: scripts/move-local-skill.ps1 -Name "skill-name"</action>
+        </branch>
+      </decision_tree>
     </step>
 
-    <step number="6" name="Validate">
-      <checklist>
-        <item>YAML frontmatter is valid</item>
-        <item>Description explains when to use</item>
-        <item>Goal section is clear and concise</item>
-        <item>Instructions are actionable</item>
-        <item>Examples show input → output</item>
-        <item>DO/DON'T lists provide guardrails</item>
-      </checklist>
+    <step number="7" name="Iterate">
+      <instruction>Improve based on real usage</instruction>
+      <cycle>
+        <action>Use the skill on real tasks</action>
+        <action>Notice struggles or inefficiencies</action>
+        <action>Identify what to update in SKILL.md or resources</action>
+        <action>Implement changes and test again</action>
+      </cycle>
+      <tip>Iterate immediately after use while context is fresh</tip>
     </step>
   </workflow>
 
@@ -136,11 +221,15 @@ description: |
     <do>Provide concrete examples</do>
     <do>Use tables for quick reference data</do>
     <do>Keep references one level deep</do>
-    <dont>Put everything in one massive file</dont>
+    <do>Test scripts before packaging</do>
+    <do>Use imperative/infinitive form in instructions</do>
+    <dont>Put everything in one massive file (max ~500 lines)</dont>
     <dont>Write vague descriptions ("Does stuff")</dont>
-    <dont>Create mega-skills</dont>
-    <dont>Skip the "When to use" section</dont>
+    <dont>Create mega-skills (split if scope creeps)</dont>
+    <dont>Skip the "When to use" in description</dont>
     <dont>Deeply nest file references</dont>
+    <dont>Create README, CHANGELOG, or other auxiliary docs</dont>
+    <dont>Duplicate info between SKILL.md and references/</dont>
   </best_practices>
 
   <troubleshooting>
@@ -148,11 +237,12 @@ description: |
     <issue problem="Skill partially loaded">Keep references one level deep</issue>
     <issue problem="Wrong skill activated">Make description more specific</issue>
     <issue problem="Instructions ignored">Use numbered steps, not prose</issue>
+    <issue problem="Context window bloat">Split into reference files, stay under 500 lines</issue>
   </troubleshooting>
 
   <related_skills>
+    <skill>workflow-builder</skill>
     <skill>mcp-manager</skill>
-    <skill>docker-ops</skill>
     <skill>tool-creator</skill>
   </related_skills>
 </skill>

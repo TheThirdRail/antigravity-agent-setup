@@ -9,6 +9,11 @@ description: Create a pull request with proper description, tests verified, and 
     <trigger>Before merging to main branch</trigger>
   </when_to_use>
 
+  <recommended_mcp>
+    <server>github</server>
+    <reason>Pull request automation and management</reason>
+  </recommended_mcp>
+
   <steps>
     <step number="1" name="Verify Tests Pass" turbo="true">
       <command>npm test</command>
@@ -60,6 +65,7 @@ description: Create a pull request with proper description, tests verified, and 
     </step>
 
     <step number="8" name="Self-Review">
+      <skill ref="code-reviewer">Use for systematic self-review</skill>
       <action>Review the diff in the PR interface</action>
       <action>Check for accidental debug code</action>
       <action>Verify no secrets are exposed</action>
