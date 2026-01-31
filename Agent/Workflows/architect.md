@@ -36,6 +36,7 @@ description: Architect Mode - Plan and design a new feature or project from scra
 
     <step number="3" name="Design Architecture">
       <skill ref="architecture-planner">Use this skill for diagrams and ADRs</skill>
+      <skill ref="frontend-architect">Use this skill for UI/UX and component design</skill>
       <action>Create high-level architecture including tech stack decisions</action>
       <action>Define file/folder structure</action>
       <action>Create data flow diagrams (using Mermaid via architecture-planner)</action>

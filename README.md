@@ -6,12 +6,12 @@ A comprehensive toolkit for configuring Google Antigravity AI agents with custom
 
 This repository provides everything you need to supercharge your Antigravity AI coding assistant:
 
-| Component | Purpose |
-|-----------|---------|
-| **Skills** | Reusable AI capabilities (test generation, API building, etc.) |
-| **Workflows** | Step-by-step automation sequences (Test Developer, research, etc.) |
-| **Rules** | Behavioral constraints and guardrails for the agent |
-| **MCP Servers** | External tools via Docker MCP Gateway (databases, search, etc.) |
+| Component | Count | Purpose |
+|-----------|-------|---------|
+| **Skills** | 18 | Reusable AI capabilities (frontend architecture, API building, etc.) |
+| **Workflows** | 19 | Step-by-step automation sequences (architect, debug, deploy, etc.) |
+| **Rules** | 6 | Behavioral constraints and quality guardrails |
+| **MCP Servers** | 40+ | External tools via Docker MCP Gateway (databases, search, security, etc.) |
 
 ## 📁 Folder Structure
 
@@ -19,12 +19,14 @@ This repository provides everything you need to supercharge your Antigravity AI 
 antigravity-agent-setup/
 ├── Agent/                    # Source files for agent configuration
 │   ├── Skills/              # AI skill definitions (XML-in-Markdown)
+│   │   └── metadata.schema.json  # JSON Schema for skill discovery
 │   ├── Workflows/           # Workflow definitions (XML-in-Markdown)
 │   └── Rules/               # Rule definitions (XML-in-Markdown)
 ├── MCP-Servers/             # Docker MCP server catalog
 │   └── mcp-docker-stack/    # Custom MCP server definitions
 ├── Scripts/                 # PowerShell installation scripts
-├── .agent/                  # Local workspace copy (gitignored)
+├── Info/                    # Documentation and guides
+│   └── secrets-acquisition-guide.md  # How to get API keys
 ├── example.env              # Template for API keys and secrets
 └── README.md
 ```
@@ -38,7 +40,7 @@ cd antigravity-agent-setup
 
 # Copy and fill in your API keys
 Copy-Item example.env .env
-# Edit .env with your actual credentials
+# Edit .env with your actual credentials (see Info/secrets-acquisition-guide.md)
 ```
 
 ### 2. Install Components
@@ -68,67 +70,114 @@ Close and reopen Antigravity to load the new skills and workflows.
 | `install-rules.ps1` | Copies rules to `~\.gemini\rules` |
 | `set-mcp-secrets.ps1` | Sets Docker MCP secrets from `.env` file |
 | `setup_lazy_load.ps1` | Enables MCP servers in Docker MCP Gateway |
-| `install-mcp-servers.ps1` | Adds MCP server entries to Antigravity config |
 
 All scripts support `-DryRun` to preview changes without making them.
 
-## 🛠️ Included Skills
+## 🛠️ Included Skills (18)
 
+### Development
 | Skill | Description |
 |-------|-------------|
-| `api-builder` | Design and build RESTful/GraphQL APIs |
-| `architecture-planner` | Create system architecture diagrams |
-| `docker-ops` | Docker container management |
-| `git-commit-generator` | Generate conventional commit messages |
-| `mcp-manager` | Manage Docker MCP servers efficiently |
-| `rule-builder` | Create agent behavioral rules |
+| `frontend-architect` | UI component architecture, responsive design, accessibility (WCAG 2.1 AA) |
+| `api-builder` | RESTful/GraphQL API design with OpenAPI |
+| `architecture-planner` | System architecture diagrams and planning |
+| `test-generator` | Unit/integration test generation (TDD) |
+| `code-reviewer` | Code review with quality feedback |
+
+### Productivity
+| Skill | Description |
+|-------|-------------|
+| `documentation-generator` | Generate README, ADRs, API docs, changelogs |
+| `research-capability` | Information gathering from docs and web |
+| `performance-analyzer` | Profiling and optimization patterns |
+| `git-commit-generator` | Conventional commit message generation |
+
+### Agent Building
+| Skill | Description |
+|-------|-------------|
 | `skill-builder` | Create new AI skills |
-| `test-generator` | Generate unit tests (TDD) |
-| `tool-creator` | Create custom MCP tools |
 | `workflow-builder` | Create agent workflows |
+| `rule-builder` | Create behavioral rules |
+| `mcp-builder` | Create MCP server definitions |
+| `mcp-manager` | Manage Docker MCP servers |
+| `agent-builder` | Build complete agent configurations |
 
-## 🔄 Included Workflows
+### Infrastructure
+| Skill | Description |
+|-------|-------------|
+| `docker-ops` | Docker container management |
+| `ci-cd-debugger` | Debug CI/CD pipelines |
+| `security-checker` | Security audit and vulnerability scanning |
 
-| Workflow | Slash Command | Description |
-|----------|---------------|-------------|
-| `/analyze` | Debug mode | Maximum reasoning for problem diagnosis |
-| `/architect` | Planning mode | Design new features/systems |
-| `/code` | Execution mode | Implement with minimal discussion |
-| `/research` | Research mode | Deep web research and analysis |
-| `/refactor` | Refactor mode | Safe code refactoring |
-| `/tutor` | Learning mode | Generate educational documentation |
-| `/test-developer` | TDD mode | Test-driven development cycle |
+## 🔄 Included Workflows (19)
 
-## 🐳 MCP Servers
+| Mode | Workflow | Description |
+|------|----------|-------------|
+| **Planning** | `/architect` | Design new features with MAX reasoning |
+| **Execution** | `/code` | Implement with minimal discussion |
+| **Debugging** | `/analyze` | Deep problem diagnosis |
+| **Debugging** | `/debug-step` | Surgical step-by-step debugging |
+| **Research** | `/research` | Deep web research and analysis |
+| **Learning** | `/tutor` | Generate educational documentation |
+| **Testing** | `/test-developer` | Test-driven development cycle |
+| **Security** | `/security-audit` | Security vulnerability scanning |
+| **Refactoring** | `/refactor` | Safe code refactoring |
+| **Deployment** | `/deploy` | Safe production deployment with verification |
+| **Performance** | `/performance-tune` | Systematic performance optimization |
+| **Onboarding** | `/onboard` | Systematic codebase onboarding |
+| **Handoff** | `/handoff` | Session handoff documentation |
+| **Daily** | `/morning` | Daily startup routine |
+| **PR** | `/pr` | Pull request preparation |
+| **Dependencies** | `/dependency-check` | Dependency audit |
+| **Issues** | `/fix-issue` | GitHub issue resolution |
+| **Project** | `/project-setup` | Initialize new project |
+| **Archive** | `/archive` | Index project to databases |
 
-The `docker-mcp-catalog.yaml` includes these custom servers:
+## 🐳 MCP Servers (40+)
 
-- **Development**: filesystem, github, git, desktop-commander
-- **Search**: brave-search, context7, firecrawl
-- **Databases**: postgres, mongodb, sqlite, supabase, neon
-- **Task Management**: todoist, linear, shrimp-task-manager
-- **AI Tools**: memory, sequential-thinking, playwright
+The `docker-mcp-catalog.yaml` includes servers across these categories:
+
+### Core Development
+- **filesystem**, **github**, **git**, **desktop-commander**, **serena**
+
+### Search & Research
+- **brave-search**, **context7**, **firecrawl**, **arxiv**, **pubmed**
+
+### Databases
+- **postgres**, **mongodb**, **sqlite**, **supabase**, **neon**, **qdrant** (vector)
+
+### Security (NEW)
+- **gitleaks** - Secret detection (500+ patterns, no API key required)
+- **sentry** - Error monitoring and observability
+- **snyk**, **semgrep** - Vulnerability scanning
+
+### Frontend & Design
+- **react**, **vue**, **shadcn**, **magic**
+
+### Task Management
+- **todoist**, **linear**, **shrimp-task-manager**
+
+### AI & Memory
+- **memory**, **sequential-thinking**, **mem0**
 
 ### Setting Up MCP
 
 1. Ensure Docker Desktop is running with MCP Toolkit enabled
-2. Run `.\Scripts\set-mcp-secrets.ps1` to configure API keys
-3. Add the catalog: `docker mcp catalog add mcp-docker-stack local "path\to\docker-mcp-catalog.yaml"`
+2. Get API keys (see `Info/secrets-acquisition-guide.md`)
+3. Run `.\Scripts\set-mcp-secrets.ps1` to configure
+4. Add catalog: `docker mcp catalog add mcp-docker-stack local "path\to\docker-mcp-catalog.yaml"`
 
-## 📝 File Format
+## 📝 File Formats
 
-All skills, workflows, and rules use **Embedded XML in Markdown** format:
-
+### Skills, Workflows, Rules (XML-in-Markdown)
 ```markdown
 ---
 name: component-name
-description: |
-  Brief description of the component
+description: Brief description
 ---
 
 <skill name="component-name" version="1.0.0">
   <goal>What this component does</goal>
-  
   <workflow>
     <step number="1" name="Step Name">
       <instruction>What to do</instruction>
@@ -137,43 +186,67 @@ description: |
 </skill>
 ```
 
-This format provides:
-- **YAML frontmatter** for discovery and metadata
-- **XML body** for structured, parseable instructions
+### Skill Metadata (metadata.json)
+Optional JSON file for skill discovery:
+```json
+{
+  "name": "frontend-architect",
+  "version": "1.0.0",
+  "category": "development",
+  "keywords": ["frontend", "ui", "react"],
+  "triggers": ["build UI component"]
+}
+```
+
+See `Agent/Skills/metadata.schema.json` for the full schema.
 
 ## 🔐 Environment Variables
 
-Copy `example.env` to `.env` and fill in your credentials:
+Copy `example.env` to `.env` and fill in credentials. Key variables:
 
-| Variable | Service |
-|----------|---------|
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub API access |
-| `BRAVE_API_KEY` | Brave Search API |
-| `POSTGRES_URL` | PostgreSQL connection |
-| `SUPABASE_ACCESS_TOKEN` | Supabase management |
-| `TAVILY_API_KEY` | Tavily search |
-| `FIRECRAWL_API_KEY` | Web scraping |
+| Variable | Service | Free Tier |
+|----------|---------|-----------|
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub API | ✅ |
+| `BRAVE_API_KEY` | Brave Search | ✅ 2k/month |
+| `SENTRY_AUTH_TOKEN` | Error monitoring | ✅ 5k events |
+| `QDRANT_API_KEY` | Vector database | ✅ 1GB |
+| `SUPABASE_ACCESS_TOKEN` | BaaS | ✅ 500MB |
 
-See `example.env` for the complete list.
+**See `Info/secrets-acquisition-guide.md` for step-by-step instructions to get each API key.**
 
 ## 🔧 Customization
 
 ### Adding a New Skill
-1. Create folder: `Agent/Skills/my-skill/`
-2. Create `SKILL.md` using the embedded XML format
-3. Run `.\Scripts\install-skills.ps1`
+```powershell
+# Use the skill-builder
+# Or manually:
+1. Create folder: Agent/Skills/my-skill/
+2. Create SKILL.md (XML-in-Markdown format)
+3. Optionally add metadata.json
+4. Run .\Scripts\install-skills.ps1
+```
 
 ### Adding a New Workflow
-1. Create file: `Agent/Workflows/my-workflow.md`
-2. Use embedded XML format with `<workflow>` root
-3. Run `.\Scripts\install-workflows.ps1`
+```powershell
+1. Create: Agent/Workflows/my-workflow.md
+2. Use <workflow> root element
+3. Run .\Scripts\install-workflows.ps1
+```
 
-### Adding a New Rule
-1. Create file: `Agent/Rules/my-rule.md`
-2. Use embedded XML format with `<rule>` root
-3. Run `.\Scripts\install-rules.ps1`
-
-Use the `skill-builder`, `workflow-builder`, and `rule-builder` skills for guided creation.
+### Adding a New MCP Server
+```yaml
+# In MCP-Servers/mcp-docker-stack/docker-mcp-catalog.yaml
+my-server:
+  dateAdded: "2026-01-31T00:00:00Z"
+  description: What it does
+  title: Display Name
+  type: server
+  image: node:20-slim
+  command: [npx, -y, package-name]
+  secrets:
+    - name: my-server.key
+      env: MY_API_KEY
+```
 
 ## 📄 License
 
@@ -189,3 +262,5 @@ MIT License - feel free to use, modify, and distribute.
 ---
 
 **Built for Google Antigravity** | Supercharge your AI coding assistant
+
+*Last updated: 2026-01-31*

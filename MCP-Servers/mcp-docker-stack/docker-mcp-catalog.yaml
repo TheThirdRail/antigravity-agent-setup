@@ -969,3 +969,91 @@ registry:
       tags: [diagrams, mermaid, visualization, free]
     source: https://github.com/abrinsmead/mindpilot-mcp
 
+  # ============================================
+  # SECURITY ENHANCEMENT (Added 2026-01-31)
+  # ============================================
+
+  gitleaks:
+    dateAdded: "2026-01-31T00:00:00Z"
+    description: Secret detection - scans repos for hardcoded secrets, API keys, and passwords (500+ detection patterns)
+    title: Gitleaks (Secret Scanner)
+    type: server
+    image: ghcr.io/gitleaks/gitleaks:latest
+    command:
+      - detect
+      - --source=/workspace
+      - --no-git
+    volumes:
+      - "D:/Coding:/workspace"
+    metadata:
+      category: security
+      owner: zricethezav
+      tags: [security, secrets, leaks, scanning, free]
+    tools:
+      - name: detect
+        description: "Scan for hardcoded secrets in files"
+      - name: protect
+        description: "Pre-commit hook to prevent secret commits"
+    source: https://github.com/gitleaks/gitleaks
+
+  sentry:
+    dateAdded: "2026-01-31T00:00:00Z"
+    description: Access error monitoring, releases, and project data from Sentry.io
+    title: Sentry (Error Monitoring)
+    type: server
+    image: node:20-slim
+    command:
+      - npx
+      - -y
+      - mcp-server-sentry
+    secrets:
+      - name: sentry.auth_token
+        env: SENTRY_AUTH_TOKEN
+        description: Sentry authentication token with read access
+        example: sntrys_xxxxxxxxxxxxxxxxxxxxxxxx
+      - name: sentry.org
+        env: SENTRY_ORG
+        description: Sentry organization slug
+        example: my-organization
+    metadata:
+      category: monitoring
+      owner: community
+      tags: [monitoring, errors, observability, freemium]
+    tools:
+      - name: get_issues
+        description: "List issues for a project"
+      - name: get_issue
+        description: "Get details of a specific issue"
+      - name: get_events
+        description: "Get error events"
+    source: https://github.com/getsentry/sentry-mcp-server
+
+  qdrant:
+    dateAdded: "2026-01-31T00:00:00Z"
+    description: High-performance vector database for semantic search and RAG applications
+    title: Qdrant (Vector DB)
+    type: server
+    image: python:3.11-slim
+    command:
+      - sh
+      - -c
+      - "pip install qdrant-client mcp-server-qdrant && mcp-server-qdrant"
+    secrets:
+      - name: qdrant.url
+        env: QDRANT_URL
+        description: Qdrant server URL (cloud or local)
+        example: https://xyz.qdrant.cloud:6333
+      - name: qdrant.api_key
+        env: QDRANT_API_KEY
+        description: Qdrant API key (for cloud instances)
+        example: your_qdrant_api_key
+    metadata:
+      category: database
+      owner: qdrant
+      tags: [vector, embedding, rag, search, freemium]
+    tools:
+      - name: store
+        description: "Store embeddings in collection"
+      - name: search
+        description: "Semantic search in collection"
+    source: https://github.com/qdrant/mcp-server-qdrant

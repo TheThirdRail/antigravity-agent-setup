@@ -68,6 +68,14 @@ $Mappings = @{
     # ============================================
     "NOTION_API_KEY"               = @("notion.internal_integration_token")  # Docker native
     "MEM0_API_KEY"                 = @("mem0.key")  # Custom catalog
+
+    # ============================================
+    # MONITORING & VECTOR DB - Custom catalog
+    # ============================================
+    "SENTRY_AUTH_TOKEN"            = @("sentry.auth_token")
+    "SENTRY_ORG"                   = @("sentry.org")
+    "QDRANT_URL"                   = @("qdrant.url")
+    "QDRANT_API_KEY"               = @("qdrant.api_key")
 }
 
 Write-Host "+--------------------------------------------+" -ForegroundColor Cyan

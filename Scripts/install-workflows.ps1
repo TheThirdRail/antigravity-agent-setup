@@ -17,7 +17,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 # Antigravity global workflows location
-$destPath = "$env:LOCALAPPDATA\Google\Antigravity\User Data\User\workflows"
+$destPath = "$env:USERPROFILE\.gemini\antigravity\global_workflows"
 $sourcePath = Join-Path $PSScriptRoot "..\Agent\Workflows"
 
 Write-Host "=== Antigravity Workflow Installer ===" -ForegroundColor Cyan

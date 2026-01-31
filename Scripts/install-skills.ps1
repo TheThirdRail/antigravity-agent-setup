@@ -17,7 +17,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 # Antigravity global skills location
-$destPath = "$env:LOCALAPPDATA\Google\Antigravity\User Data\User\skills"
+$destPath = "$env:USERPROFILE\.gemini\antigravity\skills"
 $sourcePath = Join-Path $PSScriptRoot "..\Agent\Skills"
 
 Write-Host "=== Antigravity Skills Installer ===" -ForegroundColor Cyan

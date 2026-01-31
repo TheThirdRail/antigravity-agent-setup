@@ -24,7 +24,8 @@ description: Analyze Mode - Debug issues and diagnose problems with maximum reas
     </step>
 
     <step number="2" name="Research and Gather Context">
-      <skill ref="context-gatherer">Use for documentation and code examples</skill>
+      <skill ref="research-capability">Use for documentation and code examples</skill>
+      <skill ref="performance-analyzer">Use if diagnosing performance issues</skill>
       <tool>File search and code inspection</tool>
       <tool>Web search for similar issues</tool>
       <tool>Log analysis</tool>

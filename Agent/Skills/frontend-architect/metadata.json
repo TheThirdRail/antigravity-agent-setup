@@ -1,0 +1,42 @@
+{
+    "name": "frontend-architect",
+    "version": "1.0.0",
+    "description": "Design and build modern frontend applications with component architecture, state management, responsive design, and accessibility.",
+    "category": "development",
+    "keywords": [
+        "frontend",
+        "ui",
+        "react",
+        "vue",
+        "components",
+        "css",
+        "accessibility",
+        "responsive"
+    ],
+    "triggers": [
+        "build UI component",
+        "create frontend architecture",
+        "design responsive layout",
+        "implement form",
+        "setup design system"
+    ],
+    "recommended_mcp": [
+        "react",
+        "vue",
+        "shadcn",
+        "magic"
+    ],
+    "related_skills": [
+        "api-builder",
+        "test-generator",
+        "code-reviewer"
+    ],
+    "related_workflows": [
+        "/architect",
+        "/code"
+    ],
+    "author": "TheThirdRail",
+    "license": "MIT",
+    "dateCreated": "2026-01-31",
+    "dateModified": "2026-01-31"
+}
