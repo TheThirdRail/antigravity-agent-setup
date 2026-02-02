@@ -47,7 +47,10 @@ $servers = @(
     "context7",
     "shrimp-task-manager",
     "scip-indexer",
-    "git-history"
+    "git-history",
+    "mem0",
+    "codegraph",
+    "ragdocs"
 )
 
 # ============================================================================
@@ -95,6 +98,7 @@ $secretMappings = @{
     "CLOUDFLARE_ACCOUNT_ID"        = "cloudflare.account_id"
     "SNYK_TOKEN"                   = "snyk.token"
     "GITGUARDIAN_API_KEY"          = "gitguardian.api_key"
+    "MEM0_API_KEY"                 = "mem0.key"
 }
 
 $secretSetCount = 0
