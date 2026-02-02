@@ -1,6 +1,7 @@
 {
     "name": "mcp-git-history",
     "version": "1.0.0",
+    "type": "module",
     "description": "MCP Server for Advanced Git History Search",
     "main": "index.js",
     "dependencies": {
