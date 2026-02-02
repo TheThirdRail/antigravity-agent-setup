@@ -196,6 +196,44 @@ registry:
 
   # ============================================
   # COMMAND EXECUTION
+  scip-indexer:
+    dateAdded: "2026-02-02T00:00:00Z"
+    description: Compiler-precise code navigation (SCIP)
+    title: SCIP Indexer
+    type: server
+    image: node:20-slim
+    command:
+      - sh
+      - -c
+      - "apt-get update -qq && apt-get install -y -qq python3 python3-pip && cd /app && npm install --quiet && node index.js"
+    volumes:
+      - "./MCP-Servers/mcp-scip:/app"
+      - "D:/Coding:/workspace"
+    metadata:
+      category: code-intelligence
+      tags: [scip, indexer, navigation]
+      owner: custom
+    source: local
+
+  git-history:
+    dateAdded: "2026-02-02T00:00:00Z"
+    description: Semantic Git history search
+    title: Git History
+    type: server
+    image: node:20-slim
+    command:
+      - sh
+      - -c
+      - "apt-get update -qq && apt-get install -y -qq git && cd /app && npm install --quiet && node index.js"
+    volumes:
+      - "./MCP-Servers/mcp-git-history:/app"
+      - "D:/Coding:/workspace"
+    metadata:
+      category: code-intelligence
+      tags: [git, history, search]
+      owner: custom
+    source: local
+
   # ============================================
   
   desktop-commander:

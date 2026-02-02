@@ -45,7 +45,9 @@ $servers = @(
     "clangd",
     "serena",
     "context7",
-    "shrimp-task-manager"
+    "shrimp-task-manager",
+    "scip-indexer",
+    "git-history"
 )
 
 # ============================================================================
