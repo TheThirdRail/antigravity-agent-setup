@@ -11,6 +11,12 @@ description: Tutor Mode - Generate educational documentation for learning the co
     <trigger>Teaching someone else the project</trigger>
   </when_to_use>
 
+  <constraints>
+    <constraint>DO NOT write implementation code</constraint>
+    <constraint>DO NOT modify source files</constraint>
+    <constraint>Focus ONLY on generating documentation in Agent-Context/Lessons/ folder</constraint>
+  </constraints>
+
   <request_parsing>
     <instruction>Read user's request to determine which type of documentation they want:</instruction>
     <option user_says="Tutor OR Give me an overview">Generate PROJECT_OVERVIEW.md only</option>
@@ -19,12 +25,12 @@ description: Tutor Mode - Generate educational documentation for learning the co
   </request_parsing>
 
   <setup first_time_only="true">
-    <action>Create the education/ folder if it doesn't exist</action>
-    <action>Add education/ to .gitignore if not already present</action>
+    <action>Create the Agent-Context/Lessons/ folder if it doesn't exist</action>
+    <action>Ensure Agent-Context/ is in .gitignore</action>
   </setup>
 
   <output_options>
-    <option name="Project Overview" output="education/PROJECT_OVERVIEW.md">
+    <option name="Project Overview" output="Agent-Context/Lessons/PROJECT_OVERVIEW.md">
       <content>Project file structure (tree view)</content>
       <content>Quick explainer for each file (1-3 sentences)</content>
       <content>Purpose of each file</content>
@@ -32,7 +38,7 @@ description: Tutor Mode - Generate educational documentation for learning the co
       <content>Entry points and main flows</content>
     </option>
 
-    <option name="Single File Explainer" output="education/[filename]_explained.md">
+    <option name="Single File Explainer" output="Agent-Context/Lessons/[filename]_explained.md">
       <content>What the file does (plain English)</content>
       <content>Key concepts used</content>
       <content>Line-by-line or section-by-section breakdown</content>
@@ -42,7 +48,7 @@ description: Tutor Mode - Generate educational documentation for learning the co
     </option>
 
     <option name="Full Project Documentation">
-      <output>education/PROJECT_OVERVIEW.md + education/[filename]_explained.md for EVERY source file</output>
+      <output>Agent-Context/Lessons/PROJECT_OVERVIEW.md + Agent-Context/Lessons/[filename]_explained.md for EVERY source file</output>
     </option>
   </output_options>
 
@@ -56,7 +62,7 @@ description: Tutor Mode - Generate educational documentation for learning the co
 
   <exit_criteria>
     <criterion>Requested documentation created</criterion>
-    <criterion>Files are in education/ folder</criterion>
+    <criterion>Files are in Agent-Context/Lessons/ folder</criterion>
     <criterion>User confirms understanding</criterion>
   </exit_criteria>
 </workflow>

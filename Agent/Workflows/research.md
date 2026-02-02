@@ -20,10 +20,16 @@ description: Research Mode - Deep research with maximum thinking using all searc
     <reason>Deep reasoning and comprehensive web search/scraping</reason>
   </recommended_mcp>
 
+  <constraints>
+    <constraint>DO NOT write implementation code</constraint>
+    <constraint>DO NOT edit source files</constraint>
+    <constraint>Focus ONLY on information gathering and synthesis</constraint>
+  </constraints>
+
   <output>
-    <location>research/</location>
+    <location>Agent-Context/Research/</location>
     <format>[topic]-research.md</format>
-    <note>The research/ folder should be in .gitignore</note>
+    <note>The Agent-Context/ folder should be in .gitignore</note>
   </output>
 
   <steps>
@@ -66,28 +72,34 @@ description: Research Mode - Deep research with maximum thinking using all searc
 
     <step number="5" name="Document Findings">
       <output_template><![CDATA[
+
 # [Topic] Research
 
 **Date:** [Today's date]
 **Purpose:** [Why this research was needed]
 
 ## Executive Summary
+
 [2-3 sentence summary]
 
 ## Key Findings
 
 ### Best Practices (2024-2025)
+
 - [Finding 1] — Source: [URL]
 
 ### Recommended Approach
+
 [Your synthesis and recommendation]
 
 ### Alternatives Considered
+
 | Option | Pros | Cons |
 |--------|------|------|
 | [Option 1] | [Pros] | [Cons] |
 
 ### Sources
+
 1. [Title](URL) — [Date] — [Brief note]
       ]]></output_template>
     </step>
@@ -98,10 +110,11 @@ description: Research Mode - Deep research with maximum thinking using all searc
       <rule>Explain WHY you recommend it</rule>
       <rule>Note any trade-offs</rule>
     </step>
+
   </steps>
 
   <exit_criteria>
-    <criterion>Research file created in research/ folder</criterion>
+    <criterion>Research file created in Agent-Context/Research/ folder</criterion>
     <criterion>Clear synthesis and recommendation provided</criterion>
     <criterion>Sources documented with dates</criterion>
     <criterion>User understands the findings</criterion>

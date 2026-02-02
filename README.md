@@ -34,6 +34,7 @@ antigravity-agent-setup/
 ## 🚀 Quick Start
 
 ### 1. Clone and Configure
+
 ```powershell
 git clone https://github.com/YourUsername/antigravity-agent-setup.git
 cd antigravity-agent-setup
@@ -44,6 +45,7 @@ Copy-Item example.env .env
 ```
 
 ### 2. Install Components
+
 ```powershell
 # Install skills globally
 .\Scripts\install-skills.ps1
@@ -59,6 +61,7 @@ Copy-Item example.env .env
 ```
 
 ### 3. Restart Antigravity
+
 Close and reopen Antigravity to load the new skills and workflows.
 
 ## 📜 Scripts Reference
@@ -76,6 +79,7 @@ All scripts support `-DryRun` to preview changes without making them.
 ## 🛠️ Included Skills (18)
 
 ### Development
+
 | Skill | Description |
 |-------|-------------|
 | `frontend-architect` | UI component architecture, responsive design, accessibility (WCAG 2.1 AA) |
@@ -85,6 +89,7 @@ All scripts support `-DryRun` to preview changes without making them.
 | `code-reviewer` | Code review with quality feedback |
 
 ### Productivity
+
 | Skill | Description |
 |-------|-------------|
 | `documentation-generator` | Generate README, ADRs, API docs, changelogs |
@@ -93,6 +98,7 @@ All scripts support `-DryRun` to preview changes without making them.
 | `git-commit-generator` | Conventional commit message generation |
 
 ### Agent Building
+
 | Skill | Description |
 |-------|-------------|
 | `skill-builder` | Create new AI skills |
@@ -103,6 +109,7 @@ All scripts support `-DryRun` to preview changes without making them.
 | `agent-builder` | Build complete agent configurations |
 
 ### Infrastructure
+
 | Skill | Description |
 |-------|-------------|
 | `docker-ops` | Docker container management |
@@ -138,26 +145,38 @@ All scripts support `-DryRun` to preview changes without making them.
 The `docker-mcp-catalog.yaml` includes servers across these categories:
 
 ### Core Development
+
 - **filesystem**, **github**, **git**, **desktop-commander**, **serena**
 
+### Custom Indexing (NEW)
+
+- **scip-indexer** - Precice code navigation (Go to definition, Find references)
+- **git-history** - Temporal search ("Why did this change?", "When was this introduced?")
+
 ### Search & Research
+
 - **brave-search**, **context7**, **firecrawl**, **arxiv**, **pubmed**
 
 ### Databases
+
 - **postgres**, **mongodb**, **sqlite**, **supabase**, **neon**, **qdrant** (vector)
 
 ### Security (NEW)
+
 - **gitleaks** - Secret detection (500+ patterns, no API key required)
 - **sentry** - Error monitoring and observability
 - **snyk**, **semgrep** - Vulnerability scanning
 
 ### Frontend & Design
+
 - **react**, **vue**, **shadcn**, **magic**
 
 ### Task Management
+
 - **todoist**, **linear**, **shrimp-task-manager**
 
 ### AI & Memory
+
 - **memory**, **sequential-thinking**, **mem0**
 
 ### Setting Up MCP
@@ -170,6 +189,7 @@ The `docker-mcp-catalog.yaml` includes servers across these categories:
 ## 📝 File Formats
 
 ### Skills, Workflows, Rules (XML-in-Markdown)
+
 ```markdown
 ---
 name: component-name
@@ -187,7 +207,9 @@ description: Brief description
 ```
 
 ### Skill Metadata (metadata.json)
+
 Optional JSON file for skill discovery:
+
 ```json
 {
   "name": "frontend-architect",
@@ -217,6 +239,7 @@ Copy `example.env` to `.env` and fill in credentials. Key variables:
 ## 🔧 Customization
 
 ### Adding a New Skill
+
 ```powershell
 # Use the skill-builder
 # Or manually:
@@ -227,6 +250,7 @@ Copy `example.env` to `.env` and fill in credentials. Key variables:
 ```
 
 ### Adding a New Workflow
+
 ```powershell
 1. Create: Agent/Workflows/my-workflow.md
 2. Use <workflow> root element
@@ -234,6 +258,7 @@ Copy `example.env` to `.env` and fill in credentials. Key variables:
 ```
 
 ### Adding a New MCP Server
+
 ```yaml
 # In MCP-Servers/mcp-docker-stack/docker-mcp-catalog.yaml
 my-server:
@@ -263,4 +288,4 @@ MIT License - feel free to use, modify, and distribute.
 
 **Built for Google Antigravity** | Supercharge your AI coding assistant
 
-*Last updated: 2026-01-31*
+*Last updated: 2026-02-02*

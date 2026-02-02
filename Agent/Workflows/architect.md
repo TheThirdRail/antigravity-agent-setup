@@ -11,6 +11,19 @@ description: Architect Mode - Plan and design a new feature or project from scra
     <trigger>Designing system architecture</trigger>
   </when_to_use>
 
+  <constraints>
+    <constraint>DO NOT write implementation code (use /code workflow for that)</constraint>
+    <constraint>DO NOT create source files (only config, docs, and scaffolding)</constraint>
+    <constraint>Focus ONLY on planning, structure, and documentation</constraint>
+  </constraints>
+
+  <distinction>
+    <versus workflow="/code">
+      <difference>/architect is for PLANNING and DESIGN only</difference>
+      <difference>/code is for IMPLEMENTATION and EXECUTION</difference>
+    </versus>
+  </distinction>
+
   <recommended_mcp>
     <server>sequential-thinking</server>
     <server>shrimp-task-manager</server>
@@ -42,12 +55,13 @@ description: Architect Mode - Plan and design a new feature or project from scra
       <action>Create data flow diagrams (using Mermaid via architecture-planner)</action>
       <action>Identify dependencies and integration points</action>
       <action>Document architectural decisions using ADR template</action>
+      <warning>Do not start writing actual component code here</warning>
     </step>
 
     <step number="4" name="Generate Documentation">
-      <output file="prd.md">Goals, user stories, acceptance criteria, technical requirements, scope</output>
-      <output file="checklist.md">Phased implementation plan with atomic, checkable tasks</output>
-      <output file="project_rules.md">Tech stack, coding conventions, linting rules, naming conventions</output>
+      <output file="Agent-Context/PRD/prd.md">Goals, user stories, acceptance criteria, technical requirements, scope</output>
+      <output file="Agent-Context/PRD/checklist.md">Phased implementation plan with atomic, checkable tasks</output>
+      <output file="Agent-Context/Plan/project_rules.md">Tech stack, coding conventions, linting rules, naming conventions</output>
     </step>
 
     <step number="5" name="Index the Project">
@@ -61,6 +75,12 @@ description: Architect Mode - Plan and design a new feature or project from scra
       <action>Otherwise, use checklist.md as the source of truth</action>
     </step>
   </steps>
+
+  <behavior_rules>
+    <rule>Stop before writing any implementation code</rule>
+    <rule>Refuse requests to "just write the code" in this mode</rule>
+    <rule>Refer user to /code workflow for implementation</rule>
+  </behavior_rules>
 
   <exit_criteria>
     <criterion>All documentation files created</criterion>

@@ -17,6 +17,13 @@ description: Analyze Mode - Debug issues and diagnose problems with maximum reas
     <reason>Deep root cause analysis and experimentation</reason>
   </recommended_mcp>
 
+  <constraints>
+    <constraint>DO NOT write implementation code in this workflow</constraint>
+    <constraint>DO NOT modify source files (read-only diagnosis)</constraint>
+    <constraint>Focus ONLY on diagnosing the root cause</constraint>
+    <constraint>Switch to /fix-issue or /debug-step to apply fixes</constraint>
+  </constraints>
+
   <steps>
     <step number="1" name="Assess the Issue">
       <condition type="obvious">Proceed directly to research</condition>
@@ -36,10 +43,13 @@ description: Analyze Mode - Debug issues and diagnose problems with maximum reas
     <step number="3" name="Hypothesize Causes">
       <instruction>Generate a ranked list of possible causes from most to least likely</instruction>
       <format><![CDATA[
+
 ## Analysis Report
+
 **Issue:** [One-sentence summary]
 
 ### Possible Causes (Ranked)
+
 1. **[Most Likely]** — [Why] — [How to verify] — [Suggested fix]
 2. **[Next Most Likely]** — [Why] — [Verify] — [Fix]
 3. **[Less Likely]** — [Why] — [Verify] — [Fix]
@@ -48,20 +58,21 @@ description: Analyze Mode - Debug issues and diagnose problems with maximum reas
 
     <step number="4" name="Recommend Next Steps">
       <action>Provide a clear diagnostic plan</action>
-      <action>Offer to implement fixes</action>
+      <action>Recommend switching to /fix-issue or /debug-step to implement the fix</action>
       <action>If multiple approaches exist, ask user preference</action>
     </step>
 
-    <step number="5" name="Verify Fix">
-      <action>Test the specific issue</action>
-      <action>Check for regressions</action>
-      <action>Confirm with user that issue is resolved</action>
+    <step number="5" name="Prepare for Verification">
+      <action>Define how the fix should be verified</action>
+      <action>Suggest test cases to run</action>
+      <action>Confirm readiness to switch workflows</action>
     </step>
+
   </steps>
 
   <exit_criteria>
     <criterion>Root cause identified</criterion>
-    <criterion>Fix implemented and verified</criterion>
+    <criterion>Fix strategy defined</criterion>
     <criterion>User confirms issue is resolved</criterion>
   </exit_criteria>
 </workflow>

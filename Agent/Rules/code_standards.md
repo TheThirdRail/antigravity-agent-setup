@@ -62,4 +62,17 @@ activation: always_on
     <rule>Group related calls when possible.</rule>
     <rule>Confirm before destructive operations.</rule>
   </tool_usage>
+  <environment_enforcement>
+    <trigger>Writing or executing Python code, or installing packages.</trigger>
+    <constraint>
+      <STOP>DO NOT install packages globally.</STOP>
+      <STOP>DO NOT run python scripts without a virtual environment.</STOP>
+    </constraint>
+    <protocol>
+      <step>Check for existing venv (e.g. `.venv` or `venv` folders).</step>
+      <step>If none exists, create one: `python -m venv .venv`.</step>
+      <step>Activate it BEFORE every new terminal session or command sequence.</step>
+      <step>Install dependencies ONLY into the active venv.</step>
+    </protocol>
+  </environment_enforcement>
 </rule>

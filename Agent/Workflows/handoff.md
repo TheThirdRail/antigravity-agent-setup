@@ -15,6 +15,12 @@ description: End-of-session summary for handing off work to yourself tomorrow or
     <reason>Save session state and next steps</reason>
   </recommended_mcp>
 
+  <constraints>
+    <constraint>DO NOT write implementation code</constraint>
+    <constraint>DO NOT modify source files</constraint>
+    <constraint>Focus ONLY on updating status and creating handoff notes in Agent-Context/Communications/Agent-Notes/</constraint>
+  </constraints>
+
   <steps>
     <step number="1" name="Summarize What Was Done">
       <question>What features were added?</question>
@@ -50,33 +56,39 @@ description: End-of-session summary for handing off work to yourself tomorrow or
     </step>
 
     <step number="7" name="Create Handoff Document">
-      <instruction>Write summary to HANDOFF.md or similar</instruction>
+      <instruction>Write summary to Agent-Context/Communications/Agent-Notes/HANDOFF.yaml (YAML format for agent consumption)</instruction>
       <instruction>Include date/time</instruction>
       <instruction>Commit if appropriate</instruction>
     </step>
   </steps>
 
   <handoff_template><![CDATA[
+
 # Handoff - [Date]
 
 ## Completed
+
 - [x] Task 1
 - [x] Task 2
 
 ## In Progress
+
 - [ ] Task 3 (about 60% done)
   - Current approach: ...
   - Next step: ...
 
 ## Blockers
+
 - Waiting on [person] for [thing]
 
 ## Next Steps
+
 1. Finish task 3
 2. Start task 4
 3. Review PR #123
 
 ## Gotchas
+
 - ⚠️ Don't merge PR #456 until #123 is done
 - ⚠️ Tests in `auth.test.ts` are temporarily skipped
   ]]></handoff_template>

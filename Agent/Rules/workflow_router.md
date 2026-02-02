@@ -17,6 +17,7 @@ activation: always_on
   <instruction>Delegate complex tasks to the appropriate Workflow:</instruction>
 
   <routing_table>
+    <route trigger="Idea/Brainstorming" workflow="/planner" />
     <route trigger="Planning/Design" workflow="/architect" />
     <route trigger="Debugging/Issues" workflow="/analyze" />
     <route trigger="Surgical Debugging" workflow="/debug-step" />
@@ -24,7 +25,6 @@ activation: always_on
     <route trigger="Researching" workflow="/research" />
     <route trigger="Learning/Docs" workflow="/tutor" />
     <route trigger="Project Setup" workflow="/project-setup" />
-    <route trigger="Indexing/Cleanup" workflow="/archive" />
     <route trigger="Refactoring" workflow="/refactor" />
     <route trigger="Pull Request" workflow="/pr" />
     <route trigger="Testing/TDD" workflow="/test-developer" />
@@ -36,11 +36,13 @@ activation: always_on
     <route trigger="Dependency Check" workflow="/dependency-check" />
     <route trigger="Deployment" workflow="/deploy" />
     <route trigger="Performance Optimization" workflow="/performance-tune" />
+    <!-- NOTE: /archive workflow removed. Archiving is now automatic via archive_rules.md -->
   </routing_table>
 
   <decision_logic>
     <rule>If task matches a trigger, suggest that workflow before proceeding</rule>
     <rule>User may decline workflow and proceed with direct implementation</rule>
     <rule>Always explain why a workflow was suggested</rule>
+    <rule>Archiving is handled automatically by archive_rules.md (no workflow needed)</rule>
   </decision_logic>
 </rule>

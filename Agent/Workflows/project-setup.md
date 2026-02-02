@@ -27,33 +27,54 @@ vendor/
 __pycache__/
 
 # Build outputs
+
 dist/
 build/
 .next/
 
 # Environment
+
 .env
 .env.local
 .env.*.local
 
 # IDE
+
 .idea/
 .vscode/settings.json
 
 # AI/Agent Generated (DO NOT COMMIT)
-education/
-research/
+
+Agent-Context/
 
 # Testing
+
 coverage/
 
 # Temporary
+
 tmp/
 temp/
       ]]></content>
     </step>
 
-    <step number="2" name="Create Project Structure">
+    <step number="2" name="Create Agent-Context Folder Structure">
+      <instruction>Create the Agent-Context directory tree for all agent-generated files.</instruction>
+      <folders>
+        <folder>Agent-Context/Research</folder>
+        <folder>Agent-Context/Lessons</folder>
+        <folder>Agent-Context/PRD</folder>
+        <folder>Agent-Context/Plan</folder>
+        <folder>Agent-Context/Tasks</folder>
+        <folder>Agent-Context/Communications/Agent-Notes</folder>
+        <folder>Agent-Context/Communications/Proj-Mgr-Notes</folder>
+        <folder>Agent-Context/Misc</folder>
+      </folders>
+      <note>Agent-Notes uses YAML format for structured agent-to-agent communication.</note>
+      <note>Proj-Mgr-Notes uses Markdown for human-readable artifacts.</note>
+    </step>
+
+    <step number="3" name="Create Project Structure">
       <skill ref="architecture-planner">Use for structure decisions</skill>
       <instruction>Based on the tech stack from /architect, create appropriate folders</instruction>
       <template type="Web/Node">src/components/, src/pages/, src/utils/, public/, tests/, docs/</template>
@@ -65,6 +86,7 @@ temp/
       <instruction>Create `.agent/rules/project-rules.md` using the rule-builder format</instruction>
       <content><![CDATA[
 ---
+
 name: project-rules
 description: |
   Workspace-specific rules for this project.

@@ -109,5 +109,6 @@ activation: always_on
   <related_rules>
     <rule>testing_rules</rule>
     <rule>code_standards</rule>
+    <rule>agent_context_rules</rule>
   </related_rules>
 </rule>

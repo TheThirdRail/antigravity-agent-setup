@@ -23,6 +23,12 @@ description: Systematic onboarding for new or inherited codebases
     </versus>
   </distinction>
 
+  <constraints>
+    <constraint>DO NOT write implementation code</constraint>
+    <constraint>DO NOT modify source files (read-only for understanding)</constraint>
+    <constraint>Configuration/scaffolding (e.g. .env) is permitted</constraint>
+  </constraints>
+
   <recommended_mcp>
     <server>context7</server>
     <reason>Retrieve documentation for unfamiliar frameworks</reason>
