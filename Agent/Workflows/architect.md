@@ -6,6 +6,9 @@ description: Architect Mode - Plan and design a new feature or project from scra
   <important>Use MAXIMUM thinking/reasoning depth. Plan thoroughly before any implementation.</important>
 
   <when_to_use>
+    <trigger>User says "I have an idea"</trigger>
+    <trigger>User says "Help me plan"</trigger>
+    <trigger>Ambiguous requirements needing clarification</trigger>
     <trigger>Starting a new project from scratch</trigger>
     <trigger>Planning a major new feature</trigger>
     <trigger>Designing system architecture</trigger>
@@ -33,6 +36,14 @@ description: Architect Mode - Plan and design a new feature or project from scra
   </recommended_mcp>
 
   <steps>
+    <step number="0" name="Clarify Vision">
+      <action>Ask open-ended questions to understand the "What" and "Why".</action>
+      <action>Identify the user's ultimate goal and success criteria.</action>
+      <example>"What problem are we solving?" "Who is this for?"</example>
+      <action>Agree on the "MVP" (Minimum Viable Product) features.</action>
+      <action>Determine technical constraints (Language, Platform, Budget).</action>
+    </step>
+
     <step number="1" name="Clarify Requirements">
       <action>Ask questions about scope, requirements, and constraints</action>
       <action>DO NOT proceed until critical questions are answered</action>
@@ -50,6 +61,7 @@ description: Architect Mode - Plan and design a new feature or project from scra
     <step number="3" name="Design Architecture">
       <skill ref="architecture-planner">Use this skill for diagrams and ADRs</skill>
       <skill ref="frontend-architect">Use this skill for UI/UX and component design</skill>
+      <skill ref="backend-architect">Use this skill for API, database, and security design</skill>
       <action>Create high-level architecture including tech stack decisions</action>
       <action>Define file/folder structure</action>
       <action>Create data flow diagrams (using Mermaid via architecture-planner)</action>

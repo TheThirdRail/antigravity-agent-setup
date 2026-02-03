@@ -2,7 +2,7 @@
 # Run this script ONCE to initialize all servers
 # Usage: .\setup-mcp-lazy-load.ps1
 
-$EnvFilePath = ".env"
+$EnvFilePath = "$PSScriptRoot\..\.env"
 if (-not (Test-Path $EnvFilePath)) {
     Write-Error "File not found: $EnvFilePath"
     exit 1
@@ -46,8 +46,6 @@ $servers = @(
     "serena",
     "context7",
     "shrimp-task-manager",
-    "scip-indexer",
-    "git-history",
     "mem0",
     "codegraph",
     "ragdocs"

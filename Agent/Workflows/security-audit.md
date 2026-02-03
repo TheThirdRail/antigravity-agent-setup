@@ -15,36 +15,23 @@ description: Scan codebase for security vulnerabilities, exposed secrets, and ri
   </recommended_mcp>
 
   <steps>
-    <step number="1" name="Check for Exposed Secrets">
-      <skill ref="security-checker">Use for comprehensive security analysis</skill>
-      <action>Look for patterns like api_key =, password =, secret =</action>
-      <action>Check .env files are in .gitignore</action>
+    <step number="1" name="Run Security Checker Skill">
+      <skill ref="security-checker">Invoke full security analysis</skill>
+      <instruction>The skill handles: secret scanning, injection checks, auth review, input validation.</instruction>
+      <instruction>Review the skill's prioritized findings before proceeding.</instruction>
     </step>
 
-    <step number="2" name="Review Authentication">
-      <check>Check login/logout flows</check>
-      <check>Verify password hashing</check>
-      <check>Look for missing auth checks on protected routes</check>
-    </step>
-
-    <step number="3" name="Check Dependencies" turbo="true">
+    <step number="2" name="Check Dependencies" turbo="true">
       <command>npm audit</command>
+      <command>pip-audit</command>
+      <instruction>Run appropriate command based on project type.</instruction>
     </step>
 
-    <step number="4" name="Review Input Handling">
-      <vulnerability name="SQL injection">Unsanitized database queries</vulnerability>
-      <vulnerability name="XSS">User input rendered as HTML</vulnerability>
-      <vulnerability name="Command injection">User input in shell commands</vulnerability>
-    </step>
-
-    <step number="5" name="Check File Handling">
-      <instruction>User input should not directly control file paths</instruction>
-    </step>
-
-    <step number="6" name="Generate Report">
-      <action>List all issues found</action>
-      <action>Prioritize by severity (Critical → High → Medium → Low)</action>
-      <action>Suggest fixes for each issue</action>
+    <step number="3" name="Generate Report">
+      <action>Compile findings from skill and dependency audit.</action>
+      <action>Prioritize by severity (Critical → High → Medium → Low).</action>
+      <action>Suggest fixes for each issue.</action>
+      <output>Security audit report with prioritized issues and remediation steps.</output>
     </step>
   </steps>
 

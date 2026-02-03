@@ -31,31 +31,36 @@ description: End-of-session summary for handing off work to yourself tomorrow or
     <step number="2" name="Identify What's In Progress">
       <question>What's partially complete?</question>
       <question>What was the approach being taken?</question>
-      <question>Any dead ends hit?</question>
     </step>
 
-    <step number="3" name="List Blockers">
+    <step number="3" name="Document Dead Ends & Failed Attempts">
+      <question>What approaches were tried and failed?</question>
+      <question>Why did they fail? (Technical limitation, complexity, etc.)</question>
+      <question>What shouldn't be tried again?</question>
+    </step>
+
+    <step number="4" name="List Blockers">
       <question>Waiting on someone else?</question>
       <question>Need more information?</question>
       <question>Technical obstacle?</question>
     </step>
 
-    <step number="4" name="Note Next Steps">
+    <step number="5" name="Note Next Steps">
       <instruction>Numbered list of next actions in priority order</instruction>
     </step>
 
-    <step number="5" name="Flag Any Gotchas">
+    <step number="6" name="Flag Any Gotchas">
       <example>"Don't run X without doing Y first"</example>
       <example>"This file is temporarily broken"</example>
       <example>"That approach didn't work because..."</example>
     </step>
 
-    <step number="6" name="Check Branch State" turbo="true">
+    <step number="7" name="Check Branch State" turbo="true">
       <command>git status</command>
       <command>git log --oneline -5</command>
     </step>
 
-    <step number="7" name="Create Handoff Document">
+    <step number="8" name="Create Handoff Document">
       <instruction>Write summary to Agent-Context/Communications/Agent-Notes/HANDOFF.yaml (YAML format for agent consumption)</instruction>
       <instruction>Include date/time</instruction>
       <instruction>Commit if appropriate</instruction>
@@ -76,6 +81,12 @@ description: End-of-session summary for handing off work to yourself tomorrow or
 - [ ] Task 3 (about 60% done)
   - Current approach: ...
   - Next step: ...
+
+## Dead Ends & Failed Attempts
+
+- [ ] Tried Library X: Failed because it doesn't support Windows.
+- [ ] Tried Approach Y: Too complex, resulted in spaghetti code.
+- [ ] **Do NOT try Z**: It causes a circular dependency.
 
 ## Blockers
 

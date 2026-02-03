@@ -814,15 +814,8 @@ registry:
     dateAdded: "2025-01-01T00:00:00Z"
     description: Compiler-precise code navigation (SCIP)
     title: SCIP Indexer
-    type: server
-    image: node:20-slim
-    command:
-      - sh
-      - -c
-      - "apt-get update -qq && apt-get install -y -qq python3 python3-pip && cd /app && npm install --quiet && node index.js"
-    volumes:
-      - "d:/Coding/Tools/mcp-docker-stack/MCP-Servers/mcp-scip:/app"
-      - "D:/Coding:/workspace"
+    type: sse
+    url: http://host.docker.internal:3001/sse
     metadata:
       category: code-intelligence
       tags: [scip, indexer, navigation]
@@ -836,15 +829,8 @@ registry:
     dateAdded: "2025-01-01T00:00:00Z"
     description: Semantic Git history search
     title: Git History
-    type: server
-    image: node:20-slim
-    command:
-      - sh
-      - -c
-      - "apt-get update -qq && apt-get install -y -qq git && cd /app && npm install --quiet && node index.js"
-    volumes:
-      - "d:/Coding/Tools/mcp-docker-stack/MCP-Servers/mcp-git-history:/app"
-      - "D:/Coding:/workspace"
+    type: sse
+    url: http://host.docker.internal:3002/sse
     metadata:
       category: code-intelligence
       tags: [git, history, search]

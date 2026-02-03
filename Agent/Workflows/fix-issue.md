@@ -4,10 +4,16 @@ argument-hint: <issue-number>
 ---
 
 <workflow name="fix-issue" thinking="Normal">
+  <modes>
+    <mode name="full">Full cycle: analyze → implement → test → PR (default)</mode>
+    <mode name="surgical">Quick fix: targeted change, skip branch/PR steps. Use for single-line fixes.</mode>
+  </modes>
+
   <when_to_use>
     <trigger>When assigned a GitHub issue</trigger>
     <trigger>When picking up a bug report</trigger>
     <trigger>Usage: /fix-issue 123 where 123 is the issue number</trigger>
+    <trigger>For surgical debugging: /fix-issue surgical (skip branch/PR)</trigger>
   </when_to_use>
 
   <recommended_mcp>

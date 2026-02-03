@@ -1,0 +1,22 @@
+{
+    "name": "backend-architect",
+    "version": "1.0.0",
+    "description": "Design and build robust, scalable, and secure backend systems following language-agnostic best practices.",
+    "keywords": [
+        "backend",
+        "architecture",
+        "api",
+        "database",
+        "security",
+        "scalability",
+        "rest",
+        "graphql"
+    ],
+    "author": "Antigravity",
+    "language_agnostic": true,
+    "standards": [
+        "OWASP",
+        "12-Factor App",
+        "API-First"
+    ]
+}

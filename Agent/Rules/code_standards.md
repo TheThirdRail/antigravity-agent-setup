@@ -1,18 +1,19 @@
 ---
 name: code-standards
 description: |
-  Code quality standards, refactoring thresholds, and naming conventions.
-  Enforces consistent, maintainable code across the codebase.
+  Refactoring thresholds and tool usage guidelines.
+  For naming/style rules, see code_style_rules.md.
+  For environment rules, see environment_rules.md.
 activation: always_on
 ---
 
-<rule name="code-standards" version="1.0.0">
+<rule name="code-standards" version="1.1.0">
   <metadata>
     <category>quality</category>
     <severity>warning</severity>
   </metadata>
 
-  <goal>Maintain consistent, high-quality, maintainable code.</goal>
+  <goal>Maintain manageable file and function sizes; enforce proper tool usage.</goal>
 
   <refactoring_thresholds>
     <note importance="high">When these thresholds are hit, suggest using /refactor workflow.</note>
@@ -26,35 +27,6 @@ activation: always_on
     </triggers>
   </refactoring_thresholds>
 
-  <standards>
-    <standard name="Type Safety">
-      TypeScript over JavaScript; type hints in Python
-    </standard>
-    <standard name="Naming">
-      Descriptive names; avoid abbreviations; functions start with verbs
-      <examples>
-        <good>getUserById, isValidEmail, calculateTotalPrice</good>
-        <bad>getUsr, valid, calc</bad>
-      </examples>
-    </standard>
-    <standard name="Comments">
-      Explain why, not what; document non-obvious decisions
-    </standard>
-    <standard name="Error Messages">
-      User-friendly; include context; suggest next steps
-    </standard>
-    <standard name="Magic Values">
-      Extract to named constants
-      <examples>
-        <bad>if (status === 3) { ... }</bad>
-        <good>const STATUS_APPROVED = 3; if (status === STATUS_APPROVED) { ... }</good>
-      </examples>
-    </standard>
-    <standard name="DRY">
-      Don't Repeat Yourself — extract shared logic into utilities
-    </standard>
-  </standards>
-
   <tool_usage>
     <rule>Read before write. Always verify file contents before modifying.</rule>
     <rule>Use `mcp-manager` to load tools dynamically.</rule>
@@ -62,17 +34,11 @@ activation: always_on
     <rule>Group related calls when possible.</rule>
     <rule>Confirm before destructive operations.</rule>
   </tool_usage>
-  <environment_enforcement>
-    <trigger>Writing or executing Python code, or installing packages.</trigger>
-    <constraint>
-      <STOP>DO NOT install packages globally.</STOP>
-      <STOP>DO NOT run python scripts without a virtual environment.</STOP>
-    </constraint>
-    <protocol>
-      <step>Check for existing venv (e.g. `.venv` or `venv` folders).</step>
-      <step>If none exists, create one: `python -m venv .venv`.</step>
-      <step>Activate it BEFORE every new terminal session or command sequence.</step>
-      <step>Install dependencies ONLY into the active venv.</step>
-    </protocol>
-  </environment_enforcement>
+
+  <related_rules>
+    <rule file="code_style_rules.md">Naming, comments, DRY</rule>
+    <rule file="environment_rules.md">Python venv enforcement</rule>
+    <rule file="error_handling_rules.md">Error response format</rule>
+    <rule file="logging_standards.md">Structured logging</rule>
+  </related_rules>
 </rule>

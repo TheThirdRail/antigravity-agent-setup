@@ -2,7 +2,7 @@
 # Updated to support both Docker native catalog and custom catalog secret names
 
 param(
-    [string]$EnvFilePath = ".env"
+    [string]$EnvFilePath = "$PSScriptRoot\..\.env"
 )
 
 if (-not (Test-Path $EnvFilePath)) {

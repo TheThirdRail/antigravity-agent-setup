@@ -45,6 +45,7 @@ description: |
       <format>Embedded XML in Markdown (YAML frontmatter + XML body)</format>
       <template><![CDATA[
 ---
+
 name: rule-name
 description: |
   Brief description of what this rule enforces.
@@ -62,18 +63,24 @@ glob: "*.ts"  # only if activation is glob
   <purpose>One sentence explaining what this rule prevents or enforces.</purpose>
 
   <constraints>
-    <must>Always do this specific thing</must>
-    <must_not>Never do this dangerous thing</must_not>
-    <prefer>Prefer this approach when possible</prefer>
+    <must>
+      <behavior id="unique-id">Specific mandated behavior</behavior>
+    </must>
+    <must_not>
+      <behavior id="unique-id">Specific prohibited behavior</behavior>
+    </must_not>
+    <prefer>
+      <behavior id="unique-id">Preferred approach</behavior>
+    </prefer>
   </constraints>
 
   <examples>
-    <good description="Correct approach">
+    <example type="good" description="Correct approach">
       <code>...</code>
-    </good>
-    <bad description="What to avoid">
+    </example>
+    <example type="bad" description="What to avoid">
       <code>...</code>
-    </bad>
+    </example>
   </examples>
 </rule>
       ]]></template>

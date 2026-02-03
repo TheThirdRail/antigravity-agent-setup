@@ -17,10 +17,10 @@ activation: always_on
   <instruction>Delegate complex tasks to the appropriate Workflow:</instruction>
 
   <routing_table>
-    <route trigger="Idea/Brainstorming" workflow="/planner" />
+    <route trigger="Idea/Brainstorming" workflow="/architect" />
     <route trigger="Planning/Design" workflow="/architect" />
     <route trigger="Debugging/Issues" workflow="/analyze" />
-    <route trigger="Surgical Debugging" workflow="/debug-step" />
+    <route trigger="Surgical Debugging" workflow="/fix-issue surgical" />
     <route trigger="Implementation" workflow="/code" />
     <route trigger="Researching" workflow="/research" />
     <route trigger="Learning/Docs" workflow="/tutor" />
@@ -36,6 +36,7 @@ activation: always_on
     <route trigger="Dependency Check" workflow="/dependency-check" />
     <route trigger="Deployment" workflow="/deploy" />
     <route trigger="Performance Optimization" workflow="/performance-tune" />
+    <route trigger="Code Review" workflow="/review" />
     <!-- NOTE: /archive workflow removed. Archiving is now automatic via archive_rules.md -->
   </routing_table>
 
