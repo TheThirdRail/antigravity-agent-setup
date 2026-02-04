@@ -29,9 +29,10 @@ if (-not $ProjectName) {
 }
 
 # Locate output directory
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
-$OutputDir = Join-Path $Root "Agent-Context\Archives\code-index"
+
+# Deriving output directory relative to the project being indexed
+$ProjectRoot = Resolve-Path $ProjectPath
+$OutputDir = Join-Path $ProjectRoot "Agent-Context\Archives\code-index"
 $OutputFile = Join-Path $OutputDir "$ProjectName.scip"
 
 # Ensure output directory exists

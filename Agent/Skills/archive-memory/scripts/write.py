@@ -3,15 +3,17 @@
 
 import argparse
 import sqlite3
-import sys
+
 from pathlib import Path
 from datetime import datetime
 
 
-def get_db_path():
+def get_db_path(project_path=None):
     """Get the path to the memory database."""
-    script_dir = Path(__file__).parent
-    root = script_dir.parent.parent.parent.parent
+    if project_path:
+        root = Path(project_path)
+    else:
+        root = Path.cwd()
     return root / "Agent-Context" / "Archives" / "memory.db"
 
 
@@ -41,9 +43,10 @@ def main():
     )
     parser.add_argument("--key", required=True, help="Unique key")
     parser.add_argument("--value", required=True, help="Content to store")
+    parser.add_argument("--project-path", help="Path to the project root")
     args = parser.parse_args()
 
-    db_path = get_db_path()
+    db_path = get_db_path(args.project_path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(str(db_path))

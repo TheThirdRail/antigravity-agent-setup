@@ -3,9 +3,9 @@
 
 import argparse
 import sqlite3
-import os
+
 from pathlib import Path
-from tree_sitter_languages import get_language, get_parser
+from tree_sitter_languages import get_parser
 
 
 # Database Setup
@@ -159,9 +159,9 @@ def main():
     parser.add_argument("--path", required=True, help="Project root path")
     args = parser.parse_args()
 
-    script_dir = Path(__file__).parent
-    root = script_dir.parent.parent.parent.parent
-    db_path = root / "Agent-Context" / "Archives" / "graph.db"
+    project_path = Path(args.path)
+    # Store graph.db inside the project's Agent-Context
+    db_path = project_path / "Agent-Context" / "Archives" / "graph.db"
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     conn = init_db(str(db_path))

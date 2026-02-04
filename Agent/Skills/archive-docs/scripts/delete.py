@@ -15,19 +15,22 @@ except ImportError:
     sys.exit(1)
 
 
-def get_archive_path():
+def get_archive_path(project_path=None):
     """Get the path to the chroma archive directory."""
-    script_dir = Path(__file__).parent
-    root = script_dir.parent.parent.parent.parent
+    if project_path:
+        root = Path(project_path)
+    else:
+        root = Path.cwd()
     return root / "Agent-Context" / "Archives" / "chroma"
 
 
 def main():
     parser = argparse.ArgumentParser(description="Delete document from archive")
     parser.add_argument("--id", required=True, help="Document ID to delete")
+    parser.add_argument("--project-path", help="Path to the project root")
     args = parser.parse_args()
 
-    archive_path = get_archive_path()
+    archive_path = get_archive_path(args.project_path)
     if not archive_path.exists():
         print("No documents archived yet.")
         sys.exit(0)

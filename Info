@@ -1,0 +1,98 @@
+# Archive Location Fix Instructions
+
+The following archive scripts currently write data to a global location relative to the agent's installation directory. They must be updated to store data in the **local project's** `Agent-Context/Archives` folder.
+
+## Required Changes
+
+Each script needs logic to determine the `Agent-Context` root path based on the *project code path*, not the *script location*.
+
+### 1. Archive Code (`archive-code/scripts/index-py.ps1`)
+
+**Current Logic:**
+
+```powershell
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
+$OutputDir = Join-Path $Root "Agent-Context\Archives\code-index"
+```
+
+**New Logic:**
+Use the `$ProjectPath` argument to derive the output directory.
+
+```powershell
+# Determine output directory relative to the project being indexed
+$ProjectRoot = Resolve-Path $ProjectPath
+$OutputDir = Join-Path $ProjectRoot "Agent-Context\Archives\code-index"
+```
+
+### 2. Archive Docs (`archive-docs/scripts/add.py`)
+
+**Current Logic:**
+
+```python
+def get_archive_path():
+    """Get the path to the chroma archive directory."""
+    script_dir = Path(__file__).parent
+    root = script_dir.parent.parent.parent.parent
+    return root / "Agent-Context" / "Archives" / "chroma"
+```
+
+**New Logic:**
+Allow an optional `--project-path` argument, defaulting to the current working directory if not provided.
+
+```python
+def get_archive_path(project_path=None):
+    if project_path:
+        root = Path(project_path)
+    else:
+        root = Path.cwd() # Default to current directory
+    return root / "Agent-Context" / "Archives" / "chroma"
+```
+
+*Note: The script argument parser must also be updated to accept `--project-path`.*
+
+### 3. Archive Graph (`archive-graph/scripts/build.py`)
+
+**Current Logic:**
+
+```python
+ script_dir = Path(__file__).parent
+ root = script_dir.parent.parent.parent.parent
+ db_path = root / "Agent-Context" / "Archives" / "graph.db"
+```
+
+**New Logic:**
+Use the existing `--path` argument (which specifies the project root) to set the DB path.
+
+```python
+ project_path = Path(args.path)
+ # Store graph.db inside the project's Agent-Context
+ db_path = project_path / "Agent-Context" / "Archives" / "graph.db"
+```
+
+### 4. Archive Memory (`archive-memory/scripts/write.py` and `read.py`)
+
+**Current Logic:**
+
+```python
+def get_db_path():
+    script_dir = Path(__file__).parent
+    root = script_dir.parent.parent.parent.parent
+    return root / "Agent-Context" / "Archives" / "memory.db"
+```
+
+**New Logic:**
+Add `--project-path` argument or infer from CWD.
+
+```python
+def get_db_path(project_path=None):
+    if project_path:
+        root = Path(project_path)
+    else:
+        root = Path.cwd()
+    return root / "Agent-Context" / "Archives" / "memory.db"
+```
+
+## Summary
+
+All archive tools must treat `Agent-Context` as a **project-local** resource, never a global agent resource.

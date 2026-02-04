@@ -810,35 +810,7 @@ registry:
 
   # ============================================
   # NEW SERVERS (Added 2025-12-30)
-  scip-indexer:
-    dateAdded: "2025-01-01T00:00:00Z"
-    description: Compiler-precise code navigation (SCIP)
-    title: SCIP Indexer
-    type: sse
-    url: http://host.docker.internal:3001/sse
-    metadata:
-      category: code-intelligence
-      tags: [scip, indexer, navigation]
-      owner: custom
-    tools:
-      - name: index_typescript
-      - name: index_python
-    source: local
 
-  git-history:
-    dateAdded: "2025-01-01T00:00:00Z"
-    description: Semantic Git history search
-    title: Git History
-    type: sse
-    url: http://host.docker.internal:3002/sse
-    metadata:
-      category: code-intelligence
-      tags: [git, history, search]
-      owner: custom
-    tools:
-      - name: search_commits
-      - name: get_file_history
-    source: local
   # ============================================
 
   semgrep:

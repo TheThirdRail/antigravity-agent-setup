@@ -7,9 +7,11 @@ import sys
 from pathlib import Path
 
 
-def get_db_path():
-    script_dir = Path(__file__).parent
-    root = script_dir.parent.parent.parent.parent
+def get_db_path(project_path=None):
+    if project_path:
+        root = Path(project_path)
+    else:
+        root = Path.cwd()
     return root / "Agent-Context" / "Archives" / "graph.db"
 
 
@@ -20,9 +22,10 @@ def main():
     parser.add_argument(
         "--structure", help="Show structure of a specific file (by name pattern)"
     )
+    parser.add_argument("--project-path", help="Path to the project root")
     args = parser.parse_args()
 
-    db_path = get_db_path()
+    db_path = get_db_path(args.project_path)
     if not db_path.exists():
         print("No graph database found. Run build.py first.")
         sys.exit(0)
@@ -51,19 +54,19 @@ def main():
         print(f"Structure of {file_node[1]}:")
 
         # Recursive CTE to get structure
-        query = """
-        WITH RECURSIVE file_structure AS (
-            SELECT id, type, name, 0 as level
-            FROM nodes WHERE id = ?
-            UNION ALL
-            SELECT n.id, n.type, n.name, fs.level + 1
-            FROM nodes n
-            JOIN edges e ON e.target_id = n.id
-            JOIN file_structure fs ON e.source_id = fs.id
-            WHERE e.type = 'contains'
-        )
-        SELECT type, name, level FROM file_structure ORDER BY level, start_line
-        """
+        # query = """
+        # WITH RECURSIVE file_structure AS (
+        #     SELECT id, type, name, 0 as level
+        #     FROM nodes WHERE id = ?
+        #     UNION ALL
+        #     SELECT n.id, n.type, n.name, fs.level + 1
+        #     FROM nodes n
+        #     JOIN edges e ON e.target_id = n.id
+        #     JOIN file_structure fs ON e.source_id = fs.id
+        #     WHERE e.type = 'contains'
+        # )
+        # SELECT type, name, level FROM file_structure ORDER BY level, start_line
+        # """
         # Note: start_line sort hack requires joining back to nodes, simplified for now
 
         # Simpler non-recursive query for immediate children (often sufficient for simple listing)
