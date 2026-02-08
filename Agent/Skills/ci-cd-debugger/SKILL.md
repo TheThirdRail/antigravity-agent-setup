@@ -6,7 +6,7 @@ description: |
   in CI, or deployments don't complete successfully.
 ---
 
-<skill name="ci-cd-debugger" version="1.0.0">
+<skill name="ci-cd-debugger" version="2.0.0">
   <metadata>
     <keywords>ci-cd, github-actions, pipeline, debugging, devops</keywords>
   </metadata>
@@ -32,13 +32,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>CI pipeline fails after a commit</trigger>
-    <trigger>Tests pass locally but fail in CI</trigger>
-    <trigger>Deployment workflow doesn't complete</trigger>
-    <trigger>Build times suddenly increased</trigger>
-    <trigger>Flaky tests causing intermittent failures</trigger>
-  </when_to_use>
+
 
   <workflow>
     <step number="1" name="Identify Job and Step">

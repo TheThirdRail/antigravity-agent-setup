@@ -23,6 +23,8 @@
     .\scaffold_tests.ps1 -SourceFile "app/services/user_service.py" -Framework "pytest"
 #>
 
+# TODO_SCAN_ALLOW: This script intentionally emits TODO placeholders for generated test scaffolds.
+
 param(
     [Parameter(Mandatory = $true)]
     [string]$SourceFile,
@@ -330,7 +332,7 @@ if (Test-Path $testFilePath) {
 # Write test file
 $testContent | Out-File -FilePath $testFilePath -Encoding utf8
 
-Write-Host "`n✅ Created test file: $testFilePath" -ForegroundColor Green
+Write-Host "`n[OK] Created test file: $testFilePath" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "  1. Fill in TODO placeholders with actual test data" -ForegroundColor Gray

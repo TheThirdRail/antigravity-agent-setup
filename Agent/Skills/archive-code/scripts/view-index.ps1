@@ -3,27 +3,36 @@
     View contents of a SCIP index file.
 .PARAMETER ProjectName
     Name of the project (matches the .scip filename)
+.PARAMETER ProjectPath
+    Path to the project root that contains Agent-Context/Archives/code-index
 .PARAMETER Json
     Output in JSON format
 #>
 param(
     [Parameter(Mandatory = $true)]
     [string]$ProjectName,
+
+    [Parameter(Mandatory = $false)]
+    [string]$ProjectPath = ".",
     
     [switch]$Json
 )
 
 $ErrorActionPreference = "Stop"
 
-# Locate index file
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
-$IndexFile = Join-Path $Root "Agent-Context\Archives\code-index\$ProjectName.scip"
+$ResolvedProjectPath = (Resolve-Path $ProjectPath -ErrorAction Stop).Path
+$IndexDir = Join-Path $ResolvedProjectPath "Agent-Context\Archives\code-index"
+$IndexFile = Join-Path $IndexDir "$ProjectName.scip"
 
 if (-not (Test-Path $IndexFile)) {
     Write-Host "Error: Index not found: $IndexFile" -ForegroundColor Red
     Write-Host "Available indices:" -ForegroundColor Yellow
-    Get-ChildItem (Join-Path $Root "Agent-Context\Archives\code-index") -Filter "*.scip" | ForEach-Object { Write-Host "  - $($_.BaseName)" }
+    if (Test-Path $IndexDir) {
+        Get-ChildItem $IndexDir -Filter "*.scip" | ForEach-Object { Write-Host "  - $($_.BaseName)" }
+    }
+    else {
+        Write-Host "  (none found at $IndexDir)" -ForegroundColor Yellow
+    }
     exit 1
 }
 

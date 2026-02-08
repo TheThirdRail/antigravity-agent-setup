@@ -6,7 +6,7 @@ description: |
   Use when planning new features, documenting existing systems, or reviewing architecture.
 ---
 
-<skill name="architecture-planner" version="1.0.0">
+<skill name="architecture-planner" version="2.0.0">
   <metadata>
     <keywords>architecture, design, mermaid, diagrams, system-design</keywords>
   </metadata>
@@ -38,13 +38,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Planning a new feature or system</trigger>
-    <trigger>Documenting existing architecture</trigger>
-    <trigger>Reviewing design decisions</trigger>
-    <trigger>Onboarding new team members</trigger>
-    <trigger>Preparing technical specifications</trigger>
-  </when_to_use>
+
 
   <recommended_mcp>
     <server>sequential-thinking</server>

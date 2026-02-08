@@ -1,65 +1,54 @@
 <#
 .SYNOPSIS
-    Write a memory to the local SQLite archive.
-.PARAMETER Category
-    Memory category (decisions, patterns, files, context, custom)
-.PARAMETER Key
-    Unique key within the category
-.PARAMETER Value
-    The content to store
+    Write memories to the local SQLite archive via Python implementation.
 #>
 param(
     [Parameter(Mandatory = $true)]
     [ValidateSet("decisions", "patterns", "files", "context", "custom")]
     [string]$Category,
-    
+
     [Parameter(Mandatory = $true)]
     [string]$Key,
-    
+
     [Parameter(Mandatory = $true)]
-    [string]$Value
+    [string]$Value,
+
+    [string]$ProjectPath = "."
 )
 
 $ErrorActionPreference = "Stop"
 
-# Locate database
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
-$DbPath = Join-Path $Root "Agent-Context\Archives\memory.db"
-
-# Ensure directory exists
-$DbDir = Split-Path -Parent $DbPath
-if (-not (Test-Path $DbDir)) {
-    New-Item -ItemType Directory -Path $DbDir -Force | Out-Null
+function Get-PythonCommand {
+    $candidates = @("python", "python3", "py")
+    foreach ($name in $candidates) {
+        $cmd = Get-Command $name -ErrorAction SilentlyContinue
+        if ($cmd) {
+            return $cmd.Source
+        }
+    }
+    throw "Python executable not found. Install Python or add it to PATH."
 }
 
-# Initialize DB if needed
-$InitSql = @"
-CREATE TABLE IF NOT EXISTS memories (
-    id INTEGER PRIMARY KEY,
-    category TEXT NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(category, key)
-);
-"@
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PythonScript = Join-Path $ScriptDir "write.py"
 
-# Use sqlite3 CLI (commonly available)
-$InitSql | sqlite3 $DbPath
+if (-not (Test-Path $PythonScript)) {
+    throw "Missing script: $PythonScript"
+}
 
-# Upsert the memory
-$EscapedValue = $Value -replace "'", "''"
-$EscapedKey = $Key -replace "'", "''"
-$UpsertSql = @"
-INSERT INTO memories (category, key, value, updated_at)
-VALUES ('$Category', '$EscapedKey', '$EscapedValue', datetime('now'))
-ON CONFLICT(category, key) DO UPDATE SET
-    value = excluded.value,
-    updated_at = datetime('now');
-"@
+if (-not (Test-Path $ProjectPath)) {
+    throw "Project path not found: $ProjectPath"
+}
 
-$UpsertSql | sqlite3 $DbPath
+$ResolvedProjectPath = (Resolve-Path $ProjectPath -ErrorAction Stop).Path
+$PythonExe = Get-PythonCommand
 
-Write-Host "✓ Stored memory: [$Category] $Key" -ForegroundColor Green
+$args = @(
+    "--category", $Category,
+    "--key", $Key,
+    "--value", $Value,
+    "--project-path", $ResolvedProjectPath
+)
+
+& $PythonExe $PythonScript @args
+exit $LASTEXITCODE

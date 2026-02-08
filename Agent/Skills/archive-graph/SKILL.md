@@ -1,53 +1,73 @@
 ---
 name: archive-graph
 description: |
-  Build and query a comprehensive knowledge graph of the codebase using Tree-sitter and SQLite.
-  Enables understanding of relationships between functions, classes, and files.
+  Build and query a local structural code graph using Tree-sitter and SQLite.
+  Use when you need file/function/class structure context and lightweight
+  relationship exploration for impact analysis.
 ---
 
-# Archive Graph Skill
+<skill name="archive-graph" version="2.0.0">
+  <metadata>
+    <keywords>archive, graph, tree-sitter, sqlite, structure, impact-analysis</keywords>
+  </metadata>
 
-Store structured code relationships in `Agent-Context/Archives/graph.db`.
+  <goal>Create and query a project-local structural graph of files and code symbols.</goal>
 
-## Prerequisites
+  <core_principles>
+    <principle name="Build Before Query">
+      <rule>Run graph build after significant code changes or before deep structural analysis.</rule>
+      <rule>Treat graph output as a snapshot of repository state at build time.</rule>
+    </principle>
 
-```powershell
-pip install tree-sitter tree-sitter-languages
-```
+    <principle name="Use Supported Query Modes">
+      <rule>Supported query modes are --files, --structure, and --query.</rule>
+      <rule>Do not assume unsupported traversal flags unless implemented in scripts/query.py.</rule>
+    </principle>
 
-## When to Use
+    <principle name="Project-Scoped Persistence">
+      <rule>Store graph database at [PROJECT_PATH]/Agent-Context/Archives/graph.db.</rule>
+    </principle>
+  </core_principles>
 
-- Understanding project architecture and dependencies
-- Finding callers/callees of functions locally
-- analyzing impact of changes (graph traversal)
-- "Find all functions that use X"
+  <workflow>
+    <step number="1" name="Install Prerequisites">
+      <command>pip install tree-sitter tree-sitter-languages</command>
+    </step>
 
-## Available Scripts
+    <step number="2" name="Build Graph Snapshot">
+      <command>python Agent\Skills\archive-graph\scripts\build.py --path "[PROJECT_PATH]"</command>
+      <output>[PROJECT_PATH]\Agent-Context\Archives\graph.db</output>
+    </step>
 
-### Build Graph
+    <step number="3" name="Query Available Files">
+      <command>python Agent\Skills\archive-graph\scripts\query.py --files --project-path "[PROJECT_PATH]"</command>
+    </step>
 
-```powershell
-# Index a project directory
-python Agent\Skills\archive-graph\scripts\build.py --path "D:\Coding\MyProject"
-```
+    <step number="4" name="Inspect File Structure">
+      <command>python Agent\Skills\archive-graph\scripts\query.py --structure "auth" --project-path "[PROJECT_PATH]"</command>
+    </step>
 
-### Query Graph
+    <step number="5" name="Search Symbol Names">
+      <command>python Agent\Skills\archive-graph\scripts\query.py --query "login" --project-path "[PROJECT_PATH]"</command>
+    </step>
+  </workflow>
 
-```powershell
-# Find dependencies of a function
-python Agent\Skills\archive-graph\scripts\query.py --query "MATCH (f:function)-[:calls]->(d) WHERE f.name='login' RETURN d"
+  <resources>
+    <script file="scripts/build.py">Parse codebase and materialize graph nodes/edges.</script>
+    <script file="scripts/query.py">Run supported graph queries (files, structure, symbol search).</script>
+  </resources>
 
-# Find structural path
-python Agent\Skills\archive-graph\scripts\query.py --start "login" --end "Database" --depth 3
-```
+  <best_practices>
+    <do>Rebuild graph after refactors to avoid stale symbol locations</do>
+    <do>Use symbol search first, then narrow with structure queries</do>
+    <do>Pair graph results with archive-git when validating change history</do>
+    <dont>Assume unsupported query flags or Cypher-style syntax</dont>
+    <dont>Treat graph output as runtime call graph truth</dont>
+  </best_practices>
 
-## Database Schema
-
-- **Nodes**: `id`, `type` (function, class, file), `name`, `path`, `start_line`, `end_line`
-- **Edges**: `source_id`, `target_id`, `type` (defines, calls, imports, inherits)
-
-## Details
-
-- Uses `tree-sitter-languages` for robust, multi-language parsing
-- Stores everything in a portable SQLite file
-- Supports recursive graph queries via CTEs
+  <related_skills>
+    <skill>archive-manager</skill>
+    <skill>archive-code</skill>
+    <skill>archive-git</skill>
+  </related_skills>
+</skill>

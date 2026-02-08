@@ -6,7 +6,7 @@ description: |
   Use when optimizing database performance or reviewing schema design.
 ---
 
-<skill name="database-optimizer" version="1.0.0">
+<skill name="database-optimizer" version="2.0.0">
   <metadata>
     <keywords>database, sql, indexes, queries, schema, n+1, explain, optimization</keywords>
   </metadata>
@@ -34,13 +34,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Query performance is slow</trigger>
-    <trigger>Reviewing database schema design</trigger>
-    <trigger>Planning new tables or relationships</trigger>
-    <trigger>Investigating N+1 query problems</trigger>
-    <trigger>Pre-deployment database review</trigger>
-  </when_to_use>
+
 
   <workflow>
     <step number="1" name="Gather Slow Queries">
@@ -74,6 +68,15 @@ description: |
       <action>Document before/after metrics.</action>
     </step>
   </workflow>
+
+  <best_practices>
+    <do>Measure with EXPLAIN ANALYZE before and after every optimization</do>
+    <do>Optimize top slow queries first instead of broad schema rewrites</do>
+    <do>Add indexes based on observed filter, join, and sort patterns</do>
+    <do>Document performance deltas with concrete baseline metrics</do>
+    <dont>Add indexes speculatively without workload evidence</dont>
+    <dont>Ship query changes without regression checks on representative data</dont>
+  </best_practices>
 
   <anti_patterns>
     <pattern name="N+1 Query Problem">

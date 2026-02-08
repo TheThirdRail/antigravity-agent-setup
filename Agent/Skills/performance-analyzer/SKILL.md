@@ -1,180 +1,83 @@
 ---
 name: performance-analyzer
 description: |
-  Systematically profile, benchmark, and optimize application performance.
-  Use when diagnosing "why is this slow?" or optimizing critical paths.
+  Profile, benchmark, and optimize application performance using measurable
+  baselines and incremental changes. Use when diagnosing latency, throughput,
+  memory, database, or frontend performance bottlenecks.
 ---
 
-<skill name="performance-analyzer" version="1.0.0">
+<skill name="performance-analyzer" version="2.0.0">
   <metadata>
-    <keywords>performance, profiling, optimization, benchmarking, caching, bottleneck</keywords>
+    <keywords>performance, profiling, benchmarking, optimization, latency, throughput</keywords>
   </metadata>
 
-  <goal>Identify and resolve performance bottlenecks through systematic profiling and optimization.</goal>
+  <goal>Identify the highest-impact bottlenecks and apply measured optimizations with verifiable improvements.</goal>
 
-  <when_to_use>
-    <trigger>User reports "slow", "performance issue", "optimize"</trigger>
-    <trigger>Load testing or profiling requests</trigger>
-    <trigger>Query optimization needs</trigger>
-    <trigger>Scalability concerns</trigger>
-    <trigger>Memory or CPU usage issues</trigger>
-  </when_to_use>
+  <core_principles>
+    <principle name="Measure Before Change">
+      <rule>Capture baseline metrics (p50/p95/p99 latency, throughput, resource utilization) before optimization.</rule>
+      <rule>Do not accept optimizations without measurable deltas.</rule>
+    </principle>
+
+    <principle name="Impact-First Prioritization">
+      <rule>Rank bottlenecks by user impact and system cost, then fix top offenders first.</rule>
+      <rule>Prefer 80/20 changes that reduce dominant latency contributors.</rule>
+    </principle>
+
+    <principle name="One Change at a Time">
+      <rule>Apply optimizations incrementally and re-measure after each change.</rule>
+      <rule>Document regressions and rollback if improvements are not sustained.</rule>
+    </principle>
+  </core_principles>
 
   <workflow>
     <step number="1" name="Establish Baseline">
-      <instruction>Measure current performance metrics before any changes</instruction>
-      <metrics>
-        <metric>Response time (p50, p95, p99)</metric>
-        <metric>Throughput (requests/second)</metric>
-        <metric>Resource usage (CPU, memory, disk I/O)</metric>
-        <metric>Database query times</metric>
-      </metrics>
-      <tools>
-        <tool>Browser DevTools (Network, Performance tabs)</tool>
-        <tool>Node.js: --inspect, clinic.js</tool>
-        <tool>Python: cProfile, py-spy</tool>
-        <tool>Database: EXPLAIN ANALYZE</tool>
-      </tools>
+      <metric>Response time distribution (p50, p95, p99)</metric>
+      <metric>Throughput and error rate</metric>
+      <metric>CPU, memory, disk I/O, and database timings</metric>
     </step>
 
-    <step number="2" name="Identify Bottlenecks">
-      <instruction>Profile to find where time is being spent</instruction>
-      <categories>
-        <category name="CPU-bound">Heavy computation, tight loops</category>
-        <category name="I/O-bound">Database queries, file access, network calls</category>
-        <category name="Memory-bound">Large data structures, memory leaks</category>
-        <category name="Network-bound">External API calls, slow responses</category>
-      </categories>
-      <output>Ranked list of top 3 bottlenecks by impact</output>
+    <step number="2" name="Profile and Localize Bottlenecks">
+      <instruction>Use profilers and traces to determine where time and resources are spent.</instruction>
+      <category>CPU-bound</category>
+      <category>I/O-bound</category>
+      <category>Memory-bound</category>
+      <category>Network-bound</category>
     </step>
 
-    <step number="3" name="Apply 80/20 Rule">
-      <instruction>Focus on high-impact optimizations first</instruction>
-      <principle>20% of the code causes 80% of the slowness</principle>
-      <priority_order>
-        <item>Database queries (often biggest impact)</item>
-        <item>External API calls</item>
-        <item>Algorithm complexity</item>
-        <item>Memory allocations</item>
-      </priority_order>
+    <step number="3" name="Apply Targeted Optimizations">
+      <instruction>Select one optimization from references/optimization-patterns.md and implement it.</instruction>
+      <focus>Database, API calls, algorithmic complexity, caching, rendering, payload size</focus>
     </step>
 
-    <step number="4" name="Optimize Incrementally">
-      <instruction>Apply one optimization at a time, measure after each</instruction>
-      <important>Never optimize without measuring impact</important>
+    <step number="4" name="Re-Measure and Compare">
+      <instruction>Re-run benchmark/profile suite and compare against baseline.</instruction>
+      <output>Before/after table with quantifiable deltas</output>
     </step>
 
-    <step number="5" name="Document Results">
-      <instruction>Record before/after metrics and optimizations applied</instruction>
+    <step number="5" name="Document Outcome">
+      <instruction>Record what changed, why it helped, and remaining risks or next bottlenecks.</instruction>
     </step>
   </workflow>
 
-  <patterns>
-    <pattern name="Database Query Optimization">
-      <techniques>
-        <technique name="Add Indexes">
-          On columns used in WHERE, JOIN, ORDER BY
-        </technique>
-        <technique name="Avoid N+1 Queries">
-          Use eager loading (JOIN) instead of lazy loading
-        </technique>
-        <technique name="Use EXPLAIN ANALYZE">
-          Understand query execution plan
-        </technique>
-        <technique name="Limit Result Sets">
-          Paginate large queries, use LIMIT
-        </technique>
-        <technique name="Cache Query Results">
-          For frequently accessed, rarely changed data
-        </technique>
-      </techniques>
-    </pattern>
+  <resources>
+    <reference file="references/optimization-patterns.md">Optimization tactics and quick-win catalog.</reference>
+  </resources>
 
-    <pattern name="Caching Strategies">
-      <layers>
-        <layer name="Application Cache">
-          In-memory (Redis, Memcached) for hot data
-        </layer>
-        <layer name="HTTP Cache">
-          Cache-Control headers, CDN caching
-        </layer>
-        <layer name="Database Cache">
-          Query result caching, materialized views
-        </layer>
-        <layer name="Computed Value Cache">
-          Memoization for expensive calculations
-        </layer>
-      </layers>
-      <considerations>
-        <item>Cache invalidation strategy</item>
-        <item>TTL (time-to-live) settings</item>
-        <item>Cache warming</item>
-        <item>Memory limits</item>
-      </considerations>
-    </pattern>
-
-    <pattern name="Code-Level Optimization">
-      <techniques>
-        <technique name="Algorithm Complexity">
-          Replace O(n²) with O(n log n) or O(n)
-        </technique>
-        <technique name="Lazy Loading">
-          Load data/resources only when needed
-        </technique>
-        <technique name="Async/Parallel Processing">
-          Parallelize independent I/O operations
-        </technique>
-        <technique name="Connection Pooling">
-          Reuse database/HTTP connections
-        </technique>
-        <technique name="Batch Operations">
-          Combine multiple operations into one
-        </technique>
-      </techniques>
-    </pattern>
-
-    <pattern name="Frontend Performance">
-      <techniques>
-        <technique name="Code Splitting">
-          Load only needed JavaScript
-        </technique>
-        <technique name="Image Optimization">
-          Compress, lazy load, use modern formats (WebP)
-        </technique>
-        <technique name="Bundle Analysis">
-          Identify large dependencies
-        </technique>
-        <technique name="Critical CSS">
-          Inline above-the-fold styles
-        </technique>
-      </techniques>
-    </pattern>
-  </patterns>
-
-  <quick_wins>
-    <win>Add database indexes on foreign keys and frequently queried columns</win>
-    <win>Enable gzip/brotli compression for responses</win>
-    <win>Add HTTP caching headers</win>
-    <win>Use connection pooling</win>
-    <win>Paginate large lists</win>
-    <win>Lazy load images and heavy components</win>
-  </quick_wins>
-
-  <antipatterns>
-    <antipattern name="Premature Optimization">
-      Measure first, then optimize. Don't guess.
-    </antipattern>
-    <antipattern name="Optimizing the Wrong Thing">
-      Profile to find actual bottlenecks, not perceived ones.
-    </antipattern>
-    <antipattern name="Over-caching">
-      Cache invalidation is hard. Only cache what's needed.
-    </antipattern>
-  </antipatterns>
+  <best_practices>
+    <do>Use representative workloads for benchmarks</do>
+    <do>Keep performance budgets explicit for critical paths</do>
+    <do>Validate database query plans after schema/index changes</do>
+    <do>Track improvements and regressions in repeatable reports</do>
+    <dont>Optimize based on intuition alone</dont>
+    <dont>Ship optimizations that increase complexity without clear gain</dont>
+    <dont>Ignore memory pressure when improving pure latency</dont>
+  </best_practices>
 
   <related_skills>
     <skill>api-builder</skill>
     <skill>architecture-planner</skill>
+    <skill>database-optimizer</skill>
   </related_skills>
 
   <related_workflows>

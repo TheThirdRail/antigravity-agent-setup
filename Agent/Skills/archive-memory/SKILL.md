@@ -1,68 +1,75 @@
 ---
 name: archive-memory
 description: |
-  Store and retrieve project context in a local SQLite database.
-  Use to persist architectural decisions, key patterns, file purposes,
-  and other structured memories across sessions.
+  Persist structured project context in a local SQLite memory store. Use when
+  recording decisions, patterns, and durable notes that should survive across
+  sessions and remain queryable by category or text search.
 ---
 
-# Archive Memory Skill
+<skill name="archive-memory" version="2.0.0">
+  <metadata>
+    <keywords>archive, memory, sqlite, context, decisions, persistence</keywords>
+  </metadata>
 
-Store persistent project context in `Agent-Context/Archives/memory.db`.
+  <goal>Maintain durable project memory with safe, parameterized read/write/delete operations.</goal>
 
-## When to Use
+  <core_principles>
+    <principle name="Python as Canonical Implementation">
+      <rule>Python scripts are the source of truth for archive-memory behavior.</rule>
+      <rule>PowerShell scripts are wrappers that delegate to Python scripts.</rule>
+    </principle>
 
-- After making architectural decisions
-- When documenting key patterns or conventions
-- Before ending a session (to preserve context)
-- When you need to recall previous decisions
+    <principle name="Safe Persistence">
+      <rule>Use parameterized SQL paths only; avoid raw SQL interpolation in wrappers.</rule>
+      <rule>Store memory at [PROJECT_PATH]/Agent-Context/Archives/memory.db.</rule>
+    </principle>
 
-## Available Scripts
+    <principle name="Structured Retrieval">
+      <rule>Support targeted reads by category/key plus broad keyword search.</rule>
+    </principle>
+  </core_principles>
 
-### Write Memory
+  <workflow>
+    <step number="1" name="Write Memory Entry">
+      <command>python Agent\Skills\archive-memory\scripts\write.py --category "decisions" --key "auth-strategy" --value "JWT with refresh tokens" --project-path "[PROJECT_PATH]"</command>
+      <note>Valid categories: decisions, patterns, files, context, custom.</note>
+    </step>
 
-```python
-# From project root
-python Agent\Skills\archive-memory\scripts\write.py --category "decisions" --key "auth-strategy" --value "JWT with refresh tokens"
-```
+    <step number="2" name="Read Memory">
+      <command>python Agent\Skills\archive-memory\scripts\read.py --category "decisions" --key "auth-strategy" --project-path "[PROJECT_PATH]"</command>
+      <command>python Agent\Skills\archive-memory\scripts\read.py --search "auth" --project-path "[PROJECT_PATH]"</command>
+    </step>
 
-### Read Memory
+    <step number="3" name="Delete Memory Entry">
+      <command>python Agent\Skills\archive-memory\scripts\delete.py --category "decisions" --key "auth-strategy" --project-path "[PROJECT_PATH]"</command>
+    </step>
 
-```python
-# Get specific memory
-python Agent\Skills\archive-memory\scripts\read.py --category "decisions" --key "auth-strategy"
+    <step number="4" name="Use Wrapper Commands When Needed">
+      <command>.\Agent\Skills\archive-memory\scripts\write.ps1 -Category decisions -Key "auth-strategy" -Value "JWT with refresh tokens" -ProjectPath "[PROJECT_PATH]"</command>
+      <instruction>Wrappers delegate to Python for consistent behavior and safety.</instruction>
+    </step>
+  </workflow>
 
-# List all in category
-python Agent\Skills\archive-memory\scripts\read.py --category "decisions"
+  <resources>
+    <script file="scripts/write.py">Canonical write/upsert operation.</script>
+    <script file="scripts/read.py">Canonical read/search operation.</script>
+    <script file="scripts/delete.py">Canonical delete operation.</script>
+    <script file="scripts/write.ps1">PowerShell wrapper for write.py.</script>
+    <script file="scripts/read.ps1">PowerShell wrapper for read.py.</script>
+    <script file="scripts/delete.ps1">PowerShell wrapper for delete.py.</script>
+  </resources>
 
-# Search across all
-python Agent\Skills\archive-memory\scripts\read.py --search "auth"
-```
+  <best_practices>
+    <do>Store concise keys and meaningful values with stable category usage</do>
+    <do>Use project-path explicitly when operating outside project root</do>
+    <do>Capture decisions with rationale, not only conclusions</do>
+    <dont>Store credentials or sensitive secrets in memory archives</dont>
+    <dont>Use wrappers to execute raw SQL directly</dont>
+  </best_practices>
 
-### Delete Memory
-
-```python
-python Agent\Skills\archive-memory\scripts\delete.py --category "decisions" --key "auth-strategy"
-```
-
-## Categories
-
-- `decisions` - Architectural decisions and rationale
-- `patterns` - Code patterns and conventions
-- `files` - File purposes and relationships
-- `context` - Session context and state
-- `custom` - User-defined memories
-
-## Database Schema
-
-```sql
-CREATE TABLE memories (
-    id INTEGER PRIMARY KEY,
-    category TEXT NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(category, key)
-);
-```
+  <related_skills>
+    <skill>archive-manager</skill>
+    <skill>research-capability</skill>
+    <skill>documentation-generator</skill>
+  </related_skills>
+</skill>

@@ -39,6 +39,14 @@ description: Research Mode - Deep research with maximum thinking using all searc
       <parse>Any constraints (free only, specific language, etc.)?</parse>
     </step>
 
+    <step number="1.5" name="Verify Product Lifecycle & Status">
+      <action>Search for "[Topic] release history [Current Year]" and "[Topic] status"</action>
+      <action>Identify the "Newest Official Source" and "Newest Credible Third-Party Source"</action>
+      <rule>Compare dates: If Official is significantly older than Credible, investigate discrepancies</rule>
+      <rule>Judgement: If Official says "deprecated" but recent Credible sources show activity, verify if it's a relaunch</rule>
+      <rule>Scour multiple sources to confirm status before proceeding to deep research</rule>
+    </step>
+
     <step number="2" name="Use ALL Search Tools">
       <skill ref="context-gatherer">Use for documentation and code examples</skill>
       <tools category="Web Search">

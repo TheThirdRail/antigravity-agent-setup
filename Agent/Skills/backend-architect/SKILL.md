@@ -3,9 +3,10 @@ name: backend-architect
 description: |
   Design and build robust, scalable, and secure backend systems following language-agnostic best practices.
   Focuses on API design, database modeling, security (OWASP), and operational excellence.
+  Use when designing backend services, reviewing backend architecture, or hardening API/data-layer design.
 ---
 
-<skill name="backend-architect" version="1.0.0">
+<skill name="backend-architect" version="2.0.0">
   <metadata>
     <keywords>backend, api, rest, graphql, database, security, microservices, architecture, owasp</keywords>
   </metadata>
@@ -20,7 +21,7 @@ description: |
       <rule>Standard Status Codes: Use 200, 201, 400, 401, 403, 404, 500 correctly.</rule>
     </principle>
 
-    <principle name="Statelessness & Scalability">
+    <principle name="Statelessness &amp; Scalability">
       <rule>Treat servers as cattle, not pets.</rule>
       <rule>No session state in application memory (use Redis/external stores).</rule>
       <rule>Any request must be handleable by any instance.</rule>
@@ -42,13 +43,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Designing new API endpoints</trigger>
-    <trigger>Planning database schema</trigger>
-    <trigger>Reviewing backend code for security/performance</trigger>
-    <trigger>Setting up a new backend service</trigger>
-    <trigger>Refactoring legacy backend logic</trigger>
-  </when_to_use>
+
 
   <workflow>
     <step number="1" name="Define Interface (API-First)">
@@ -65,7 +60,7 @@ description: |
       <check>Are appropriate indexes planned for query patterns?</check>
     </step>
 
-    <step number="3" name="Plan Logic & Layers">
+    <step number="3" name="Plan Logic &amp; Layers">
       <instruction>Separate concerns (Controller vs Service vs Repository)</instruction>
       <layer name="Controller">Parse request, validate input, send response (No business logic)</layer>
       <layer name="Service">Business rules, transaction management</layer>
@@ -84,6 +79,17 @@ description: |
       <check>Correlation IDs for request tracing?</check>
     </step>
   </workflow>
+
+  <best_practices>
+    <do>Define API contracts before writing implementation code</do>
+    <do>Enforce schema constraints and foreign keys in the database</do>
+    <do>Use parameterized queries and explicit input validation on every boundary</do>
+    <do>Separate controller, service, and repository responsibilities</do>
+    <do>Plan observability early with logs, health checks, and tracing IDs</do>
+    <dont>Store secrets in source control</dont>
+    <dont>Place business logic in controllers</dont>
+    <dont>Rely on app-memory session state for horizontal scaling</dont>
+  </best_practices>
 
   <anti_patterns>
     <pattern name="God Object/Table">

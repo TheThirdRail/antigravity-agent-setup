@@ -5,17 +5,12 @@ description: |
   need logs, or require health checks. For loading/unloading servers, use mcp-manager.
 ---
 
-<skill name="docker-ops" version="1.0.0">
+<skill name="docker-ops" version="2.0.0">
   <metadata>
     <keywords>docker, containers, debugging, logs, health-checks</keywords>
   </metadata>
 
-  <when_to_use>
-    <trigger>Container won't start or is unhealthy</trigger>
-    <trigger>Need to check logs or debug errors</trigger>
-    <trigger>Running health checks or diagnostics</trigger>
-    <not_for>Loading/unloading MCP servers (use mcp-manager)</not_for>
-  </when_to_use>
+
 
   <goal>Systematic troubleshooting for Docker containers hosting MCP servers.</goal>
 
@@ -36,6 +31,33 @@ description: |
       <rule>Verify health after any operational changes</rule>
     </principle>
   </core_principles>
+
+  <workflow>
+    <step number="1" name="Identify Failing Container">
+      <command>docker ps -a --filter "name=mcp"</command>
+      <instruction>Confirm status, exit code, and recent restart behavior.</instruction>
+    </step>
+
+    <step number="2" name="Collect Diagnostics">
+      <command>docker logs &lt;container&gt; --tail 200</command>
+      <command>docker inspect &lt;container&gt;</command>
+      <command>docker stats --no-stream</command>
+    </step>
+
+    <step number="3" name="Apply Corrective Action">
+      <instruction>Fix configuration, secrets, network, or resource constraints based on diagnostics.</instruction>
+      <command>docker restart &lt;container&gt;</command>
+    </step>
+
+    <step number="4" name="Verify Health">
+      <instruction>Re-check health status and confirm expected behavior under load.</instruction>
+      <command>docker ps --filter "name=mcp"</command>
+    </step>
+
+    <step number="5" name="Capture Outcome">
+      <instruction>Record root cause, remediation, and prevention steps for future incidents.</instruction>
+    </step>
+  </workflow>
 
   <quick_reference>
     <command purpose="List MCP containers">docker ps --filter "name=mcp"</command>
@@ -109,6 +131,6 @@ description: |
 
   <related_skills>
     <skill>mcp-manager</skill>
-    <skill>tool-creator</skill>
+    <skill>mcp-builder</skill>
   </related_skills>
 </skill>

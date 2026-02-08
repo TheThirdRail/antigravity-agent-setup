@@ -1,60 +1,70 @@
 ---
 name: archive-docs
 description: |
-  Embed and search documents semantically using ChromaDB.
-  Use to store documentation, code explanations, and research
-  for retrieval-augmented context.
+  Store and search project documents semantically with ChromaDB embeddings.
+  Use when you need retrieval-ready documentation memory for design notes,
+  architecture explanations, runbooks, and long-form references.
 ---
 
-# Archive Docs Skill
+<skill name="archive-docs" version="2.0.0">
+  <metadata>
+    <keywords>archive, docs, embeddings, chromadb, semantic-search, knowledge-base</keywords>
+  </metadata>
 
-Store embeddings in `Agent-Context/Archives/chroma/` for semantic search.
+  <goal>Preserve searchable project documentation context using embedding-based retrieval.</goal>
 
-## Prerequisites
+  <core_principles>
+    <principle name="Semantic Retrieval Over Keyword-Only Search">
+      <rule>Index documents with metadata to support meaning-based lookup.</rule>
+      <rule>Use consistent document IDs for stable updates and deletions.</rule>
+    </principle>
 
-```powershell
-pip install chromadb sentence-transformers
-```
+    <principle name="Traceable Sources">
+      <rule>Include metadata like source path, topic, and timestamp when adding documents.</rule>
+      <rule>Keep original source text accessible outside the vector store.</rule>
+    </principle>
 
-## When to Use
+    <principle name="Project-Scoped Persistence">
+      <rule>Persist vectors in [PROJECT_PATH]/Agent-Context/Archives/chroma.</rule>
+    </principle>
+  </core_principles>
 
-- Indexing project documentation
-- Storing code explanations for later retrieval
-- Building searchable knowledge base
-- Finding related context by meaning (not just keywords)
+  <workflow>
+    <step number="1" name="Install Prerequisites">
+      <command>pip install chromadb sentence-transformers</command>
+    </step>
 
-## Available Scripts
+    <step number="2" name="Add Documents">
+      <command>python Agent\Skills\archive-docs\scripts\add.py --id "doc-id" --content "Document text" --metadata "{\"source\":\"docs/architecture.md\"}"</command>
+      <command>python Agent\Skills\archive-docs\scripts\add.py --file "docs/architecture.md" --id "architecture"</command>
+    </step>
 
-### Add Document
+    <step number="3" name="Search Semantically">
+      <command>python Agent\Skills\archive-docs\scripts\search.py --query "authentication flow" --limit 5</command>
+    </step>
 
-```powershell
-# From project root
-python Agent\Skills\archive-docs\scripts\add.py --id "readme-overview" --content "Project overview content..." --metadata '{"source": "README.md"}'
-```
+    <step number="4" name="Delete or Replace Stale Entries">
+      <command>python Agent\Skills\archive-docs\scripts\delete.py --id "doc-id"</command>
+    </step>
+  </workflow>
 
-### Add from File
+  <resources>
+    <script file="scripts/add.py">Add or update archived documentation entries.</script>
+    <script file="scripts/search.py">Semantic search over archived documents.</script>
+    <script file="scripts/delete.py">Delete archived document entries by ID.</script>
+  </resources>
 
-```powershell
-python Agent\Skills\archive-docs\scripts\add.py --file "docs/architecture.md" --id "architecture"
-```
+  <best_practices>
+    <do>Use deterministic IDs so updates replace the right document</do>
+    <do>Attach source metadata for every document entry</do>
+    <do>Batch related docs by topic for better retrieval quality</do>
+    <dont>Index transient or generated noise files without curation</dont>
+    <dont>Rely on embeddings alone when exact command/code matches are required</dont>
+  </best_practices>
 
-### Search Documents
-
-```powershell
-# Semantic search
-python Agent\Skills\archive-docs\scripts\search.py --query "how does authentication work" --limit 5
-```
-
-### Delete Document
-
-```powershell
-python Agent\Skills\archive-docs\scripts\delete.py --id "readme-overview"
-```
-
-## Embedding Model
-
-Uses `all-MiniLM-L6-v2` by default (384 dimensions, fast, good quality).
-
-## Storage
-
-Data persisted to `Agent-Context/Archives/chroma/` directory.
+  <related_skills>
+    <skill>archive-manager</skill>
+    <skill>research-capability</skill>
+    <skill>documentation-generator</skill>
+  </related_skills>
+</skill>

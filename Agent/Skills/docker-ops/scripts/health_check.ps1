@@ -65,19 +65,19 @@ $containers -split "`n" | ForEach-Object {
         $state = $Matches[4]
         
         $icon = switch ($state) {
-            "running" { "✅" }
-            "exited" { "⏹️" }
-            "restarting" { "🔄" }
-            default { "❓" }
+            "running" { "[RUNNING]" }
+            "exited" { "[STOPPED]" }
+            "restarting" { "[RESTARTING]" }
+            default { "[UNKNOWN]" }
         }
         
         # Check for health status in status string
         if ($status -match "unhealthy") {
-            $icon = "🔴"
+            $icon = "[UNHEALTHY]"
             $unhealthy += $name
         }
         elseif ($status -match "healthy") {
-            $icon = "✅"
+            $icon = "[HEALTHY]"
             $healthy += $name
         }
         elseif ($state -eq "exited") {

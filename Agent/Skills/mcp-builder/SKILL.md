@@ -3,18 +3,15 @@ name: mcp-builder
 description: |
   Create custom MCP tools from scratch. For combining existing MCP tools,
   use mcp-manager's code-mode feature instead.
+  Use when no existing MCP server provides the required capability and a custom MCP tool is needed.
 ---
 
-<skill name="mcp-builder" version="1.0.0">
+<skill name="mcp-builder" version="2.0.0">
   <metadata>
     <keywords>mcp, tools, custom, schema, handlers, development</keywords>
   </metadata>
 
-  <when_to_use>
-    <trigger>Need a capability no existing MCP server provides</trigger>
-    <trigger>Building reusable custom tools (not one-off scripts)</trigger>
-    <not_for>Combining existing tools (use mcp-manager code-mode)</not_for>
-  </when_to_use>
+
 
   <goal>Create custom MCP tools to extend Antigravity's capabilities.</goal>
 
@@ -90,7 +87,7 @@ async function handler({ city, units = "celsius" }) {
     </step>
 
     <step number="4" name="Test with mcp-exec">
-      <action>mcp_gate_mcp-exec(name: "fetch_weather", arguments: {city: "London"})</action>
+      <action>mcp-exec(name: "fetch_weather", arguments: {city: "London"})</action>
     </step>
   </workflow>
 

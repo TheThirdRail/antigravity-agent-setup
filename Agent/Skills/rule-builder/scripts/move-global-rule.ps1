@@ -1,35 +1,85 @@
-<#
-.SYNOPSIS
-    Move a rule file to the global rules directory (Agent/Rules).
-.PARAMETER Name
-    Name of the rule file (e.g., rule-name.md)
-#>
+[CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [Parameter(Mandatory = $true)]
-    [string]$Name
+    [ValidatePattern('^[a-z0-9][a-z0-9._-]*\.md$')]
+    [string]$Name,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateSet('anthropic', 'openai', 'google')]
+    [string]$Vendor,
+
+    [Parameter(Mandatory = $false)]
+    [string]$SourcePath,
+
+    [Parameter(Mandatory = $false)]
+    [ValidateSet('Copy', 'Move')]
+    [string]$Mode = 'Copy',
+
+    [Parameter(Mandatory = $false)]
+    [switch]$UseLegacyCodexPath,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
 
-# Paths
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
-$Source = Join-Path $Root "Agent\Rules\$Name" # Assuming initially created here or needing verified move
-# In this specific context, rules might be created directly in Agent\Rules, 
-# but this script formally "installs" or validates them if we were moving from a temp location.
-# For simplicity, if it's already in Agent\Rules, we just verify.
-
-$GlobalRulesDir = Join-Path $Root "Agent\Rules"
-
-if (-not (Test-Path $GlobalRulesDir)) {
-    New-Item -ItemType Directory -Path $GlobalRulesDir -Force | Out-Null
+if (-not $SourcePath) {
+    $SourcePath = Join-Path (Get-Location) $Name
 }
 
-$DestPath = Join-Path $GlobalRulesDir $Name
+$SourcePath = (Resolve-Path $SourcePath -ErrorAction Stop).Path
+if (-not (Test-Path -Path $SourcePath -PathType Leaf)) {
+    Write-Error "Source rule file not found: $SourcePath"
+    exit 1
+}
 
+switch ($Vendor) {
+    'anthropic' { $GlobalPath = Join-Path $HOME ".claude\rules" }
+    'openai' {
+        if ($UseLegacyCodexPath) {
+            $GlobalPath = Join-Path $HOME ".codex\rules"
+        }
+        else {
+            $GlobalPath = Join-Path $HOME ".agents\rules"
+        }
+    }
+    'google' { $GlobalPath = Join-Path $HOME ".gemini\rules" }
+}
+
+if (-not (Test-Path $GlobalPath)) {
+    if ($PSCmdlet.ShouldProcess($GlobalPath, "Create destination directory")) {
+        New-Item -ItemType Directory -Path $GlobalPath -Force | Out-Null
+    }
+}
+
+$DestPath = Join-Path $GlobalPath $Name
 if (Test-Path $DestPath) {
-    Write-Host "Rule '$Name' is installed at: $DestPath" -ForegroundColor Green
+    if (-not $Force) {
+        Write-Error "Destination already exists. Use -Force to overwrite: $DestPath"
+        exit 1
+    }
+
+    if ($PSCmdlet.ShouldProcess($DestPath, "Remove existing destination file")) {
+        Remove-Item -Path $DestPath -Force
+    }
 }
-else {
-    Write-Host "Rule '$Name' not found at destination. Please ensure it is created in Agent\Rules." -ForegroundColor Yellow
+
+$ActionName = if ($Mode -eq 'Copy') { 'Copy' } else { 'Move' }
+
+Write-Host "Installing global rule" -ForegroundColor Cyan
+Write-Host "  Vendor: $Vendor" -ForegroundColor Gray
+Write-Host "  Mode: $Mode" -ForegroundColor Gray
+Write-Host "  Source: $SourcePath" -ForegroundColor Gray
+Write-Host "  Destination: $DestPath" -ForegroundColor Gray
+
+if ($PSCmdlet.ShouldProcess($DestPath, "$ActionName rule file")) {
+    if ($Mode -eq 'Copy') {
+        Copy-Item -Path $SourcePath -Destination $DestPath -Force
+    }
+    else {
+        Move-Item -Path $SourcePath -Destination $DestPath -Force
+    }
+
+    Write-Host "Global install completed: $DestPath" -ForegroundColor Green
 }

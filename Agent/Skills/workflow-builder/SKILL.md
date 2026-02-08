@@ -1,13 +1,12 @@
 ---
 name: workflow-builder
 description: |
-  Meta-skill for creating new AI agent workflows following best practices. Guides
-  the process of defining workflow structure, writing YAML frontmatter, creating
-  numbered steps with turbo annotations, and organizing reusable workflows.
-  Produces workflows compatible with Antigravity, Claude Code, and Cursor.
+  Create reusable agent workflows with clear numbered steps, turbo-safe
+  automation, and portable install targets. Use when defining repeatable
+  operational or engineering procedures that should run consistently.
 ---
 
-<skill name="workflow-builder" version="1.0.0">
+<skill name="workflow-builder" version="2.0.0">
   <metadata>
     <keywords>workflows, meta, template, builder, automation</keywords>
   </metadata>
@@ -65,10 +64,6 @@ description: Brief description of what this workflow does
 
   <important>Key instruction the agent must follow</important>
 
-  <when_to_use>
-    <trigger>Specific situation that triggers this workflow</trigger>
-  </when_to_use>
-
   <steps>
     <step number="1" name="Step Name">
       <instruction>What to do in this step</instruction>
@@ -98,13 +93,13 @@ description: Brief description of what this workflow does
       <annotation name="// turbo-all" purpose="Auto-run ALL steps" placement="Anywhere in file"/>
     </step>
 
-    <step number="6" name="Add Placeholders">
+    <step number="5" name="Add Placeholders">
       <placeholder syntax="[Name]" use="Visual prompt for user" example="Create [ComponentName]"/>
       <placeholder syntax="$ARGUMENTS" use="All text after command" example="/fix-issue $ARGUMENTS"/>
       <placeholder syntax="$1, $2" use="Positional arguments" example="git checkout $1"/>
     </step>
 
-    <step number="7" name="Validate">
+    <step number="6" name="Validate">
       <checklist>
         <item>Description explains what AND when to use</item>
         <item>Steps are numbered and clear</item>
@@ -115,14 +110,14 @@ description: Brief description of what this workflow does
       </checklist>
     </step>
 
-    <step number="8" name="Install Workflow">
+    <step number="7" name="Install Workflow">
       <instruction>Move the workflow to the appropriate location.</instruction>
       <decision_tree>
         <branch condition="Global Workflow (Apply to ALL projects)">
-          <action>Run: scripts/move-global-workflow.ps1 -Name "workflow-name.md"</action>
+          <action>Run: scripts/move-global-workflow.ps1 -Name "workflow-name.md" -Vendor "anthropic|openai|google"</action>
         </branch>
         <branch condition="Workspace Workflow (Apply to THIS project only)">
-          <action>Run: scripts/move-local-workflow.ps1 -Name "workflow-name.md"</action>
+          <action>Run: scripts/move-local-workflow.ps1 -Name "workflow-name.md" -Vendor "mine|anthropic|openai|google"</action>
         </branch>
       </decision_tree>
     </step>

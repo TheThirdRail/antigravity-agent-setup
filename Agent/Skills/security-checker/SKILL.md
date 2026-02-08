@@ -1,12 +1,12 @@
 ---
 name: security-checker
 description: |
-  Focused security analysis capability for code review and pre-commit checks.
-  Identifies common vulnerabilities, exposed secrets, and insecure patterns.
-  Use during code review, before commits, or when reviewing authentication logic.
+  Analyze code for vulnerabilities, exposed secrets, and insecure patterns
+  before merge or release. Use when reviewing security-sensitive changes,
+  authentication/authorization flows, input handling, and dependency risk.
 ---
 
-<skill name="security-checker" version="1.0.0">
+<skill name="security-checker" version="2.0.0">
   <metadata>
     <keywords>security, vulnerabilities, secrets, injection, xss, audit</keywords>
   </metadata>
@@ -30,13 +30,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Reviewing code changes in code-reviewer skill</trigger>
-    <trigger>Before committing code with authentication logic</trigger>
-    <trigger>After adding user input handling</trigger>
-    <trigger>Reviewing API endpoints</trigger>
-    <trigger>Pre-merge security check</trigger>
-  </when_to_use>
+
 
   <recommended_mcp>
     <server>snyk</server>

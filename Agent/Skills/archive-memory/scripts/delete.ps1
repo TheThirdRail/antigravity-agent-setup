@@ -1,33 +1,49 @@
 <#
 .SYNOPSIS
-    Delete a memory from the local SQLite archive.
-.PARAMETER Category
-    Memory category
-.PARAMETER Key
-    Key to delete
+    Delete memories from the local SQLite archive via Python implementation.
 #>
 param(
     [Parameter(Mandatory = $true)]
     [string]$Category,
-    
+
     [Parameter(Mandatory = $true)]
-    [string]$Key
+    [string]$Key,
+
+    [string]$ProjectPath = "."
 )
 
 $ErrorActionPreference = "Stop"
 
-# Locate database
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
-$DbPath = Join-Path $Root "Agent-Context\Archives\memory.db"
-
-if (-not (Test-Path $DbPath)) {
-    Write-Host "No memories found. Archive not initialized." -ForegroundColor Yellow
-    exit 0
+function Get-PythonCommand {
+    $candidates = @("python", "python3", "py")
+    foreach ($name in $candidates) {
+        $cmd = Get-Command $name -ErrorAction SilentlyContinue
+        if ($cmd) {
+            return $cmd.Source
+        }
+    }
+    throw "Python executable not found. Install Python or add it to PATH."
 }
 
-$EscapedKey = $Key -replace "'", "''"
-$Sql = "DELETE FROM memories WHERE category='$Category' AND key='$EscapedKey';"
-$Sql | sqlite3 $DbPath
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PythonScript = Join-Path $ScriptDir "delete.py"
 
-Write-Host "✓ Deleted memory: [$Category] $Key" -ForegroundColor Green
+if (-not (Test-Path $PythonScript)) {
+    throw "Missing script: $PythonScript"
+}
+
+if (-not (Test-Path $ProjectPath)) {
+    throw "Project path not found: $ProjectPath"
+}
+
+$ResolvedProjectPath = (Resolve-Path $ProjectPath -ErrorAction Stop).Path
+$PythonExe = Get-PythonCommand
+
+$args = @(
+    "--category", $Category,
+    "--key", $Key,
+    "--project-path", $ResolvedProjectPath
+)
+
+& $PythonExe $PythonScript @args
+exit $LASTEXITCODE

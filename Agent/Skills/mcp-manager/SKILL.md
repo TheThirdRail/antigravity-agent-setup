@@ -3,19 +3,15 @@ name: mcp-manager
 description: |
   Orchestrate MCP servers: load, unload, and optimize context usage.
   For container troubleshooting (logs, health), use docker-ops instead.
+  Use when you need to discover, enable, optimize, or disable MCP server usage for a task.
 ---
 
-<skill name="mcp-manager" version="1.0.0">
+<skill name="mcp-manager" version="2.0.0">
   <metadata>
     <keywords>mcp, docker, context, lazy-load, optimization</keywords>
   </metadata>
 
-  <when_to_use>
-    <trigger>Need a capability from an MCP server</trigger>
-    <trigger>Reducing context usage or tool count</trigger>
-    <trigger>Creating composite tools with code-mode</trigger>
-    <not_for>Container failures or logs (use docker-ops)</not_for>
-  </when_to_use>
+
 
   <goal>Maintain optimal Antigravity context by managing MCP servers with lazy-loading.</goal>
 
@@ -44,7 +40,7 @@ description: |
     </step>
 
     <step number="2" name="Find Server">
-      <action>mcp_gate_mcp-find(query: "github")</action>
+      <action>mcp-find(query: "github")</action>
     </step>
 
     <step number="3" name="Check Budget">
@@ -52,7 +48,7 @@ description: |
     </step>
 
     <step number="4" name="Load Temporarily">
-      <action>mcp_gate_mcp-add(name: "github", activate: false)</action>
+      <action>mcp-add(name: "github", activate: false)</action>
     </step>
 
     <step number="5" name="Perform Work">
@@ -60,7 +56,7 @@ description: |
     </step>
 
     <step number="6" name="Cleanup">
-      <action>mcp_gate_mcp-remove(name: "github")</action>
+      <action>mcp-remove(name: "github")</action>
     </step>
   </workflow>
 
@@ -131,13 +127,13 @@ Context savings: ~750 tokens per operation
   </best_practices>
 
   <troubleshooting>
-    <issue problem="Too many tools error">Reset: docker mcp server disable --all</issue>
+    <issue problem="Too many tools error">Reset: docker mcp server reset</issue>
     <issue problem="Server won't load">Check secrets: docker mcp secret ls</issue>
     <issue problem="Context still bloated">Verify 0 permanently enabled servers</issue>
   </troubleshooting>
 
   <related_skills>
     <skill>docker-ops</skill>
-    <skill>tool-creator</skill>
+    <skill>mcp-builder</skill>
   </related_skills>
 </skill>

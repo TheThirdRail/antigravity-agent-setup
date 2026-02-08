@@ -6,7 +6,7 @@ description: |
   reviewing PRs, before merging code, or when requesting a second opinion on changes.
 ---
 
-<skill name="code-reviewer" version="1.0.0">
+<skill name="code-reviewer" version="2.0.0">
   <metadata>
     <keywords>code-review, pr, pull-request, security, bugs</keywords>
   </metadata>
@@ -30,11 +30,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Reviewing a pull request before merge</trigger>
-    <trigger>Self-reviewing code before committing</trigger>
-    <trigger>Auditing existing code for issues</trigger>
-  </when_to_use>
+
 
   <recommended_mcp>
     <server>snyk</server>

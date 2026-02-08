@@ -1,22 +1,23 @@
 {
-    "name": "backend-architect",
-    "version": "1.0.0",
-    "description": "Design and build robust, scalable, and secure backend systems following language-agnostic best practices.",
-    "keywords": [
-        "backend",
-        "architecture",
-        "api",
-        "database",
-        "security",
-        "scalability",
-        "rest",
-        "graphql"
-    ],
-    "author": "Antigravity",
-    "language_agnostic": true,
-    "standards": [
-        "OWASP",
-        "12-Factor App",
-        "API-First"
-    ]
+  "name": "backend-architect",
+  "version": "2.0.0",
+  "description": "Design and build robust, scalable, and secure backend systems following language-agnostic best practices. Focuses on API design, database modeling, security (OWASP), and operational excellence. Use...",
+  "category": "architecture",
+  "keywords": [
+    "backend",
+    "api",
+    "rest",
+    "graphql",
+    "database",
+    "security",
+    "microservices",
+    "architecture",
+    "owasp"
+  ],
+  "related_skills": [
+    "api-builder",
+    "code-reviewer",
+    "database-optimizer",
+    "security-checker"
+  ]
 }

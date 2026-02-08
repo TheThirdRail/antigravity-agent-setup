@@ -1,12 +1,12 @@
 ---
 name: research-capability
 description: |
-  Comprehensive research capability for contextual information gathering.
-  Use for quick lookups, deep research, code examples, and best practices.
-  Combines former context-gatherer functionality into a single unified skill.
+  Perform validated technical research using documentation, repositories, and
+  recent sources. Use when implementation decisions require current APIs,
+  best practices, lifecycle status, or high-confidence code examples.
 ---
 
-<skill name="research-capability" version="2.0.0">
+<skill name="research-capability" version="2.1.0">
   <metadata>
     <keywords>research, search, documentation, context7, web-search, examples, best-practices</keywords>
   </metadata>
@@ -18,7 +18,7 @@ description: |
       <priority order="1">Official documentation (context7, gitmcp)</priority>
       <priority order="2">Framework/library guides (augments)</priority>
       <priority order="3">GitHub repos with high stars</priority>
-      <priority order="4">Recent Stack Overflow (2024-2025)</priority>
+      <priority order="4">Recent community discussions ([Current Year]-1 to [Current Year])</priority>
       <priority order="5">Technical blog posts</priority>
     </principle>
 
@@ -26,6 +26,12 @@ description: |
       <rule>Note the date of every source</rule>
       <rule>Flag outdated information explicitly</rule>
       <rule>Prefer "latest" or "current" versions</rule>
+    </principle>
+
+    <principle name="Lifecycle Awareness">
+      <rule>Always verify if the tool is still active/supported in [Current Year]</rule>
+      <rule>If Official Docs are old (>1 year), scour for newer credible sources (blogs, news)</rule>
+      <rule>Judgement: Valid recent info > Outdated official info for status/lifecycle</rule>
     </principle>
 
     <principle name="Context Types">
@@ -38,20 +44,12 @@ description: |
 
     <principle name="Quality Signals">
       <signal good="true">Official docs, verified examples, high GitHub stars</signal>
-      <signal good="true">Recent content (2024-2025), active maintenance</signal>
+      <signal good="true">Recent content ([Current Year]-1 to [Current Year]), active maintenance</signal>
       <signal good="false">Outdated posts, deprecated APIs, low engagement</signal>
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Quick lookup during coding workflow</trigger>
-    <trigger>Before implementing a feature you haven't done before</trigger>
-    <trigger>When using a new library or framework</trigger>
-    <trigger>Looking for code examples to follow</trigger>
-    <trigger>Checking current best practices for a pattern</trigger>
-    <trigger>During /architect, /analyze, /code workflows</trigger>
-    <trigger>When debugging unfamiliar code</trigger>
-  </when_to_use>
+
 
   <recommended_mcp>
     <server>context7</server>
@@ -144,8 +142,12 @@ description: |
       <context7>"[library] [function] usage"</context7>
       <github>"[function](" language:[lang] stars:>50</github>
     </pattern>
+    <pattern name="Status Check">
+      <search>"[topic] status [Current Year]"</search>
+      <search>"[topic] release notes [Current Year]"</search>
+    </pattern>
     <pattern name="Best Practices">
-      <search>"[topic] best practices 2024"</search>
+      <search>"[topic] best practices [Current Year]"</search>
       <github>"[pattern]" language:[lang] stars:>500</github>
     </pattern>
     <pattern name="Configuration">

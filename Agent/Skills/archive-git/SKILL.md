@@ -1,55 +1,70 @@
 ---
 name: archive-git
 description: |
-  Query git history for semantic code evolution understanding.
-  Use to find when features were added, who made changes,
-  and how code evolved over time.
+  Query repository history for code evolution, ownership, and change context.
+  Use when tracing when and why behavior changed, who modified critical files,
+  or how specific patterns entered the codebase.
 ---
 
-# Archive Git Skill
+<skill name="archive-git" version="2.0.0">
+  <metadata>
+    <keywords>archive, git, history, commits, evolution, blame, diffs</keywords>
+  </metadata>
 
-Query git history directly (no database needed - uses live git).
+  <goal>Provide reliable historical context by querying live git history with focused scripts.</goal>
 
-## When to Use
+  <core_principles>
+    <principle name="History as Evidence">
+      <rule>Use commit history and diffs to validate assumptions about system behavior changes.</rule>
+      <rule>Prefer concrete commit references over narrative guesses.</rule>
+    </principle>
 
-- Finding when a feature was introduced
-- Understanding why code changed
-- Tracking file evolution
-- Searching commit history semantically
+    <principle name="Query by Intent">
+      <rule>Use message mode for rationale/themes and diff mode for exact code pattern tracking.</rule>
+      <rule>Use file history when investigating regressions in a specific path.</rule>
+    </principle>
 
-## Available Scripts
+    <principle name="Live Repository Source">
+      <rule>Queries run directly against the current git repo state, without separate indexing.</rule>
+    </principle>
+  </core_principles>
 
-### Search Commits by Message
+  <workflow>
+    <step number="1" name="Choose Target Repository">
+      <instruction>Set [PROJECT_PATH] to the repository root for all queries.</instruction>
+    </step>
 
-```powershell
-.\Agent\Skills\archive-git\scripts\search.ps1 -RepoPath "D:\Coding\MyProject" -Query "authentication" -Mode "message"
-```
+    <step number="2" name="Select Query Mode">
+      <command>.\Agent\Skills\archive-git\scripts\search.ps1 -RepoPath "[PROJECT_PATH]" -Query "authentication" -Mode "message"</command>
+      <command>.\Agent\Skills\archive-git\scripts\search.ps1 -RepoPath "[PROJECT_PATH]" -Query "JWT_SECRET" -Mode "diff"</command>
+    </step>
 
-### Search Commits by Code Change
+    <step number="3" name="Inspect File-Specific Evolution">
+      <command>.\Agent\Skills\archive-git\scripts\file-history.ps1 -RepoPath "[PROJECT_PATH]" -FilePath "src/auth/login.ts" -Limit 10</command>
+    </step>
 
-```powershell
-# Find commits that added/removed specific code
-.\Agent\Skills\archive-git\scripts\search.ps1 -RepoPath "D:\Coding\MyProject" -Query "JWT_SECRET" -Mode "diff"
-```
+    <step number="4" name="Review Recent Activity">
+      <command>.\Agent\Skills\archive-git\scripts\recent.ps1 -RepoPath "[PROJECT_PATH]" -Days 7</command>
+    </step>
+  </workflow>
 
-### Get File History
+  <resources>
+    <script file="scripts/search.ps1">Search commit history by message or diff content.</script>
+    <script file="scripts/file-history.ps1">Track evolution of one file over time.</script>
+    <script file="scripts/recent.ps1">Summarize recent repository activity.</script>
+  </resources>
 
-```powershell
-.\Agent\Skills\archive-git\scripts\file-history.ps1 -RepoPath "D:\Coding\MyProject" -FilePath "src/auth/login.ts" -Limit 10
-```
+  <best_practices>
+    <do>Pair message and diff queries when root-cause confidence is low</do>
+    <do>Capture commit hash and date in archived findings</do>
+    <do>Scope queries to likely subsystems before broadening</do>
+    <dont>Assume commit messages alone explain full behavioral impact</dont>
+    <dont>Ignore rename/move history when files changed paths</dont>
+  </best_practices>
 
-### Get Recent Activity
-
-```powershell
-.\Agent\Skills\archive-git\scripts\recent.ps1 -RepoPath "D:\Coding\MyProject" -Days 7
-```
-
-## Output Format
-
-Results include: commit hash, date, author, message, and optionally diff stats.
-
-## Notes
-
-- Uses live git queries (always current)
-- No caching (results are real-time)
-- Requires git to be installed and in PATH
+  <related_skills>
+    <skill>archive-manager</skill>
+    <skill>archive-code</skill>
+    <skill>code-reviewer</skill>
+  </related_skills>
+</skill>

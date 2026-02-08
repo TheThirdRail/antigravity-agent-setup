@@ -58,7 +58,7 @@ try {
     
     if (Test-Path $OutputFile) {
         $Size = (Get-Item $OutputFile).Length / 1KB
-        Write-Host "✓ Created index: $OutputFile ($([math]::Round($Size, 2)) KB)" -ForegroundColor Green
+        Write-Host "Created index: $OutputFile ($([math]::Round($Size, 2)) KB)" -ForegroundColor Green
     }
     else {
         Write-Host "Warning: Index file not created" -ForegroundColor Yellow
@@ -69,3 +69,4 @@ catch {
     Write-Host "Error during indexing: $_" -ForegroundColor Red
     exit 1
 }
+

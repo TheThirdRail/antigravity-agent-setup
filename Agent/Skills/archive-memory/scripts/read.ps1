@@ -1,67 +1,52 @@
 <#
 .SYNOPSIS
-    Read memories from the local SQLite archive.
-.PARAMETER Category
-    Memory category to filter by
-.PARAMETER Key
-    Specific key to retrieve
-.PARAMETER Search
-    Search term to find across all memories
+    Read memories from the local SQLite archive via Python implementation.
 #>
 param(
     [string]$Category,
     [string]$Key,
-    [string]$Search
+    [string]$Search,
+    [string]$ProjectPath = "."
 )
 
 $ErrorActionPreference = "Stop"
 
-# Locate database
+function Get-PythonCommand {
+    $candidates = @("python", "python3", "py")
+    foreach ($name in $candidates) {
+        $cmd = Get-Command $name -ErrorAction SilentlyContinue
+        if ($cmd) {
+            return $cmd.Source
+        }
+    }
+    throw "Python executable not found. Install Python or add it to PATH."
+}
+
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$Root = $ScriptDir | Split-Path | Split-Path | Split-Path | Split-Path
-$DbPath = Join-Path $Root "Agent-Context\Archives\memory.db"
+$PythonScript = Join-Path $ScriptDir "read.py"
 
-if (-not (Test-Path $DbPath)) {
-    Write-Host "No memories found. Archive not initialized." -ForegroundColor Yellow
-    exit 0
+if (-not (Test-Path $PythonScript)) {
+    throw "Missing script: $PythonScript"
 }
 
-# Build query
-if ($Key -and $Category) {
-    $Sql = "SELECT value FROM memories WHERE category='$Category' AND key='$Key';"
-    $Result = $Sql | sqlite3 $DbPath
-    if ($Result) {
-        Write-Output $Result
-    }
-    else {
-        Write-Host "Memory not found: [$Category] $Key" -ForegroundColor Yellow
-    }
+if (-not (Test-Path $ProjectPath)) {
+    throw "Project path not found: $ProjectPath"
 }
-elseif ($Category) {
-    $Sql = "SELECT key, value FROM memories WHERE category='$Category' ORDER BY updated_at DESC;"
-    $Result = $Sql | sqlite3 -header -column $DbPath
-    if ($Result) {
-        Write-Output $Result
-    }
-    else {
-        Write-Host "No memories in category: $Category" -ForegroundColor Yellow
-    }
+
+$ResolvedProjectPath = (Resolve-Path $ProjectPath -ErrorAction Stop).Path
+$PythonExe = Get-PythonCommand
+
+$args = @()
+if ($Category) {
+    $args += @("--category", $Category)
 }
-elseif ($Search) {
-    $EscapedSearch = $Search -replace "'", "''"
-    $Sql = "SELECT category, key, value FROM memories WHERE value LIKE '%$EscapedSearch%' OR key LIKE '%$EscapedSearch%' ORDER BY updated_at DESC;"
-    $Result = $Sql | sqlite3 -header -column $DbPath
-    if ($Result) {
-        Write-Output $Result
-    }
-    else {
-        Write-Host "No memories matching: $Search" -ForegroundColor Yellow
-    }
+if ($Key) {
+    $args += @("--key", $Key)
 }
-else {
-    # List all categories with counts
-    $Sql = "SELECT category, COUNT(*) as count FROM memories GROUP BY category;"
-    $Result = $Sql | sqlite3 -header -column $DbPath
-    Write-Host "Memory Archive Summary:" -ForegroundColor Cyan
-    Write-Output $Result
+if ($Search) {
+    $args += @("--search", $Search)
 }
+$args += @("--project-path", $ResolvedProjectPath)
+
+& $PythonExe $PythonScript @args
+exit $LASTEXITCODE

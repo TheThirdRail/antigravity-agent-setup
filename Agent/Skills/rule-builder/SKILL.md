@@ -1,13 +1,12 @@
 ---
 name: rule-builder
 description: |
-  Meta-skill for creating Antigravity agent rules following best practices.
-  Guides the process of defining rule structure, activation modes, and
-  behavioral constraints. Produces rules in embedded XML-in-markdown format.
-  Enforces the 12,000 character limit per rule file.
+  Create or update reusable agent behavior rules with explicit constraints,
+  activation modes, and install paths. Use when enforcing consistent
+  guardrails (security, style, workflow) across a workspace or globally.
 ---
 
-<skill name="rule-builder" version="1.0.0">
+<skill name="rule-builder" version="2.0.0">
   <metadata>
     <keywords>rules, constraints, guardrails, GEMINI.md, agent behavior</keywords>
   </metadata>
@@ -87,7 +86,7 @@ glob: "*.ts"  # only if activation is glob
     </step>
 
     <step number="3" name="Validate Size">
-      <instruction>Ensure the file characteristic count is under 12,000.</instruction>
+      <instruction>Ensure the file character count is under 12,000.</instruction>
       <check>Is the content focused purely on rules? (Move detailed how-to instructions to Skills)</check>
     </step>
 
@@ -95,10 +94,10 @@ glob: "*.ts"  # only if activation is glob
       <instruction>Move the rule to the appropriate location using helper scripts.</instruction>
       <decision_tree>
         <branch condition="Global Rule (Apply to ALL projects)">
-          <action>Run: scripts/move-global-rule.ps1 -Name "rule-name.md"</action>
+          <action>Run: scripts/move-global-rule.ps1 -Name "rule-name.md" -Vendor "anthropic|openai|google"</action>
         </branch>
         <branch condition="Workspace Rule (Apply to THIS project only)">
-          <action>Run: scripts/move-local-rule.ps1 -Name "rule-name.md"</action>
+          <action>Run: scripts/move-local-rule.ps1 -Name "rule-name.md" -Vendor "mine|anthropic|openai|google"</action>
         </branch>
       </decision_tree>
     </step>
@@ -110,4 +109,12 @@ glob: "*.ts"  # only if activation is glob
       <file>move-local-rule.ps1</file>
     </folder>
   </resource_folders>
+
+  <best_practices>
+    <do>Write constraints in enforceable terms (must, must_not, prefer)</do>
+    <do>Keep rule scope narrow and domain-specific</do>
+    <do>Install rules using script parameters instead of manual path edits</do>
+    <dont>Embed long tutorials or implementation guidance in rule files</dont>
+    <dont>Use ambiguous statements that cannot be validated in review</dont>
+  </best_practices>
 </skill>

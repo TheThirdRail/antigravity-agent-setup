@@ -6,7 +6,7 @@ description: |
   and middleware. Use when creating new APIs or refactoring existing endpoints.
 ---
 
-<skill name="api-builder" version="1.0.0">
+<skill name="api-builder" version="2.0.0">
   <metadata>
     <keywords>api, rest, graphql, openapi, endpoints, swagger</keywords>
   </metadata>
@@ -40,12 +40,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Creating a new API from scratch</trigger>
-    <trigger>Adding endpoints to existing API</trigger>
-    <trigger>Refactoring messy endpoints</trigger>
-    <trigger>Generating API documentation</trigger>
-  </when_to_use>
+
 
   <workflow>
     <step number="1" name="Define Resources">

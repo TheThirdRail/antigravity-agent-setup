@@ -17,6 +17,8 @@
     .\init_skill.ps1 -Name "pdf-editor" -Path ".agent/skills"
 #>
 
+# TODO_SCAN_ALLOW: This file intentionally contains TODO placeholders in generated templates.
+
 param(
     [Parameter(Mandatory = $true)]
     [ValidatePattern('^[a-z][a-z0-9-]{0,62}[a-z0-9]$')]
@@ -29,8 +31,13 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Resolve full path
-$SkillPath = Join-Path -Path (Resolve-Path $Path) -ChildPath $Name
+# Ensure parent path exists and resolve full path
+if (-not (Test-Path $Path)) {
+    New-Item -ItemType Directory -Path $Path -Force | Out-Null
+}
+
+$ParentPath = (Resolve-Path $Path -ErrorAction Stop).Path
+$SkillPath = Join-Path -Path $ParentPath -ChildPath $Name
 
 # Check if already exists
 if (Test-Path $SkillPath) {

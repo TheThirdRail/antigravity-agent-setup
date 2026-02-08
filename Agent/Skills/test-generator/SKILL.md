@@ -6,7 +6,7 @@ description: |
   fixing bugs, or improving test coverage on existing code.
 ---
 
-<skill name="test-generator" version="1.0.0">
+<skill name="test-generator" version="2.0.0">
   <metadata>
     <keywords>testing, tdd, unit-tests, coverage, jest, pytest</keywords>
   </metadata>
@@ -34,13 +34,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>Writing tests before implementation (TDD)</trigger>
-    <trigger>Adding tests to existing code</trigger>
-    <trigger>Increasing test coverage</trigger>
-    <trigger>Reproducing bugs with test cases</trigger>
-    <trigger>Refactoring with safety net</trigger>
-  </when_to_use>
+
 
   <workflow>
     <step number="1" name="Analyze the Code">

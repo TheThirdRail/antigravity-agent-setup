@@ -124,14 +124,14 @@ if (Test-Path $gitignorePath) {
     }
     
     if ($envWarnings.Count -eq 0) {
-        Write-Host "  ✅ .env files appear to be gitignored" -ForegroundColor Green
+        Write-Host "  [OK] .env files appear to be gitignored" -ForegroundColor Green
     }
     else {
-        Write-Host "  ⚠️  Missing from .gitignore: $($envWarnings -join ', ')" -ForegroundColor Yellow
+        Write-Host "  [WARN] Missing from .gitignore: $($envWarnings -join ', ')" -ForegroundColor Yellow
     }
 }
 else {
-    Write-Host "  ⚠️  No .gitignore found!" -ForegroundColor Yellow
+    Write-Host "  [WARN] No .gitignore found!" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -139,7 +139,7 @@ Write-Host ""
 # Report findings
 if ($findings.Count -eq 0) {
     Write-Host "--- Results ---" -ForegroundColor Green
-    Write-Host "  ✅ No secrets detected in $scannedFiles files" -ForegroundColor Green
+    Write-Host "  [OK] No secrets detected in $scannedFiles files" -ForegroundColor Green
     Write-Host ""
     exit 0
 }
@@ -150,7 +150,7 @@ else {
     $groupedFindings = $findings | Group-Object Type
     
     foreach ($group in $groupedFindings) {
-        Write-Host "  🔴 $($group.Name) ($($group.Count) found)" -ForegroundColor Red
+        Write-Host "  [ALERT] $($group.Name) ($($group.Count) found)" -ForegroundColor Red
         foreach ($finding in $group.Group) {
             Write-Host "     $($finding.File):$($finding.Line)" -ForegroundColor Yellow
             Write-Host "       $($finding.Content)" -ForegroundColor Gray

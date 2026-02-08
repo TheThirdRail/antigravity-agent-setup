@@ -7,18 +7,29 @@ description: |
   but hasn't specified exactly which component type to create.
 ---
 
-<skill name="agent-builder" version="1.0.0">
+<skill name="agent-builder" version="2.0.0">
   <metadata>
     <keywords>build, create, extend, skill, workflow, rule, tool, mcp</keywords>
   </metadata>
 
   <goal>Guide the user to the correct builder skill for extending Antigravity's capabilities.</goal>
 
-  <when_to_use>
-    <trigger>User wants to "teach" the agent something new</trigger>
-    <trigger>User wants to "add a capability" but is vague about implementation</trigger>
-    <trigger>Unsure whether to build a Skill, Workflow, or MCP Tool</trigger>
-  </when_to_use>
+  <core_principles>
+    <principle name="Route Before Building">
+      <rule>Ask minimal clarifying questions, then route to one primary builder skill.</rule>
+      <rule>Avoid mixing build tracks unless the user explicitly requests composition.</rule>
+    </principle>
+
+    <principle name="Prefer Existing Capability">
+      <rule>Use mcp-manager to discover existing capabilities before routing to mcp-builder.</rule>
+      <rule>Treat custom MCP construction as a last resort.</rule>
+    </principle>
+
+    <principle name="Keep Handoffs Explicit">
+      <rule>State which builder skill is selected and why.</rule>
+      <rule>Keep handoff criteria concrete so the target builder can execute immediately.</rule>
+    </principle>
+  </core_principles>
 
   <decision_tree>
     <node id="start" question="What kind of capability do you want to add?">
@@ -80,6 +91,14 @@ description: |
       </case>
     </step>
   </workflow>
+
+  <best_practices>
+    <do>Route to one builder skill when the request maps cleanly</do>
+    <do>Use mcp-manager before mcp-builder for capability discovery</do>
+    <do>Reframe vague requests into concrete output goals</do>
+    <dont>Start implementing before the capability type is identified</dont>
+    <dont>Assume custom tooling is needed without checking existing options</dont>
+  </best_practices>
 
   <related_skills>
     <skill>skill-builder</skill>

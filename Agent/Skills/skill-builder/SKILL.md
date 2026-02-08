@@ -1,15 +1,12 @@
 ---
 name: skill-builder
 description: |
-  Meta-skill for creating new AI agent skills following best practices. Guides
-  the process of defining skill structure, writing effective YAML frontmatter,
-  crafting discoverable descriptions, and organizing resources. Use when:
-  (1) Creating a new skill from scratch, (2) Updating an existing skill,
-  (3) Converting workflows to skills, (4) Packaging skills for distribution.
-  Produces skills compatible with Claude Code, GitHub Copilot, Cursor, and Antigravity.
+  Create and upgrade skills using strict v2 structure, validation, and
+  packaging conventions. Use when building new skills, modernizing legacy
+  skills, or preparing skills for distribution and CI enforcement.
 ---
 
-<skill name="skill-builder" version="2.0.0">
+<skill name="skill-builder" version="2.1.0">
   <metadata>
     <keywords>skills, meta, template, builder, creation, packaging</keywords>
   </metadata>
@@ -33,6 +30,12 @@ description: |
       <rule>Description must explain WHEN to use (not just what)</rule>
       <rule>Include trigger conditions in description, NOT in body</rule>
       <rule>Use keywords for searchability</rule>
+    </principle>
+
+    <principle name="Strict Validation Gate">
+      <rule>Body must not include trigger-only sections such as &lt;when_to_use&gt;.</rule>
+      <rule>Every skill must pass XML structure, metadata schema, and reference checks before packaging.</rule>
+      <rule>Warnings are promoted to errors in strict mode.</rule>
     </principle>
 
     <principle name="Degrees of Freedom">
@@ -137,7 +140,7 @@ description: |
   Keep under 200 words.
 ---
 
-<skill name="skill-name" version="1.0.0">
+<skill name="skill-name" version="2.0.0">
   <metadata>
     <keywords>keyword1, keyword2, keyword3</keywords>
   </metadata>
@@ -167,6 +170,7 @@ description: |
         <rule>name: The skill name (kebab-case)</rule>
         <rule>description: Primary trigger mechanism — explain WHEN to use</rule>
         <rule>Do NOT include "When to Use" in body (loaded after trigger)</rule>
+        <rule>Do NOT include &lt;when_to_use&gt; in body XML</rule>
         <rule>No other fields in frontmatter</rule>
       </frontmatter_rules>
     </step>
@@ -178,6 +182,9 @@ description: |
         <check>YAML frontmatter format and required fields</check>
         <check>Skill naming conventions (kebab-case, max 64 chars)</check>
         <check>Description completeness</check>
+        <check>Required XML sections and workflow step sequencing</check>
+        <check>Metadata schema validation (metadata.json)</check>
+        <check>Related skill/workflow references resolve</check>
         <check>File organization and resource references</check>
       </validates>
       <output>Creates skill-name.skill (zip with .skill extension)</output>
@@ -187,15 +194,15 @@ description: |
       <instruction>Move the skill to the appropriate location.</instruction>
       <decision_tree>
         <branch condition="Global Skill (Apply to ALL projects)">
-          <action>Run: scripts/move-global-skill.ps1 -Name "skill-name"</action>
+          <action>Run: scripts/move-global-skill.ps1 -Name "skill-name" -Vendor "anthropic|openai|google"</action>
         </branch>
         <branch condition="Workspace Skill (Apply to THIS project only)">
-          <action>Run: scripts/move-local-skill.ps1 -Name "skill-name"</action>
+          <action>Run: scripts/move-local-skill.ps1 -Name "skill-name" -Vendor "mine|anthropic|openai|google"</action>
         </branch>
       </decision_tree>
     </step>
 
-    <step number="7" name="Iterate">
+    <step number="8" name="Iterate">
       <instruction>Improve based on real usage</instruction>
       <cycle>
         <action>Use the skill on real tasks</action>
@@ -207,12 +214,32 @@ description: |
     </step>
   </workflow>
 
+  <validation_gates>
+    <command>scripts/validate-links.ps1</command>
+    <command>scripts/audit-skills.ps1 -Strict</command>
+    <command>scripts/ci-validate-skills.ps1</command>
+  </validation_gates>
+
   <platform_compatibility>
     <platform name="Antigravity" location=".agent/skills/"/>
     <platform name="Claude Code" location=".claude/skills/"/>
     <platform name="GitHub Copilot" location=".github/skills/"/>
     <platform name="Cursor" location=".cursor/skills/"/>
   </platform_compatibility>
+
+  <installation_paths>
+    <global>
+      <vendor name="Anthropic" location="~/.claude/skills/"/>
+      <vendor name="OpenAI" location="~/.agents/skills/" legacy_location="~/.codex/skills/"/>
+      <vendor name="Google" location="~/.gemini/skills/"/>
+    </global>
+    <local>
+      <vendor name="Mine" location=".agent/skills/"/>
+      <vendor name="Anthropic" location=".claude/skills/"/>
+      <vendor name="OpenAI" location=".agents/skills/" legacy_location=".codex/skills/"/>
+      <vendor name="Google" location=".gemini/skills/"/>
+    </local>
+  </installation_paths>
 
   <best_practices>
     <do>Keep SKILL.md as the "reception desk" pointing to resources</do>
@@ -243,6 +270,6 @@ description: |
   <related_skills>
     <skill>workflow-builder</skill>
     <skill>mcp-manager</skill>
-    <skill>tool-creator</skill>
+    <skill>mcp-builder</skill>
   </related_skills>
 </skill>

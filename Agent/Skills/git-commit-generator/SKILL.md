@@ -6,7 +6,7 @@ description: |
   specification. Use when committing code changes or preparing PR descriptions.
 ---
 
-<skill name="git-commit-generator" version="1.0.0">
+<skill name="git-commit-generator" version="2.0.0">
   <metadata>
     <keywords>git, commit, conventional-commits, changelog</keywords>
   </metadata>
@@ -41,12 +41,7 @@ description: |
     </principle>
   </core_principles>
 
-  <when_to_use>
-    <trigger>After staging changes with git add</trigger>
-    <trigger>When preparing a commit message</trigger>
-    <trigger>When squashing commits for PR</trigger>
-    <trigger>When writing PR titles and descriptions</trigger>
-  </when_to_use>
+
 
   <workflow>
     <step number="1" name="Analyze Staged Changes">
