@@ -56,9 +56,11 @@ if (-not $ServerNames -or $ServerNames.Count -eq 0) {
 }
 
 # Ensure mcp_config.json exists
+$config = $null
 if (-not (Test-Path $mcpConfigPath)) {
     if ($DryRun) {
         Write-Host "[DRY RUN] Would create: $mcpConfigPath" -ForegroundColor Yellow
+        $config = [pscustomobject]@{ mcpServers = [pscustomobject]@{} }
     }
     else {
         $initialConfig = @{ mcpServers = @{} }
@@ -67,8 +69,10 @@ if (-not (Test-Path $mcpConfigPath)) {
     }
 }
 
-# Read existing config
-$config = Get-Content $mcpConfigPath -Raw | ConvertFrom-Json
+# Read existing config when file is present
+if (-not $config) {
+    $config = Get-Content $mcpConfigPath -Raw | ConvertFrom-Json
+}
 
 # Ensure mcpServers property exists
 if (-not $config.mcpServers) {

@@ -1,8 +1,11 @@
-# PowerShell script to set up Docker MCP Lazy-Load Servers for Antigravity
-# Run this script ONCE to initialize all servers
-# Usage: .\setup-mcp-lazy-load.ps1
+# PowerShell script to set up Docker MCP Lazy-Load Servers.
+# Run this script ONCE to initialize all servers.
 
-$EnvFilePath = "$PSScriptRoot\..\.env"
+param(
+    [string]$ClientName = "Antigravity",
+    [string]$EnvFilePath = "$PSScriptRoot\..\.env"
+)
+
 if (-not (Test-Path $EnvFilePath)) {
     Write-Error "File not found: $EnvFilePath"
     exit 1
@@ -132,9 +135,9 @@ Write-Host "`nNext steps:" -ForegroundColor Yellow
 Write-Host "1. Open a NEW PowerShell window" -ForegroundColor White
 Write-Host "2. Run: docker mcp gateway run --port 8080 --transport sse" -ForegroundColor Cyan
 Write-Host "3. Keep that window open (it's your gateway)" -ForegroundColor White
-Write-Host "4. In Antigravity, add the Docker gateway connection" -ForegroundColor White
+Write-Host "4. In $ClientName, add the Docker gateway connection" -ForegroundColor White
 Write-Host "5. Install MCP Vault: pip install mcpv" -ForegroundColor White
-Write-Host "6. Add MCP Vault to Antigravity config for 90% context reduction" -ForegroundColor White
+Write-Host "6. Add MCP Vault to $ClientName config for 90% context reduction" -ForegroundColor White
 
 Write-Host "`nVerify setup:" -ForegroundColor Yellow
 Write-Host "  docker mcp server list          # See all servers" -ForegroundColor Cyan

@@ -1,36 +1,63 @@
 <#
 .SYNOPSIS
-    Installs rules to Antigravity global rules folder.
+    Installs rules to the selected vendor global rules folder.
 .DESCRIPTION
-    Copies all rule files from Agent/Rules to Antigravity's global
-    rules folder so they are available in all projects.
+    Copies all rule files from Agent/<Vendor>/Rules to the selected
+    vendor's global rules folder so they are available in all projects.
+.PARAMETER Vendor
+    Which vendor catalog to install from and target globally.
 .PARAMETER DryRun
     Preview what would be copied without making changes.
+.PARAMETER UseLegacyCodexPath
+    For Vendor=openai only, use ~/.codex/rules instead of ~/.agents/rules.
 .EXAMPLE
     .\install-rules.ps1
+    .\install-rules.ps1 -Vendor openai
     .\install-rules.ps1 -DryRun
 #>
 param(
-    [switch]$DryRun
+    [ValidateSet('google', 'openai', 'anthropic')]
+    [string]$Vendor = 'google',
+
+    [switch]$DryRun,
+    [switch]$UseLegacyCodexPath
 )
 
 $ErrorActionPreference = "Stop"
 
-# Antigravity global rules location
-$destPath = "$env:USERPROFILE\.gemini\rules"
-$sourcePath = Join-Path $PSScriptRoot "..\Agent\Rules"
+switch ($Vendor) {
+    'google' {
+        $vendorFolder = 'Google'
+        $destPath = "$env:USERPROFILE\.gemini\rules"
+    }
+    'openai' {
+        $vendorFolder = 'OpenAI'
+        if ($UseLegacyCodexPath) {
+            $destPath = "$env:USERPROFILE\.codex\rules"
+        }
+        else {
+            $destPath = "$env:USERPROFILE\.agents\rules"
+        }
+    }
+    'anthropic' {
+        $vendorFolder = 'Anthropic'
+        $destPath = "$env:USERPROFILE\.claude\rules"
+    }
+}
 
-Write-Host "=== Antigravity Rules Installer ===" -ForegroundColor Cyan
+$sourcePath = Join-Path $PSScriptRoot "..\Agent\$vendorFolder\Rules"
+
+Write-Host "=== Rules Installer ($Vendor) ===" -ForegroundColor Cyan
 Write-Host ""
 
 # Validate source exists
 if (-not (Test-Path $sourcePath)) {
     Write-Host "NOTE: Source folder not found: $sourcePath" -ForegroundColor Yellow
-    Write-Host "Creating Agent\Rules folder for future use..." -ForegroundColor Yellow
+    Write-Host "Creating Agent\$vendorFolder\Rules folder for future use..." -ForegroundColor Yellow
     if (-not $DryRun) {
         New-Item -ItemType Directory -Path $sourcePath -Force | Out-Null
     }
-    Write-Host "No rules to install yet. Add .md files to Agent\Rules\" -ForegroundColor White
+    Write-Host "No rules to install yet. Add .md files to Agent\$vendorFolder\Rules\" -ForegroundColor White
     exit 0
 }
 
@@ -76,6 +103,5 @@ if ($DryRun) {
     Write-Host "[DRY RUN] No changes made. Remove -DryRun to install." -ForegroundColor Yellow
 }
 else {
-    Write-Host "Done! $($rules.Count) rule(s) installed to Antigravity." -ForegroundColor Cyan
-    Write-Host "Restart Antigravity to see the new rules." -ForegroundColor White
+    Write-Host "Done! $($rules.Count) rule(s) installed for $Vendor." -ForegroundColor Cyan
 }

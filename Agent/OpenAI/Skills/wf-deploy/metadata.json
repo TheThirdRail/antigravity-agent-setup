@@ -1,0 +1,14 @@
+{
+  "name": "wf-deploy",
+  "version": "1.0.0",
+  "description": "OpenAI Codex orchestration skill converted from deploy.md. Use for deploy workflow tasks.",
+  "category": "productivity",
+  "keywords": [
+    "workflow",
+    "orchestration",
+    "deploy",
+    "openai",
+    "codex"
+  ],
+  "related_skills": []
+}

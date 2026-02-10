@@ -1,26 +1,53 @@
 <#
 .SYNOPSIS
-    Installs skills to Antigravity global skills folder.
+    Installs skills to the selected vendor global skills folder.
 .DESCRIPTION
-    Copies all skill folders from Agent/Skills to Antigravity's global
-    skills folder so they are available in all projects.
+    Copies all skill folders from Agent/<Vendor>/Skills to the selected
+    vendor's global skills folder so they are available in all projects.
+.PARAMETER Vendor
+    Which vendor catalog to install from and target globally.
 .PARAMETER DryRun
     Preview what would be copied without making changes.
+.PARAMETER UseLegacyCodexPath
+    For Vendor=openai only, use ~/.codex/skills instead of ~/.agents/skills.
 .EXAMPLE
     .\install-skills.ps1
+    .\install-skills.ps1 -Vendor openai
     .\install-skills.ps1 -DryRun
 #>
 param(
-    [switch]$DryRun
+    [ValidateSet('google', 'openai', 'anthropic')]
+    [string]$Vendor = 'google',
+
+    [switch]$DryRun,
+    [switch]$UseLegacyCodexPath
 )
 
 $ErrorActionPreference = "Stop"
 
-# Antigravity global skills location
-$destPath = "$env:USERPROFILE\.gemini\antigravity\skills"
-$sourcePath = Join-Path $PSScriptRoot "..\Agent\Skills"
+switch ($Vendor) {
+    'google' {
+        $vendorFolder = 'Google'
+        $destPath = "$env:USERPROFILE\.gemini\antigravity\skills"
+    }
+    'openai' {
+        $vendorFolder = 'OpenAI'
+        if ($UseLegacyCodexPath) {
+            $destPath = "$env:USERPROFILE\.codex\skills"
+        }
+        else {
+            $destPath = "$env:USERPROFILE\.agents\skills"
+        }
+    }
+    'anthropic' {
+        $vendorFolder = 'Anthropic'
+        $destPath = "$env:USERPROFILE\.claude\skills"
+    }
+}
 
-Write-Host "=== Antigravity Skills Installer ===" -ForegroundColor Cyan
+$sourcePath = Join-Path $PSScriptRoot "..\Agent\$vendorFolder\Skills"
+
+Write-Host "=== Skills Installer ($Vendor) ===" -ForegroundColor Cyan
 Write-Host ""
 
 # Validate source exists
@@ -76,6 +103,5 @@ if ($DryRun) {
     Write-Host "[DRY RUN] No changes made. Remove -DryRun to install." -ForegroundColor Yellow
 }
 else {
-    Write-Host "Done! $($skills.Count) skill(s) installed to Antigravity." -ForegroundColor Cyan
-    Write-Host "Restart Antigravity to use the new skills." -ForegroundColor White
+    Write-Host "Done! $($skills.Count) skill(s) installed for $Vendor." -ForegroundColor Cyan
 }

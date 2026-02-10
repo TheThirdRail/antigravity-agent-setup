@@ -12,6 +12,13 @@ Info/
 .agent/
 education/
 research/
+Agent-Context/
+agent-context/
+Agent/Anthropic/
+anthropic/
+Agent/OpenAI/deprecated-workflows/
+Agent/OpenAI/deprecated-rules/
+Agent/OpenAI/Scripts/deprecated-scripts/
 
 # Dependencies
 node_modules/

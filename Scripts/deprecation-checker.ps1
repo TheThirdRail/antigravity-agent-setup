@@ -1,37 +1,69 @@
 <#
 .SYNOPSIS
-    Removes deprecated rules, workflows, and skills from Antigravity global folders.
+    Removes deprecated rules, workflows, and skills from a selected vendor global folders.
 .DESCRIPTION
-    Compares items in Antigravity's global folders with this project's Agent/ folder.
-    Deletes any global items that no longer exist in the project (deprecated).
-    This ensures the global folders stay in sync with this project.
+    Compares items in a selected vendor's global folders with this project's
+    Agent/<Vendor>/ folder. Deletes global items that no longer exist in the
+    project (deprecated), keeping globals in sync.
+.PARAMETER Vendor
+    Which vendor catalog to compare against.
 .PARAMETER DryRun
     Preview what would be deleted without making changes.
+.PARAMETER UseLegacyCodexPath
+    For Vendor=openai only, use ~/.codex/* instead of ~/.agents/*.
 .EXAMPLE
     .\deprecation-checker.ps1
+    .\deprecation-checker.ps1 -Vendor anthropic
     .\deprecation-checker.ps1 -DryRun
 #>
 param(
-    [switch]$DryRun
+    [ValidateSet('google', 'openai', 'anthropic')]
+    [string]$Vendor = 'google',
+
+    [switch]$DryRun,
+    [switch]$UseLegacyCodexPath
 )
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Antigravity Deprecation Checker ===" -ForegroundColor Cyan
+Write-Host "=== Deprecation Checker ($Vendor) ===" -ForegroundColor Cyan
 Write-Host ""
 
 # Define paths
 $projectRoot = Join-Path $PSScriptRoot ".."
 
-# Source paths (this project)
-$sourceRules = Join-Path $projectRoot "Agent\Rules"
-$sourceSkills = Join-Path $projectRoot "Agent\Skills"
-$sourceWorkflows = Join-Path $projectRoot "Agent\Workflows"
+switch ($Vendor) {
+    'google' {
+        $vendorFolder = 'Google'
+        $globalRules = "$env:USERPROFILE\.gemini\rules"
+        $globalSkills = "$env:USERPROFILE\.gemini\antigravity\skills"
+        $globalWorkflows = "$env:USERPROFILE\.gemini\antigravity\global_workflows"
+    }
+    'openai' {
+        $vendorFolder = 'OpenAI'
+        if ($UseLegacyCodexPath) {
+            $globalRules = "$env:USERPROFILE\.codex\rules"
+            $globalSkills = "$env:USERPROFILE\.codex\skills"
+            $globalWorkflows = "$env:USERPROFILE\.codex\workflows"
+        }
+        else {
+            $globalRules = "$env:USERPROFILE\.agents\rules"
+            $globalSkills = "$env:USERPROFILE\.agents\skills"
+            $globalWorkflows = "$env:USERPROFILE\.agents\workflows"
+        }
+    }
+    'anthropic' {
+        $vendorFolder = 'Anthropic'
+        $globalRules = "$env:USERPROFILE\.claude\rules"
+        $globalSkills = "$env:USERPROFILE\.claude\skills"
+        $globalWorkflows = "$env:USERPROFILE\.claude\workflows"
+    }
+}
 
-# Destination paths (Antigravity global)
-$globalRules = "$env:USERPROFILE\.gemini\rules"
-$globalSkills = "$env:USERPROFILE\.gemini\antigravity\skills"
-$globalWorkflows = "$env:USERPROFILE\.gemini\antigravity\global_workflows"
+# Source paths (this project)
+$sourceRules = Join-Path $projectRoot "Agent\$vendorFolder\Rules"
+$sourceSkills = Join-Path $projectRoot "Agent\$vendorFolder\Skills"
+$sourceWorkflows = Join-Path $projectRoot "Agent\$vendorFolder\Workflows"
 
 $totalRemoved = 0
 
@@ -53,7 +85,8 @@ function Remove-DeprecatedItems {
 
     # Get items in global folder
     if ($IsDirectory) {
-        $globalItems = Get-ChildItem -Path $GlobalPath -Directory -ErrorAction SilentlyContinue
+        $globalItems = Get-ChildItem -Path $GlobalPath -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -notlike '.*' }
     }
     else {
         $globalItems = Get-ChildItem -Path $GlobalPath -Filter "*.md" -ErrorAction SilentlyContinue
@@ -126,7 +159,7 @@ if ($DryRun) {
 }
 else {
     if ($totalRemoved -gt 0) {
-        Write-Host "Removed $totalRemoved deprecated item(s) from Antigravity." -ForegroundColor Red
+        Write-Host "Removed $totalRemoved deprecated item(s) for $Vendor." -ForegroundColor Red
     }
     else {
         Write-Host "No deprecated items found. Everything is in sync!" -ForegroundColor Green
