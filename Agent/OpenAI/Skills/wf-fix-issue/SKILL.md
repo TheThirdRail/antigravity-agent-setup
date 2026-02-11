@@ -82,12 +82,15 @@ description: |
       <instruction>npm test</instruction>
       <command>npm test</command>
     </step>
-    <step number="9" name="Commit with Reference">
+    <step number="9" name="Update Archives">
+      <instruction>Route through archive-manager and refresh relevant archives for the changed code/docs before closing the issue workflow.</instruction>
+    </step>
+    <step number="10" name="Commit with Reference">
       <instruction>Use for conventional commit message git add . git commit -m "fix: [description] Fixes #$ARGUMENTS"</instruction>
       <command>git add .</command>
       <command>git commit -m "fix: [description] Fixes #$ARGUMENTS"</command>
     </step>
-    <step number="10" name="Create PR">
+    <step number="11" name="Create PR">
       <instruction>Reference the issue in the PR Explain what was wrong and how it was fixed Use /pr workflow if needed</instruction>
     </step>
   </workflow>
@@ -104,5 +107,6 @@ description: |
   <related_skills>
     <skill>git-commit-generator</skill>
     <skill>test-generator</skill>
+    <skill>archive-manager</skill>
   </related_skills>
 </skill>

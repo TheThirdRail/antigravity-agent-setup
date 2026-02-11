@@ -44,6 +44,9 @@ description: Govern Agent-Context structure and archive lifecycle actions across
     <must>Archive significant architectural decisions to archive-memory.</must>
     <must>Index code after major refactors or new features.</must>
     <must>Index new documentation after creation.</must>
+    <must>After code/docs/config changes, execute archive updates before marking work complete.</must>
+    <must>Use archive-manager to route archive actions to the correct archive skill(s).</must>
+    <prefer>Use fresh archive retrieval first for context-heavy tasks, then fall back to direct file reads when archives are stale.</prefer>
     <must_not>Archive credentials or secrets.</must_not>
     <must_not>Re-index unchanged codebases unnecessarily.</must_not>
   </archive_policy>
@@ -58,6 +61,7 @@ description: Govern Agent-Context structure and archive lifecycle actions across
     </step>
     <step number="3" name="Apply Archive Policy">
       <instruction>Apply archive actions by event type and change significance.</instruction>
+      <instruction>Enforce post-change archive updates before completion for implementation/refactor/fix events.</instruction>
       <instruction>Skip unchanged targets to avoid duplicate indexing.</instruction>
     </step>
     <step number="4" name="Emit Governance Report">

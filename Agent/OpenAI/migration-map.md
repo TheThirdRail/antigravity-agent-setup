@@ -32,6 +32,5 @@
 - Repo runtime AGENTS mirror: `AGENTS.md`
 - Consolidated XML rules artifact: `Agent/OpenAI/default.rules`
 - Skills root: `Agent/OpenAI/Skills`
-- Workflow archive: `Agent/OpenAI/deprecated-workflows`
-- Rule archive: `Agent/OpenAI/deprecated-rules`
-
+- Workflow archive: `Agent/OpenAI/deprecated-Workflows`
+- Rule archive: `Agent/OpenAI/deprecated-Rules`

@@ -53,14 +53,27 @@ Options:
 ## MCP Setup
 
 ```powershell
-.\install-mcp-servers.ps1 -ServerNames "filesystem", "git"
-.\set-mcp-secrets.ps1
-.\setup_lazy_load.ps1
+..\..\..\MCP-Servers\scripts\install-mcp-servers.ps1 -Vendor openai -ServerNames "filesystem", "git"
+..\..\..\MCP-Servers\scripts\set-mcp-secrets.ps1
+..\..\..\MCP-Servers\scripts\setup_lazy_load.ps1 -ClientName "OpenAI ChatGPT/Codex"
+```
+
+## MCP Runtime Cleanup (After Use)
+
+Terminate stale MCP runtime processes after MCP-heavy sessions:
+
+```powershell
+Get-Process -Name "docker-mcp" -ErrorAction SilentlyContinue | Stop-Process -Force
+```
+
+Optional verification:
+
+```powershell
+Get-Process -Name "docker-mcp" -ErrorAction SilentlyContinue
 ```
 
 ## Deprecated Scripts
 
 Deprecated scripts are archived in:
 
-- `Agent/OpenAI/Scripts/deprecated-scripts/build-agents.ps1`
-- `Agent/OpenAI/Scripts/deprecated-scripts/install-workflows.ps1`
+- `Agent/OpenAI/Scripts/deprecated-Scripts/build-agents.ps1`

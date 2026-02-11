@@ -262,7 +262,7 @@ $SkillsRoot = Split-Path $SkillPath -Parent
 $RepoRoot = Split-Path $SkillsRoot -Parent
 $SchemaPath = Join-Path $SkillsRoot "metadata.schema.json"
 $MetadataPath = Join-Path $SkillPath "metadata.json"
-$WorkflowsPath = Join-Path $RepoRoot "deprecated-workflows"
+$WorkflowsPath = Join-Path $RepoRoot "deprecated-Workflows"
 if (-not (Test-Path $WorkflowsPath)) {
     $WorkflowsPath = Join-Path $RepoRoot "Workflows"
 }

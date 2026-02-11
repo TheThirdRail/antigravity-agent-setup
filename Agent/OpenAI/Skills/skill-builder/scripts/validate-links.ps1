@@ -9,7 +9,7 @@ param(
     [string]$SkillsRoot = "Agent/OpenAI/Skills",
 
     [Parameter(Mandatory = $false)]
-    [string]$WorkflowsRoot = "Agent/OpenAI/deprecated-workflows"
+    [string]$WorkflowsRoot = "Agent/OpenAI/deprecated-Workflows"
 )
 
 $ErrorActionPreference = "Stop"

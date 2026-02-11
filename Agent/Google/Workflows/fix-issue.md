@@ -68,7 +68,12 @@ argument-hint: <issue-number>
       <command>npm test</command>
     </step>
 
-    <step number="9" name="Commit with Reference">
+    <step number="9" name="Update Archives">
+      <skill ref="archive-manager">Route and execute archive updates for changed code/docs before completion</skill>
+      <action>Refresh archive-code/archive-docs/archive-graph/archive-memory for modified artifacts</action>
+    </step>
+
+    <step number="10" name="Commit with Reference">
       <skill ref="git-commit-generator">Use for conventional commit message</skill>
       <command>git add .</command>
       <command>git commit -m "fix: [description]
@@ -76,7 +81,7 @@ argument-hint: <issue-number>
 Fixes #$ARGUMENTS"</command>
     </step>
 
-    <step number="10" name="Create PR">
+    <step number="11" name="Create PR">
       <action>Reference the issue in the PR</action>
       <action>Explain what was wrong and how it was fixed</action>
       <action>Use /pr workflow if needed</action>

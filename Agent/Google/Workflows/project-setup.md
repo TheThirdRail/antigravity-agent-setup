@@ -47,6 +47,11 @@ build/
 
 Agent-Context/
 
+# Archive Data (DO NOT COMMIT)
+
+Agent-Context/Archives/
+Archive/
+
 # Testing
 
 coverage/

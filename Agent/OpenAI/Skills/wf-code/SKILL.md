@@ -55,7 +55,7 @@ description: |
 
   <workflow>
     <step number="1" name="Load Context">
-      <instruction>Use for API docs and implementation patterns Read checklist.md to understand current progress Read prd.md for requirements Check project_rules.md for conventions Query memory/codegraph for existing patterns</instruction>
+      <instruction>Use for API docs and implementation patterns Read checklist.md to understand current progress Read prd.md for requirements Check project_rules.md for conventions Route retrieval through archive-manager and prefer fresh archives before broad source scans</instruction>
     </step>
     <step number="2" name="Execute Tasks">
       <instruction>For each task in the checklist: Read before write — Always verify file contents before modifying Implement — Write the code Test — Verify it works Update checklist — Mark task as [x] complete</instruction>
@@ -67,7 +67,7 @@ description: |
       <instruction>Don't over-explain obvious changes Focus on non-obvious logic and decisions Keep responses concise Only pause for genuine blockers</instruction>
     </step>
     <step number="5" name="Update Progress">
-      <instruction>Mark completed tasks in checklist.md Update memory/codegraph with new functions Note any deferred items</instruction>
+      <instruction>Mark completed tasks in checklist.md Update memory/codegraph with new functions Run archive-manager to sync archive-code/archive-docs/archive-graph/archive-memory for changed artifacts Note any deferred items</instruction>
     </step>
   </workflow>
 
@@ -83,5 +83,6 @@ description: |
   <related_skills>
     <skill>code-reviewer</skill>
     <skill>research-capability</skill>
+    <skill>archive-manager</skill>
   </related_skills>
 </skill>

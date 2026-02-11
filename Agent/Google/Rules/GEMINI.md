@@ -89,6 +89,21 @@ activation: always_on
     <must>Update documentation when behavior, interfaces, setup, or dependencies change.</must>
   </execution_quality_baseline>
 
+  <archive_lifecycle_baseline>
+    <must>Use canonical archive events: setup, planning, research, handoff, and release.</must>
+    <must>After code/docs/config changes, update the appropriate archives before marking work complete.</must>
+    <must>Route archive actions through `archive-manager` to select the correct archive skill(s).</must>
+    <prefer>Use archive retrieval first for context-heavy tasks when archive freshness is adequate.</prefer>
+    <fallback>When archive data is stale or missing, read project files directly and then refresh archives.</fallback>
+    <must_not>Archive credentials, secrets, keys, or sensitive tokens.</must_not>
+  </archive_lifecycle_baseline>
+
+  <teaching_protocol_baseline>
+    <must>Define unfamiliar technical terms in plain language the first time they appear.</must>
+    <must>Route to `/tutor` only when the user explicitly asks for extra understanding support.</must>
+    <must_not>Auto-route implementation/debug/review requests to `/tutor` unless explicitly requested.</must_not>
+  </teaching_protocol_baseline>
+
   <runtime_safety_baseline>
     <must>Use stable sanitized error contracts for API responses.</must>
     <must>Include correlation identifiers for error and log traceability.</must>
@@ -98,14 +113,21 @@ activation: always_on
 
   <routing_baseline>
     <instruction>When request intent clearly matches a workflow trigger, suggest routing before direct execution.</instruction>
+    <instruction>Use `/tutor` only for explicit learning/explanation requests.</instruction>
     <instruction>Detailed trigger matrix and routing logic are maintained in `Workflows/task-router.md`.</instruction>
   </routing_baseline>
+
+  <mcp_runtime_baseline>
+    <must>Use MCP capabilities when they materially improve speed, accuracy, or context efficiency.</must>
+    <must>After MCP-heavy operations, terminate stale MCP runtime processes when no longer needed.</must>
+  </mcp_runtime_baseline>
 
   <modular_authority>
     <canonical_workflow file="../Workflows/task-router.md">Routing matrix and route-decision procedure.</canonical_workflow>
     <canonical_workflow file="../Workflows/context-governance.md">Agent-Context folder policy and archiving lifecycle behavior.</canonical_workflow>
     <canonical_workflow file="../Workflows/quality-gates.md">Refactor/testing/documentation gates.</canonical_workflow>
     <canonical_skill file="../Skills/tool-selection-router/SKILL.md">Tool selection matrix and fallback/escalation logic.</canonical_skill>
+    <canonical_skill file="../Skills/archive-manager/SKILL.md">Archive routing, post-change sync, and archive-first retrieval policy.</canonical_skill>
     <canonical_skill file="../Skills/communication-protocol-enforcer/SKILL.md">Clarification, error-recovery, and progress communication templates.</canonical_skill>
     <canonical_skill file="../Skills/code-style-enforcer/SKILL.md">Naming, comments, DRY, and type-safety conventions.</canonical_skill>
     <canonical_skill file="../Skills/runtime-safety-enforcer/SKILL.md">Dependency environment, error-contract, and logging safety details.</canonical_skill>

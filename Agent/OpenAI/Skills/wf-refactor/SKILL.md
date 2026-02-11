@@ -55,7 +55,7 @@ description: |
 
   <workflow>
     <step number="1" name="Load Context from Databases">
-      <instruction>Query all 3 databases BEFORE making changes: What is this file's purpose? What patterns does this project use? Any documented decisions about this code? What files depend on this one? What functions call the ones I'm changing? What will...</instruction>
+      <instruction>Route retrieval through archive-manager and query fresh archives BEFORE making changes: What is this file's purpose? What patterns does this project use? Any documented decisions about this code? What files depend on this one? What functions call the ones I'm changing? What will break if signatures change?</instruction>
     </step>
     <step number="2" name="Identify All References">
       <instruction>Search for all usages across the codebase List all files that import/reference it Identify all call sites Note any external dependencies</instruction>
@@ -73,7 +73,7 @@ description: |
       <instruction>Run all tests Manual verification of affected features Check for regressions</instruction>
     </step>
     <step number="7" name="Update Databases">
-      <instruction>After successful refactor, update ALL 3 databases</instruction>
+      <instruction>After successful refactor, use archive-manager to refresh archive-code/archive-docs/archive-git/archive-graph/archive-memory for changed artifacts.</instruction>
     </step>
   </workflow>
 
@@ -87,5 +87,6 @@ description: |
 
   <related_skills>
     <skill>code-reviewer</skill>
+    <skill>archive-manager</skill>
   </related_skills>
 </skill>

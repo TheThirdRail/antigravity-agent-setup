@@ -55,7 +55,7 @@ description: |
 
   <workflow>
     <step number="1" name="Create .gitignore">
-      <instruction># Dependencies node_modules/ vendor/ .venv/ __pycache__/ # Build outputs dist/ build/ .next/ # Environment .env .env.local .env.*.local # IDE .idea/ .vscode/settings.json # AI/Agent Generated (DO NOT COMMIT) Agent-Context/ # Testing cove...</instruction>
+      <instruction># Dependencies node_modules/ vendor/ .venv/ __pycache__/ # Build outputs dist/ build/ .next/ # Environment .env .env.local .env.*.local # IDE .idea/ .vscode/settings.json # AI/Agent Generated (DO NOT COMMIT) Agent-Context/ # Archive Data (DO NOT COMMIT) Agent-Context/Archives/ Archive/ # Testing coverage/ # Temporary tmp/ temp/</instruction>
     </step>
     <step number="2" name="Create Agent-Context Folder Structure">
       <instruction>Create the Agent-Context directory tree for all agent-generated files. Agent-Context/Research Agent-Context/Lessons Agent-Context/PRD Agent-Context/Plan Agent-Context/Tasks Agent-Context/Communications/Agent-Notes Agent-Context/Communica...</instruction>

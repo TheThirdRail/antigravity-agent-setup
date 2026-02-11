@@ -40,6 +40,7 @@ description: Recommend the next slash command by classifying request intent agai
   <steps>
     <step number="1" name="Classify Request">
       <instruction>Map `request_text` to the closest trigger class in the routing table.</instruction>
+      <instruction>Only map to `Learning/Docs -> /tutor` when the user explicitly asks for teaching, explanation, or learning support.</instruction>
       <instruction>If `request_text` already contains an explicit slash command, return `recommended_command=no-reroute`.</instruction>
     </step>
     <step number="2" name="Resolve Workflow">

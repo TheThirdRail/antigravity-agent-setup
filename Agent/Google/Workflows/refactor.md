@@ -16,6 +16,7 @@ description: Refactor Mode - Refactor code with full database context to prevent
   <steps>
     <step number="1" name="Load Context from Databases">
       <instruction>Query all 3 databases BEFORE making changes:</instruction>
+      <instruction>Route retrieval through archive-manager and prefer fresh archives before broad source scans.</instruction>
       <database name="mem0/memory">
         <query>What is this file's purpose?</query>
         <query>What patterns does this project use?</query>
@@ -70,7 +71,7 @@ description: Refactor Mode - Refactor code with full database context to prevent
     </step>
 
     <step number="7" name="Update Databases">
-      <instruction>After successful refactor, update ALL 3 databases</instruction>
+      <instruction>After successful refactor, use archive-manager to refresh archive-code/archive-docs/archive-git/archive-graph/archive-memory for changed artifacts.</instruction>
     </step>
 
     <step number="8" name="Run Quality Gate (Mandatory)">

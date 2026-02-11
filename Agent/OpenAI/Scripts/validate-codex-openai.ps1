@@ -10,7 +10,7 @@ $canonicalAgentsPath = Join-Path $ProjectRoot 'Agent\OpenAI\AGENTS.md'
 $rootAgentsPath = Join-Path $ProjectRoot 'AGENTS.md'
 $rulesPath = Join-Path $ProjectRoot 'Agent\OpenAI\default.rules'
 $automationsDir = Join-Path $ProjectRoot 'Agent\OpenAI\Automations'
-$workflowDir = Join-Path $ProjectRoot 'Agent\OpenAI\deprecated-workflows'
+$workflowDir = Join-Path $ProjectRoot 'Agent\OpenAI\deprecated-Workflows'
 $skillsDir = Join-Path $ProjectRoot 'Agent\OpenAI\Skills'
 $mappingPath = Join-Path $ProjectRoot 'Agent\OpenAI\Codex\mappings\workflow-to-skill-map.yaml'
 
@@ -70,7 +70,7 @@ else {
 }
 
 if (-not (Test-Path $workflowDir)) {
-    $failures += 'Workflow archive missing: Agent/OpenAI/deprecated-workflows'
+    $failures += 'Workflow archive missing: Agent/OpenAI/deprecated-Workflows'
 }
 
 if (-not (Test-Path $mappingPath)) {
@@ -133,7 +133,7 @@ foreach ($root in $scanRoots) {
     $files = @()
     if ((Get-Item $root) -is [System.IO.DirectoryInfo]) {
         $files = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
-            Where-Object { $_.FullName -notlike '*\deprecated-scripts\*' }
+            Where-Object { $_.FullName -notlike '*\deprecated-Scripts\*' }
     }
     else {
         $files = @(Get-Item $root)

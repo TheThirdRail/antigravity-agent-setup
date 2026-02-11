@@ -54,15 +54,26 @@ description: |
     <principle name="Traceable Hand-Offs">
       <rule>State which archive skill is selected and what artifact will be produced.</rule>
     </principle>
+
+    <principle name="Archive Lifecycle Enforcement">
+      <rule>After code/docs/config changes, require archive updates before declaring task completion.</rule>
+      <rule>Prefer archive-first retrieval when archive freshness is adequate; fall back to direct file reads only when needed.</rule>
+    </principle>
   </core_principles>
 
   <workflow>
+    <step number="0" name="Identify Archive Event">
+      <instruction>Classify the request into one of the canonical events: setup, planning, research, handoff, or release.</instruction>
+      <instruction>For implementation/refactor/fix activity, treat completion-time indexing as part of the release event.</instruction>
+    </step>
+
     <step number="1" name="Classify Archive Need">
       <question>Need symbol index/navigation? Route to archive-code.</question>
       <question>Need semantic document retrieval? Route to archive-docs.</question>
       <question>Need repository evolution/history? Route to archive-git.</question>
       <question>Need structural code graph? Route to archive-graph.</question>
       <question>Need durable decision/context store? Route to archive-memory.</question>
+      <question>Is this retrieval-only, post-change indexing, or both?</question>
     </step>
 
     <step number="2" name="Dispatch to Specialized Skill">
@@ -76,7 +87,12 @@ description: |
     </step>
 
     <step number="3" name="Record Archive Contract">
-      <instruction>Capture chosen skill, project path, output path, and retrieval command.</instruction>
+      <instruction>Capture chosen skill, project path, output path, retrieval command, and freshness status.</instruction>
+    </step>
+
+    <step number="4" name="Enforce Archive Read/Write Policy">
+      <instruction>If code/docs/config changed, execute required archive writes before completion.</instruction>
+      <instruction>For context gathering, use fresh archives first; if stale/missing, read source files then refresh archives.</instruction>
     </step>
   </workflow>
 

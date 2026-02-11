@@ -71,7 +71,25 @@ description: |
     <step number="6" name="Validate Consistency">
       <instruction>Ensure referenced skills exist and template scope matches intended recurrence.</instruction>
     </step>
+    <step number="7" name="Install Automation">
+      <instruction>Move the automation template to the appropriate location.</instruction>
+      <decision_tree>
+        <branch condition="Global Automation (apply across projects)">
+          <action>Run: scripts/move-global-automation.ps1 -Name "wf-name.automation.md" -Vendor "openai|anthropic|google"</action>
+        </branch>
+        <branch condition="Workspace Automation (apply to current project)">
+          <action>Run: scripts/move-local-automation.ps1 -Name "wf-name.automation.md" -Vendor "mine|openai|anthropic|google"</action>
+        </branch>
+      </decision_tree>
+    </step>
   </workflow>
+
+  <resource_folders>
+    <folder name="scripts/" purpose="Automation installation utilities">
+      <file>move-global-automation.ps1</file>
+      <file>move-local-automation.ps1</file>
+    </folder>
+  </resource_folders>
 
   <best_practices>
     <do>Keep each automation template focused on one recurring job.</do>

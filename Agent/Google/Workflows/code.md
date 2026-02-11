@@ -28,10 +28,11 @@ description: Code with Context - Execute implementation with focus on building, 
     <step number="1" name="Load Context">
       <skill ref="research-capability">Use for API docs and implementation patterns</skill>
       <skill ref="tool-selection-router">Use to choose the correct lookup/search tool for context gathering</skill>
+      <skill ref="archive-manager">Route archive retrieval and prefer fresh archives before broad source scans</skill>
       <action>Read checklist.md to understand current progress</action>
       <action>Read prd.md for requirements</action>
       <action>Check project_rules.md for conventions</action>
-      <action>Query memory/codegraph for existing patterns</action>
+      <action>Query archives for existing patterns; fall back to direct file reads only when archives are stale or incomplete</action>
     </step>
 
     <step number="2" name="Execute Tasks">
@@ -74,6 +75,7 @@ description: Code with Context - Execute implementation with focus on building, 
     <step number="7" name="Update Progress">
       <action>Mark completed tasks in checklist.md</action>
       <action>Update memory/codegraph with new functions</action>
+      <action>Run archive-manager to refresh archive-code/archive-docs/archive-graph/archive-memory for changed artifacts</action>
       <action>Note any deferred items</action>
     </step>
   </steps>

@@ -80,7 +80,7 @@ function Test-ActivePathRefs {
 
     $scanFiles = @()
     $scanFiles += Get-ChildItem -Path (Join-Path $RootPath 'Agent\OpenAI\Scripts') -Recurse -File -ErrorAction SilentlyContinue |
-        Where-Object { $_.FullName -notlike '*\deprecated-scripts\*' }
+        Where-Object { $_.FullName -notlike '*\deprecated-Scripts\*' }
     $scanFiles += Get-ChildItem -Path (Join-Path $RootPath 'Agent\OpenAI\Skills') -Recurse -File -Filter 'SKILL.md' -ErrorAction SilentlyContinue
     $scanFiles += Get-Item -Path (Join-Path $RootPath 'AGENTS.md') -ErrorAction SilentlyContinue
     $scanFiles += Get-Item -Path (Join-Path $RootPath 'Agent\OpenAI\AGENTS.md') -ErrorAction SilentlyContinue

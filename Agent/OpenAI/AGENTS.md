@@ -59,6 +59,8 @@ This is the canonical OpenAI policy file for this repository.
       <constraints>
         <constraint>State assumptions explicitly when needed.</constraint>
         <constraint>Explain failures with immediate recovery actions.</constraint>
+        <constraint>Define unfamiliar technical terms in plain language the first time they appear.</constraint>
+        <constraint>Switch to dedicated tutor mode only when the user explicitly asks for extra understanding support.</constraint>
       </constraints>
     </module>
     <module id="environment-rules" priority="1">
@@ -87,6 +89,8 @@ This is the canonical OpenAI policy file for this repository.
       <constraints>
         <constraint>Start with fast local repo search before external lookup.</constraint>
         <constraint>Prefer primary sources for technical claims.</constraint>
+        <constraint>Use MCP capabilities when they materially improve speed, accuracy, or context efficiency for the task.</constraint>
+        <constraint>After MCP-heavy operations, terminate stale MCP runtime processes when no longer needed.</constraint>
       </constraints>
     </module>
     <module id="workflow-router" priority="2">
@@ -106,7 +110,10 @@ This is the canonical OpenAI policy file for this repository.
     <module id="archive-rules" priority="2">
       <intent>Archive important decisions and index meaningful changes.</intent>
       <constraints>
+        <constraint>Use canonical archive events: setup, planning, research, handoff, and release.</constraint>
         <constraint>Index substantial code/docs changes.</constraint>
+        <constraint>After code/docs/config changes, run archive updates before marking work complete.</constraint>
+        <constraint>Prefer archive retrieval first when archive freshness is adequate; fall back to direct file reads when archives are stale or missing.</constraint>
         <constraint>Do not archive credentials or secrets.</constraint>
       </constraints>
     </module>
@@ -144,6 +151,11 @@ This is the canonical OpenAI policy file for this repository.
     <route trigger="Code Review" skill="wf-review" />
   </skill_routing>
 
+  <routing_constraints>
+    <constraint>Trigger `wf-tutor` only when the user explicitly asks for learning, documentation, or explanation support.</constraint>
+    <constraint>During implementation/debug/review flows, keep explanations concise and define unfamiliar terms inline instead of auto-switching workflows.</constraint>
+  </routing_constraints>
+
   <automation_templates>
     <automation id="wf-morning" template="Agent/OpenAI/Automations/wf-morning.automation.md" schedule_hint="daily" />
     <automation id="wf-security-audit" template="Agent/OpenAI/Automations/wf-security-audit.automation.md" schedule_hint="weekly_or_monthly" />
@@ -154,7 +166,7 @@ This is the canonical OpenAI policy file for this repository.
   <references>
     <skills_root>Agent/OpenAI/Skills</skills_root>
     <rules_artifact>Agent/OpenAI/default.rules</rules_artifact>
-    <workflow_archive>Agent/OpenAI/deprecated-workflows</workflow_archive>
-    <rules_archive>Agent/OpenAI/deprecated-rules</rules_archive>
+    <workflow_archive>Agent/OpenAI/deprecated-Workflows</workflow_archive>
+    <rules_archive>Agent/OpenAI/deprecated-Rules</rules_archive>
   </references>
 </agent_policy>
