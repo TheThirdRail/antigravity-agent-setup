@@ -35,8 +35,8 @@ Install these first:
 From a terminal:
 
 ```powershell
-git clone https://github.com/TheThirdRail/antigravity-agent-setup.git
-cd antigravity-agent-setup
+git clone https://github.com/TheThirdRail/coding-agent-setup.git
+cd coding-agent-setup
 Copy-Item example.env .env
 ```
 
