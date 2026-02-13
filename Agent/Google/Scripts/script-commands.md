@@ -30,13 +30,15 @@ Workspace-local install targets (via `move-local-*` scripts):
 ## MCP Setup
 
 ```powershell
-..\..\..\MCP-Servers\scripts\install-mcp-servers.ps1 -Vendor google -ServerNames "filesystem", "git"
+..\..\..\MCP-Servers\scripts\install-mcp-servers.ps1 -Vendor google
 ..\..\..\MCP-Servers\scripts\set-mcp-secrets.ps1
 ..\..\..\MCP-Servers\scripts\setup_lazy_load.ps1 -ClientName "Google Antigravity"
 ```
 
 Targets:
-- MCP config: `%LOCALAPPDATA%\Google\Antigravity\User Data\User\mcp_config.json`
+- MCP config: `~\.gemini\antigravity\mcp_config.json`
+- Runtime catalog: `MCP-Servers\mcp-docker-stack\docker-mcp-catalog.runtime.yaml`
+- Registry: `MCP-Servers\mcp-docker-stack\registry.all.yaml`
 
 ## MCP Runtime Cleanup (After Use)
 

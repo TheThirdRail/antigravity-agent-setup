@@ -1,146 +1,232 @@
-# PowerShell script to set up Docker MCP Lazy-Load Servers.
-# Run this script ONCE to initialize all servers.
-
+[CmdletBinding()]
 param(
-    [string]$ClientName = "Antigravity",
-    [string]$EnvFilePath = "$PSScriptRoot\..\.env"
+    [string]$ClientName = 'All Clients',
+    [string]$EnvFilePath = '',
+    [string]$ReportDirectory = '',
+    [switch]$SkipCatalogSync,
+    [switch]$SkipSecrets
 )
 
-if (-not (Test-Path $EnvFilePath)) {
-    Write-Error "File not found: $EnvFilePath"
+$ErrorActionPreference = 'Stop'
+
+function Get-ServerNamesFromCatalog {
+    param([string]$CatalogPath)
+    $pattern = '(?m)^  ([a-zA-Z0-9_-]+):\s*$'
+    $matches = [regex]::Matches((Get-Content $CatalogPath -Raw), $pattern)
+    return @($matches | ForEach-Object { $_.Groups[1].Value })
+}
+
+function Write-RegistryFile {
+    param(
+        [string]$Path,
+        [string[]]$ServerNames
+    )
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add('registry:')
+    foreach ($name in $ServerNames) {
+        $lines.Add("  ${name}:")
+        $lines.Add("    ref: ''")
+    }
+    $parent = Split-Path -Parent $Path
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -Path $Path -Value ($lines -join "`r`n") -Encoding utf8
+}
+
+function Extract-ErrorLine {
+    param([string[]]$Lines)
+    foreach ($line in $Lines) {
+        if ($line -match '(?i)error|failed|timeout|cannot|unable|EOF|invalid') {
+            return $line.Trim()
+        }
+    }
+    if ($Lines.Count -gt 0) {
+        return $Lines[0].Trim()
+    }
+    return ''
+}
+
+function Invoke-ServerProbe {
+    param(
+        [string]$ServerName,
+        [string]$RegistryPath,
+        [string]$RuntimeCatalogPath
+    )
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $output = docker mcp tools count `
+        --gateway-arg="--registry=$RegistryPath" `
+        --gateway-arg="--additional-catalog=$RuntimeCatalogPath" `
+        --gateway-arg="--servers=$ServerName" 2>&1
+    $stopwatch.Stop()
+
+    $lines = @($output | ForEach-Object { "$_" })
+    $joined = ($lines -join "`n")
+    $toolCount = 0
+    $status = 'fail'
+    if ($joined -match '\b(\d+)\s+tools?\b') {
+        $toolCount = [int]$Matches[1]
+        if ($toolCount -gt 0) {
+            $status = 'pass'
+        }
+    }
+
+    return [pscustomobject]@{
+        server        = $ServerName
+        status        = $status
+        tool_count    = $toolCount
+        error_excerpt = if ($status -eq 'pass') { '' } else { Extract-ErrorLine -Lines $lines }
+        probe_seconds = [Math]::Round($stopwatch.Elapsed.TotalSeconds, 3)
+    }
+}
+
+function Write-MarkdownReport {
+    param(
+        [string]$Path,
+        [string]$InventoryCatalogPath,
+        [string]$RuntimeCatalogPath,
+        [string]$RegistryPath,
+        [object[]]$Results
+    )
+
+    $passCount = @($Results | Where-Object { $_.status -eq 'pass' }).Count
+    $failCount = @($Results | Where-Object { $_.status -eq 'fail' }).Count
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add('# MCP Health Report')
+    $lines.Add('')
+    $lines.Add("- Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz')")
+    $lines.Add("- Inventory catalog: ``$InventoryCatalogPath``")
+    $lines.Add("- Runtime catalog: ``$RuntimeCatalogPath``")
+    $lines.Add("- Registry: ``$RegistryPath``")
+    $lines.Add("- Pass: $passCount")
+    $lines.Add("- Fail: $failCount")
+    $lines.Add('')
+    $lines.Add('| Server | Status | Tool Count | Probe Seconds | Error |')
+    $lines.Add('|---|---|---:|---:|---|')
+    foreach ($result in $Results) {
+        $error = $result.error_excerpt.Replace('|', '\|')
+        $lines.Add("| $($result.server) | $($result.status) | $($result.tool_count) | $($result.probe_seconds) | $error |")
+    }
+    Set-Content -Path $Path -Value ($lines -join "`r`n") -Encoding utf8
+}
+
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$inventoryCatalogPath = (Resolve-Path (Join-Path $repoRoot 'MCP-Servers\mcp-docker-stack\docker-mcp-catalog.yaml')).Path
+$runtimeCatalogPath = (Resolve-Path (Join-Path $repoRoot 'MCP-Servers\mcp-docker-stack\docker-mcp-catalog.runtime.yaml')).Path
+$registryPath = Join-Path $repoRoot 'MCP-Servers\mcp-docker-stack\registry.all.yaml'
+$secretsScriptPath = Join-Path $PSScriptRoot 'set-mcp-secrets.ps1'
+$dockerCustomCatalogPath = Join-Path $env:USERPROFILE '.docker\mcp\catalogs\custom-stack.yaml'
+
+if ([string]::IsNullOrWhiteSpace($ReportDirectory)) {
+    $ReportDirectory = Join-Path $repoRoot 'MCP-Servers\reports'
+}
+if ([string]::IsNullOrWhiteSpace($EnvFilePath)) {
+    $EnvFilePath = Join-Path $repoRoot '.env'
+}
+
+$overlapServers = @(
+    'context7',
+    'desktop-commander',
+    'fetch',
+    'filesystem',
+    'firecrawl',
+    'github',
+    'github-official',
+    'gitmcp',
+    'memory',
+    'notion',
+    'obsidian',
+    'playwright',
+    'semgrep',
+    'sentry'
+)
+$allowedRuntimeOverrides = @('semgrep')
+
+Write-Host '========================================' -ForegroundColor Cyan
+Write-Host 'Docker MCP Lazy-Load Setup + Validation' -ForegroundColor Cyan
+Write-Host '========================================' -ForegroundColor Cyan
+Write-Host "Target client group: $ClientName" -ForegroundColor Gray
+Write-Host ''
+
+$inventoryServers = Get-ServerNamesFromCatalog -CatalogPath $inventoryCatalogPath
+$runtimeServers = Get-ServerNamesFromCatalog -CatalogPath $runtimeCatalogPath
+
+$invalidOverlap = @(
+    $runtimeServers | Where-Object {
+        ($_ -in $overlapServers) -and ($_ -notin $allowedRuntimeOverrides)
+    }
+)
+if ($invalidOverlap.Count -gt 0) {
+    Write-Error "Runtime catalog includes overlap servers that must stay in the official catalog: $($invalidOverlap -join ', ')"
     exit 1
 }
 
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Setting up Docker MCP Lazy-Load Servers" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
+Write-RegistryFile -Path $registryPath -ServerNames $inventoryServers
+Write-Host "Generated registry file: $registryPath" -ForegroundColor Green
 
-# Store environment variables from .env
-$envVars = @{}
-Get-Content $EnvFilePath | ForEach-Object {
-    $line = $_.Trim()
-    if ([string]::IsNullOrWhiteSpace($line) -or $line.StartsWith("#")) { return }
-    $parts = $line.Split("=", 2)
-    if ($parts.Count -eq 2) {
-        $envVars[$parts[0].Trim()] = $parts[1].Trim()
+$registryServers = Get-ServerNamesFromCatalog -CatalogPath $registryPath
+$missingFromRegistry = @($inventoryServers | Where-Object { $_ -notin $registryServers })
+if ($missingFromRegistry.Count -gt 0) {
+    Write-Error "Registry generation failed. Missing servers: $($missingFromRegistry -join ', ')"
+    exit 1
+}
+
+if (-not $SkipCatalogSync) {
+    $dockerCatalogParent = Split-Path -Parent $dockerCustomCatalogPath
+    if (-not (Test-Path $dockerCatalogParent)) {
+        New-Item -ItemType Directory -Path $dockerCatalogParent -Force | Out-Null
+    }
+    Copy-Item -Path $runtimeCatalogPath -Destination $dockerCustomCatalogPath -Force
+    Write-Host "Synced Docker configured catalog: $dockerCustomCatalogPath" -ForegroundColor Green
+}
+
+if (-not $SkipSecrets) {
+    if (Test-Path $secretsScriptPath) {
+        Write-Host ''
+        Write-Host 'Setting MCP secrets from .env...' -ForegroundColor Yellow
+        & $secretsScriptPath -EnvFilePath $EnvFilePath
+    }
+    else {
+        Write-Warning "Secrets script not found: $secretsScriptPath"
     }
 }
 
-# ============================================================================
-# SERVERS TO CONFIGURE (from your docker-compose.yml)
-# ============================================================================
-
-$servers = @(
-    "filesystem",
-    "git",
-    "github",
-    "memory",
-    "sequential-thinking",
-    "brave-search",
-    "todoist",
-    "linear",
-    "playwright",
-    "desktop-commander",
-    "pylance",
-    "sqlite",
-    "lsmcp",
-    "rust-analyzer",
-    "clangd",
-    "serena",
-    "context7",
-    "shrimp-task-manager",
-    "mem0",
-    "codegraph",
-    "ragdocs"
-)
-
-# ============================================================================
-# ENABLE ALL SERVERS
-# ============================================================================
-
-Write-Host "`nEnabling MCP servers in Docker..." -ForegroundColor Yellow
-
-$enabledCount = 0
-foreach ($server in $servers) {
-    Write-Host "  Enabling $server..." -NoNewline
-    
-    try {
-        $output = docker mcp server enable $server 2>&1
-        Write-Host " [OK]" -ForegroundColor Green
-        $enabledCount++
+Write-Host ''
+Write-Host 'Running isolated server probes...' -ForegroundColor Yellow
+$results = @()
+foreach ($server in $inventoryServers) {
+    Write-Host "  Probing $server ..." -NoNewline
+    $result = Invoke-ServerProbe -ServerName $server -RegistryPath $registryPath -RuntimeCatalogPath $runtimeCatalogPath
+    $results += $result
+    if ($result.status -eq 'pass') {
+        Write-Host " PASS ($($result.tool_count) tools, $($result.probe_seconds)s)" -ForegroundColor Green
     }
-    catch {
-        Write-Host " [SKIPPED]" -ForegroundColor Yellow
+    else {
+        Write-Host " FAIL ($($result.probe_seconds)s)" -ForegroundColor Red
     }
 }
 
-Write-Host "`nEnabled $enabledCount/$($servers.Count) servers" -ForegroundColor Cyan
-
-# ============================================================================
-# SET SECRETS FROM .env
-# ============================================================================
-
-Write-Host "`nSetting environment secrets..." -ForegroundColor Yellow
-
-$secretMappings = @{
-    "GITHUB_PERSONAL_ACCESS_TOKEN" = "github.token"
-    "BRAVE_API_KEY"                = "brave-search.api_key"
-    "TODOIST_API_TOKEN"            = "todoist.api_token"
-    "LINEAR_API_KEY"               = "linear.api_key"
-    "PGHOST"                       = "postgres.host"
-    "PGUSER"                       = "postgres.user"
-    "PGPASSWORD"                   = "postgres.password"
-    "PGDATABASE"                   = "postgres.database"
-    "SUPABASE_URL"                 = "supabase.url"
-    "SUPABASE_ANON_KEY"            = "supabase.anon_key"
-    "SUPABASE_SERVICE_ROLE_KEY"    = "supabase.service_role_key"
-    "MONGODB_URI"                  = "mongodb.uri"
-    "CLOUDFLARE_API_TOKEN"         = "cloudflare.api_token"
-    "CLOUDFLARE_ACCOUNT_ID"        = "cloudflare.account_id"
-    "SNYK_TOKEN"                   = "snyk.token"
-    "GITGUARDIAN_API_KEY"          = "gitguardian.api_key"
-    "MEM0_API_KEY"                 = "mem0.key"
+if (-not (Test-Path $ReportDirectory)) {
+    New-Item -ItemType Directory -Path $ReportDirectory -Force | Out-Null
 }
+$timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$jsonReportPath = Join-Path $ReportDirectory "mcp-health-$timestamp.json"
+$mdReportPath = Join-Path $ReportDirectory "mcp-health-$timestamp.md"
 
-$secretSetCount = 0
-foreach ($envVar in $secretMappings.Keys) {
-    if ($envVars.ContainsKey($envVar) -and -not [string]::IsNullOrWhiteSpace($envVars[$envVar])) {
-        $secretName = $secretMappings[$envVar]
-        $value = $envVars[$envVar]
-        
-        Write-Host "  Setting $secretName..." -NoNewline
-        
-        try {
-            $value | docker mcp secret set $secretName 2>&1 | Out-Null
-            Write-Host " [OK]" -ForegroundColor Green
-            $secretSetCount++
-        }
-        catch {
-            Write-Host " [SKIPPED]" -ForegroundColor Yellow
-        }
-    }
+$results | ConvertTo-Json -Depth 10 | Set-Content -Path $jsonReportPath -Encoding utf8
+Write-MarkdownReport -Path $mdReportPath -InventoryCatalogPath $inventoryCatalogPath -RuntimeCatalogPath $runtimeCatalogPath -RegistryPath $registryPath -Results $results
+
+$passCount = @($results | Where-Object { $_.status -eq 'pass' }).Count
+$failCount = @($results | Where-Object { $_.status -eq 'fail' }).Count
+
+Write-Host ''
+Write-Host '========================================' -ForegroundColor Cyan
+Write-Host "Validation complete: $passCount pass / $failCount fail" -ForegroundColor Cyan
+Write-Host "JSON report: $jsonReportPath" -ForegroundColor Gray
+Write-Host "MD report:   $mdReportPath" -ForegroundColor Gray
+Write-Host '========================================' -ForegroundColor Cyan
+
+if ($failCount -gt 0) {
+    exit 1
 }
-
-Write-Host "`nSet $secretSetCount secrets from .env" -ForegroundColor Cyan
-
-# ============================================================================
-# SUMMARY & NEXT STEPS
-# ============================================================================
-
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "Setup Complete!" -ForegroundColor Green
-Write-Host "========================================" -ForegroundColor Cyan
-
-Write-Host "`nNext steps:" -ForegroundColor Yellow
-Write-Host "1. Open a NEW PowerShell window" -ForegroundColor White
-Write-Host "2. Run: docker mcp gateway run --port 8080 --transport sse" -ForegroundColor Cyan
-Write-Host "3. Keep that window open (it's your gateway)" -ForegroundColor White
-Write-Host "4. In $ClientName, add the Docker gateway connection" -ForegroundColor White
-Write-Host "5. Install MCP Vault: pip install mcpv" -ForegroundColor White
-Write-Host "6. Add MCP Vault to $ClientName config for 90% context reduction" -ForegroundColor White
-
-Write-Host "`nVerify setup:" -ForegroundColor Yellow
-Write-Host "  docker mcp server list          # See all servers" -ForegroundColor Cyan
-Write-Host "  docker mcp secret ls            # See all secrets" -ForegroundColor Cyan
-
-Write-Host "`n"

@@ -1,186 +1,281 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('google', 'openai', 'anthropic')]
-    [string]$Vendor,
-
-    [switch]$DryRun,
-    [string[]]$ServerNames,
-
-    # OpenAI targets
-    [bool]$IncludeAgents = $true,
-    [bool]$IncludeCodex = $true,
-    [bool]$IncludeChatGPT = $true,
-
-    # Anthropic targets
-    [bool]$IncludeClaudeCode = $true,
-    [bool]$IncludeClaudeDesktop = $true
+    [ValidateSet('google', 'openai', 'anthropic', 'all')]
+    [string]$Vendor = 'all',
+    [switch]$DryRun
 )
 
 $ErrorActionPreference = 'Stop'
 
-if (-not $Vendor) {
-    Write-Host 'ERROR: -Vendor is required (google|openai|anthropic).' -ForegroundColor Red
-    exit 1
+function Ensure-Directory {
+    param([string]$Path)
+    $parent = Split-Path -Parent $Path
+    if ($parent -and -not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+}
+
+function Remove-TomlSection {
+    param(
+        [string[]]$Lines,
+        [string]$Header
+    )
+    $output = New-Object System.Collections.Generic.List[string]
+    $skip = $false
+    foreach ($line in $Lines) {
+        if ($line -match "^\[$([regex]::Escape($Header))\]\s*$") {
+            $skip = $true
+            continue
+        }
+        if ($skip -and $line -match '^\[.+\]\s*$') {
+            $skip = $false
+        }
+        if (-not $skip) {
+            $output.Add($line)
+        }
+    }
+    return $output
+}
+
+function Set-CodexGatewayConfig {
+    param(
+        [string]$Path,
+        [string]$RegistryPath,
+        [string]$RuntimeCatalogPath,
+        [switch]$DryRunMode
+    )
+
+    $content = ''
+    if (Test-Path $Path) {
+        $content = Get-Content $Path -Raw
+    }
+
+    $lines = @()
+    if (-not [string]::IsNullOrWhiteSpace($content)) {
+        $lines = $content -split "`r?`n"
+    }
+
+    $lines = Remove-TomlSection -Lines $lines -Header 'mcp_servers.MCP_DOCKER'
+
+    $hasParentTable = $false
+    foreach ($line in $lines) {
+        if ($line -match '^\[mcp_servers\]\s*$') {
+            $hasParentTable = $true
+            break
+        }
+    }
+
+    $trimmed = New-Object System.Collections.Generic.List[string]
+    foreach ($line in $lines) {
+        $trimmed.Add($line)
+    }
+
+    while ($trimmed.Count -gt 0 -and [string]::IsNullOrWhiteSpace($trimmed[$trimmed.Count - 1])) {
+        $trimmed.RemoveAt($trimmed.Count - 1)
+    }
+
+    if (-not $hasParentTable) {
+        if ($trimmed.Count -gt 0) {
+            $trimmed.Add('')
+        }
+        $trimmed.Add('[mcp_servers]')
+    }
+
+    if ($trimmed.Count -gt 0) {
+        $trimmed.Add('')
+    }
+    $trimmed.Add('[mcp_servers.MCP_DOCKER]')
+    $trimmed.Add("command = 'docker.exe'")
+    $trimmed.Add('args = [')
+    $trimmed.Add("    'mcp',")
+    $trimmed.Add("    'gateway',")
+    $trimmed.Add("    'run',")
+    $trimmed.Add("    '--transport',")
+    $trimmed.Add("    'stdio',")
+    $trimmed.Add("    '--registry',")
+    $trimmed.Add("    '$RegistryPath',")
+    $trimmed.Add("    '--additional-catalog',")
+    $trimmed.Add("    '$RuntimeCatalogPath',")
+    $trimmed.Add(']')
+    $trimmed.Add('')
+
+    if ($DryRunMode) {
+        Write-Host "[DRY RUN] Would update Codex config: $Path" -ForegroundColor Yellow
+        return
+    }
+
+    Ensure-Directory -Path $Path
+    Set-Content -Path $Path -Value ($trimmed -join "`r`n") -Encoding utf8
+    Write-Host "Updated Codex config: $Path" -ForegroundColor Green
+}
+
+function Read-JsonConfig {
+    param([string]$Path)
+    if (-not (Test-Path $Path)) {
+        return @{ mcpServers = @{} }
+    }
+    $raw = Get-Content $Path -Raw
+    if ([string]::IsNullOrWhiteSpace($raw)) {
+        return @{ mcpServers = @{} }
+    }
+    $obj = $raw | ConvertFrom-Json
+    return ConvertTo-Hashtable -InputObject $obj
+}
+
+function ConvertTo-Hashtable {
+    param([Parameter(ValueFromPipeline = $true)]$InputObject)
+    if ($null -eq $InputObject) {
+        return $null
+    }
+
+    if ($InputObject -is [System.Collections.IDictionary]) {
+        $hash = @{}
+        foreach ($key in $InputObject.Keys) {
+            $hash[$key] = ConvertTo-Hashtable -InputObject $InputObject[$key]
+        }
+        return $hash
+    }
+
+    if ($InputObject -is [System.Collections.IEnumerable] -and -not ($InputObject -is [string])) {
+        $list = @()
+        foreach ($item in $InputObject) {
+            $list += ,(ConvertTo-Hashtable -InputObject $item)
+        }
+        return $list
+    }
+
+    if ($InputObject -is [pscustomobject]) {
+        $hash = @{}
+        foreach ($prop in $InputObject.PSObject.Properties) {
+            $hash[$prop.Name] = ConvertTo-Hashtable -InputObject $prop.Value
+        }
+        return $hash
+    }
+
+    return $InputObject
+}
+
+function Set-JsonGatewayConfig {
+    param(
+        [string]$Path,
+        [string]$ServerKey,
+        [string]$RegistryPath,
+        [string]$RuntimeCatalogPath,
+        [switch]$DryRunMode
+    )
+
+    $config = Read-JsonConfig -Path $Path
+    if (-not $config.ContainsKey('mcpServers') -or $null -eq $config.mcpServers) {
+        $config['mcpServers'] = @{}
+    }
+
+    $existing = $null
+    if ($config.mcpServers.ContainsKey($ServerKey)) {
+        $existing = $config.mcpServers[$ServerKey]
+    }
+
+    $entry = @{
+        command = 'docker'
+        args    = @(
+            'mcp',
+            'gateway',
+            'run',
+            '--transport',
+            'stdio',
+            '--registry',
+            $RegistryPath,
+            '--additional-catalog',
+            $RuntimeCatalogPath
+        )
+    }
+
+    if ($existing -is [hashtable] -and $existing.ContainsKey('env') -and $existing.env) {
+        $entry['env'] = $existing.env
+    }
+
+    $keysToRemove = @()
+    foreach ($key in $config.mcpServers.Keys) {
+        if ($key -eq $ServerKey) {
+            continue
+        }
+        $candidate = $config.mcpServers[$key]
+        if ($candidate -isnot [hashtable]) {
+            continue
+        }
+        if (-not $candidate.ContainsKey('command') -or -not $candidate.ContainsKey('args')) {
+            continue
+        }
+        if ($candidate.command -notin @('docker', 'docker.exe')) {
+            continue
+        }
+        $argsText = ''
+        if ($candidate.args -is [array]) {
+            $argsText = ($candidate.args -join ' ')
+        }
+        if (
+            $argsText -match '\bmcp\b' -and
+            $argsText -match '\bgateway\b' -and
+            $argsText -match 'docker-mcp-catalog\.yaml'
+        ) {
+            $keysToRemove += $key
+        }
+    }
+    foreach ($removeKey in $keysToRemove) {
+        $config.mcpServers.Remove($removeKey) | Out-Null
+    }
+
+    $config.mcpServers[$ServerKey] = $entry
+
+    if ($DryRunMode) {
+        Write-Host "[DRY RUN] Would update JSON config: $Path ($ServerKey)" -ForegroundColor Yellow
+        return
+    }
+
+    Ensure-Directory -Path $Path
+    $config | ConvertTo-Json -Depth 50 | Set-Content -Path $Path -Encoding utf8
+    Write-Host "Updated JSON config: $Path ($ServerKey)" -ForegroundColor Green
 }
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$catalogPath = Join-Path $repoRoot 'MCP-Servers\mcp-docker-stack\docker-mcp-catalog.yaml'
+$runtimeCatalogPath = (Resolve-Path (Join-Path $repoRoot 'MCP-Servers\mcp-docker-stack\docker-mcp-catalog.runtime.yaml')).Path
+$registryPath = (Resolve-Path (Join-Path $repoRoot 'MCP-Servers\mcp-docker-stack\registry.all.yaml')).Path
 
-if (-not (Test-Path $catalogPath)) {
-    Write-Host "ERROR: MCP catalog not found: $catalogPath" -ForegroundColor Red
-    exit 1
-}
-
-function New-TargetConfig {
-    param(
-        [string]$Name,
-        [string]$Path
-    )
-
-    return [pscustomobject]@{
-        Name = $Name
-        Path = $Path
-    }
-}
-
-function Get-TargetConfigs {
-    param([string]$VendorName)
-
-    switch ($VendorName) {
-        'google' {
-            return @(
-                (New-TargetConfig -Name 'Google Antigravity' -Path (Join-Path $env:LOCALAPPDATA 'Google\Antigravity\User Data\User\mcp_config.json'))
-            )
-        }
-        'openai' {
-            $targets = @()
-            if ($IncludeAgents) {
-                $targets += New-TargetConfig -Name 'OpenAI Agents' -Path (Join-Path $env:USERPROFILE '.agents\mcp_config.json')
-            }
-            if ($IncludeCodex) {
-                $targets += New-TargetConfig -Name 'OpenAI Codex' -Path (Join-Path $env:USERPROFILE '.codex\mcp_config.json')
-            }
-            if ($IncludeChatGPT) {
-                $targets += New-TargetConfig -Name 'OpenAI ChatGPT' -Path (Join-Path $env:APPDATA 'OpenAI\ChatGPT\mcp_config.json')
-            }
-            return $targets
-        }
-        'anthropic' {
-            $targets = @()
-            if ($IncludeClaudeCode) {
-                $targets += New-TargetConfig -Name 'Claude Code' -Path (Join-Path $env:USERPROFILE '.claude.json')
-            }
-            if ($IncludeClaudeDesktop) {
-                $targets += New-TargetConfig -Name 'Claude Desktop' -Path (Join-Path $env:APPDATA 'Claude\claude_desktop_config.json')
-            }
-            return $targets
-        }
-        default {
-            return @()
-        }
-    }
-}
-
-function Get-McpConfigObject {
-    param([string]$ConfigPath)
-
-    $config = $null
-    if (Test-Path $ConfigPath) {
-        try {
-            $config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
-        }
-        catch {
-            Write-Host "ERROR: Invalid JSON in $ConfigPath" -ForegroundColor Red
-            throw
-        }
-    }
-    else {
-        if ($DryRun) {
-            Write-Host "[DRY RUN] Would create: $ConfigPath" -ForegroundColor Yellow
-        }
-        else {
-            $parent = Split-Path -Parent $ConfigPath
-            if ($parent -and -not (Test-Path $parent)) {
-                New-Item -ItemType Directory -Path $parent -Force | Out-Null
-            }
-        }
-
-        $config = [pscustomobject]@{
-            mcpServers = [pscustomobject]@{}
-        }
-    }
-
-    if (-not $config.mcpServers) {
-        $config | Add-Member -NotePropertyName 'mcpServers' -NotePropertyValue ([pscustomobject]@{}) -Force
-    }
-
-    return $config
-}
-
-$targetConfigs = Get-TargetConfigs -VendorName $Vendor
-if ($targetConfigs.Count -eq 0) {
-    Write-Host "ERROR: No target config selected for vendor '$Vendor'." -ForegroundColor Red
-    exit 1
-}
-
-$catalogContent = Get-Content $catalogPath -Raw
-$serverPattern = '(?m)^  ([a-zA-Z0-9_-]+):\s*$'
-$matches = [regex]::Matches($catalogContent, $serverPattern)
-$availableServers = $matches | ForEach-Object { $_.Groups[1].Value }
-
-Write-Host "=== MCP Server Installer ($Vendor) ===" -ForegroundColor Cyan
-Write-Host ''
-Write-Host "Catalog: $catalogPath" -ForegroundColor Gray
-Write-Host 'Available MCP servers in catalog:' -ForegroundColor White
-$availableServers | ForEach-Object { Write-Host "  - $_" -ForegroundColor Gray }
-Write-Host ''
-Write-Host 'Target config files:' -ForegroundColor White
-$targetConfigs | ForEach-Object { Write-Host "  - $($_.Name): $($_.Path)" -ForegroundColor Gray }
+Write-Host '=== MCP Gateway Client Sync ===' -ForegroundColor Cyan
+Write-Host "Runtime catalog: $runtimeCatalogPath" -ForegroundColor Gray
+Write-Host "Registry:        $registryPath" -ForegroundColor Gray
 Write-Host ''
 
-if (-not $ServerNames -or $ServerNames.Count -eq 0) {
-    Write-Host 'To install specific servers, run:' -ForegroundColor Yellow
-    Write-Host "  .\install-mcp-servers.ps1 -Vendor $Vendor -ServerNames 'server1', 'server2'" -ForegroundColor White
-    exit 0
+$targets = @()
+switch ($Vendor) {
+    'openai' {
+        $targets += @{ Type = 'codex'; Path = (Join-Path $env:USERPROFILE '.codex\config.toml') }
+    }
+    'google' {
+        $targets += @{ Type = 'json'; Path = (Join-Path $env:USERPROFILE '.gemini\antigravity\mcp_config.json'); Key = 'MCP_DOCKER' }
+    }
+    'anthropic' {
+        $targets += @{ Type = 'json'; Path = (Join-Path $env:USERPROFILE '.claude.json'); Key = 'MCP_DOCKER' }
+    }
+    'all' {
+        $targets += @{ Type = 'codex'; Path = (Join-Path $env:USERPROFILE '.codex\config.toml') }
+        $targets += @{ Type = 'json'; Path = (Join-Path $env:USERPROFILE '.gemini\antigravity\mcp_config.json'); Key = 'MCP_DOCKER' }
+        $targets += @{ Type = 'json'; Path = (Join-Path $env:USERPROFILE '.claude.json'); Key = 'MCP_DOCKER' }
+    }
 }
 
-foreach ($target in $targetConfigs) {
-    Write-Host "Updating $($target.Name)..." -ForegroundColor White
-    $config = Get-McpConfigObject -ConfigPath $target.Path
-
-    foreach ($serverName in $ServerNames) {
-        if ($serverName -notin $availableServers) {
-            Write-Host "  SKIP: $serverName (not found in catalog)" -ForegroundColor Red
-            continue
-        }
-
-        $exists = $null -ne $config.mcpServers.PSObject.Properties[$serverName]
-        if ($DryRun) {
-            $action = if ($exists) { 'OVERWRITE' } else { 'ADD' }
-            Write-Host "  [$action] $serverName" -ForegroundColor Yellow
-            continue
-        }
-
-        $config.mcpServers | Add-Member -NotePropertyName $serverName -NotePropertyValue @{
-            command = 'docker'
-            args    = @('run', '--rm', '-i', "mcp/$serverName")
-            env     = @{}
-        } -Force
-
-        $action = if ($exists) { 'Updated' } else { 'Added' }
-        Write-Host "  $action`: $serverName" -ForegroundColor Green
+foreach ($target in $targets) {
+    if ($target.Type -eq 'codex') {
+        Set-CodexGatewayConfig -Path $target.Path -RegistryPath $registryPath -RuntimeCatalogPath $runtimeCatalogPath -DryRunMode:$DryRun
+        continue
     }
-
-    if (-not $DryRun) {
-        $config | ConvertTo-Json -Depth 20 | Set-Content $target.Path -Encoding UTF8
-    }
-
-    Write-Host ''
+    Set-JsonGatewayConfig -Path $target.Path -ServerKey $target.Key -RegistryPath $registryPath -RuntimeCatalogPath $runtimeCatalogPath -DryRunMode:$DryRun
 }
 
 if ($DryRun) {
-    Write-Host '[DRY RUN] No changes made. Remove -DryRun to install.' -ForegroundColor Yellow
+    Write-Host ''
+    Write-Host '[DRY RUN] No files were modified.' -ForegroundColor Yellow
 }
 else {
-    Write-Host "Done! MCP server entries added for vendor '$Vendor'." -ForegroundColor Cyan
+    Write-Host ''
+    Write-Host 'Client gateway configuration sync complete.' -ForegroundColor Cyan
 }

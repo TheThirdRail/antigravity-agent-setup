@@ -1,0 +1,93 @@
+﻿registry:
+  filesystem:
+    ref: ''
+  github:
+    ref: ''
+  lsmcp:
+    ref: ''
+  serena:
+    ref: ''
+  context7:
+    ref: ''
+  desktop-commander:
+    ref: ''
+  sequential-thinking:
+    ref: ''
+  memory:
+    ref: ''
+  shrimp-task-manager:
+    ref: ''
+  todoist:
+    ref: ''
+  searxng:
+    ref: ''
+  brave-search:
+    ref: ''
+  supabase:
+    ref: ''
+  docker-mcp:
+    ref: ''
+  cloudflare:
+    ref: ''
+  snyk:
+    ref: ''
+  playwright:
+    ref: ''
+  firecrawl:
+    ref: ''
+  nexus:
+    ref: ''
+  arxiv:
+    ref: ''
+  pubmed:
+    ref: ''
+  notion:
+    ref: ''
+  obsidian:
+    ref: ''
+  mem0:
+    ref: ''
+  ragdocs:
+    ref: ''
+  react:
+    ref: ''
+  vue:
+    ref: ''
+  shadcn:
+    ref: ''
+  magic:
+    ref: ''
+  registry:
+    ref: ''
+  augments:
+    ref: ''
+  vscode:
+    ref: ''
+  codegraph:
+    ref: ''
+  semgrep:
+    ref: ''
+  gitmcp:
+    ref: ''
+  github-official:
+    ref: ''
+  fetch:
+    ref: ''
+  claude-faf-mcp:
+    ref: ''
+  filescopemcp:
+    ref: ''
+  repomapper:
+    ref: ''
+  mcp-security-audit:
+    ref: ''
+  octocode:
+    ref: ''
+  mindpilot:
+    ref: ''
+  gitleaks:
+    ref: ''
+  sentry:
+    ref: ''
+  qdrant:
+    ref: ''

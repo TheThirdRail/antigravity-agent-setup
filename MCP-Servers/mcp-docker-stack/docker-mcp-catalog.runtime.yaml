@@ -1,0 +1,722 @@
+registry:
+  lsmcp:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: TypeScript/JavaScript language server with framework awareness
+    title: LS MCP (TypeScript/JS)
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode lsmcp
+    volumes:
+    - D:/Coding:/workspace
+    metadata:
+      category: language-server
+      owner: mizchi
+      tags:
+      - typescript
+      - javascript
+      - lsp
+    source: local-adapter
+  serena:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: AI-powered code understanding with LSP support for 20+ languages
+    title: Serena
+    type: server
+    image: ghcr.io/oraios/serena:latest
+    command:
+    - serena-mcp-server
+    - --transport
+    - stdio
+    - --project-from-cwd
+    volumes:
+    - D:/Coding:/workspace
+    metadata:
+      category: code-intelligence
+      owner: oraios
+      tags:
+      - ai
+      - code-understanding
+      - lsp
+    source: https://github.com/oraios/serena
+  sequential-thinking:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Step-by-step reasoning framework
+    title: Sequential Thinking
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - '@modelcontextprotocol/server-sequential-thinking'
+    metadata:
+      category: reasoning
+      owner: modelcontextprotocol
+      tags:
+      - reasoning
+      - thinking
+    source: https://github.com/modelcontextprotocol/servers
+  shrimp-task-manager:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Local task manager (free, no API required)
+    title: Shrimp Task Manager
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - mcp-shrimp-task-manager
+    metadata:
+      category: tasks
+      owner: shrimp
+      tags:
+      - tasks
+      - local
+    source: https://github.com/shrimp-cloud/mcp-shrimp-task-manager
+  todoist:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Todoist task management integration
+    title: Todoist
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - todoist-mcp
+    env:
+    - name: API_KEY
+      value: '{{todoist.api_key}}'
+    secrets:
+    - name: todoist.api_key
+      env: API_KEY
+      description: Todoist API token
+      example: your_todoist_api_token
+    metadata:
+      category: tasks
+      owner: community
+      tags:
+      - tasks
+      - todoist
+    source: https://www.npmjs.com/package/todoist-mcp
+  searxng:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Self-hosted meta-search engine (privacy-focused)
+    title: SearXNG
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode searxng
+    volumes:
+    - D:/Coding:/workspace
+    metadata:
+      category: search
+      owner: custom
+      tags:
+      - search
+      - privacy
+      - self-hosted
+    tools:
+    - name: search
+    - name: search_images
+    - name: search_news
+    - name: search_code
+    - name: search_stackoverflow
+    - name: search_docs
+    - name: search_packages
+    - name: search_github
+    source: local-adapter
+  brave-search:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Brave Search API integration
+    title: Brave Search
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - '@modelcontextprotocol/server-brave-search'
+    secrets:
+    - name: brave-search.api_key
+      env: BRAVE_API_KEY
+      description: Brave Search API key
+      example: BSA_xxxxxxxxxxxx
+    metadata:
+      category: search
+      owner: brave
+      tags:
+      - search
+      - brave
+    source: https://github.com/modelcontextprotocol/servers
+  supabase:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Supabase platform integration
+    title: Supabase
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - '@supabase/mcp-server-supabase'
+    secrets:
+    - name: supabase.access_token
+      env: SUPABASE_ACCESS_TOKEN
+      description: Supabase personal access token
+      example: sbp_xxxxxxxxxxxx
+    metadata:
+      category: database
+      owner: supabase-community
+      tags:
+      - database
+      - supabase
+      - baas
+    source: https://github.com/supabase-community/supabase-mcp
+  docker-mcp:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Docker container management (Python-based)
+    title: Docker
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode docker-mcp
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - D:/Coding:/workspace
+    metadata:
+      category: infrastructure
+      owner: QuantGeekDev
+      tags:
+      - docker
+      - containers
+    source: local-adapter
+  cloudflare:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Cloudflare Workers and CDN management
+    title: Cloudflare
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode cloudflare
+    secrets:
+    - name: cloudflare.api_token
+      env: CLOUDFLARE_API_TOKEN
+      description: Cloudflare API token
+      example: xxxxxxxxxxxxxxxxxxxxxx
+    - name: cloudflare.account_id
+      env: CLOUDFLARE_ACCOUNT_ID
+      description: Cloudflare account ID
+      example: xxxxxxxxxxxxxxxxxxxxxx
+    metadata:
+      category: infrastructure
+      owner: cloudflare
+      tags:
+      - cloudflare
+      - cdn
+      - workers
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  snyk:
+    dateAdded: '2025-12-28T00:00:00Z'
+    description: Vulnerability scanning and security analysis
+    title: Snyk
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode snyk
+    env:
+    - name: SNYK_API_KEY
+      value: '{{snyk.api_key}}'
+    - name: SNYK_ORG_ID
+      value: '{{snyk.org_id}}'
+    secrets:
+    - name: snyk.api_key
+      env: SNYK_API_KEY
+      description: Optional Snyk API token used by custom workflows
+      example: snyk_xxxxx
+    config:
+    - name: snyk
+      description: Snyk configuration
+      type: object
+      properties:
+        org_id:
+          type: string
+          description: Snyk organization ID (optional)
+    metadata:
+      category: security
+      owner: sammcj
+      tags:
+      - security
+      - vulnerabilities
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  nexus:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: AI-powered search using Perplexity Sonar models
+    title: Perplexity Nexus
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode nexus
+    metadata:
+      category: research
+      tags:
+      - search
+      - perplexity
+      - citations
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  arxiv:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Search and retrieve academic papers from ArXiv
+    title: ArXiv Research
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode arxiv
+    metadata:
+      category: research
+      tags:
+      - academic
+      - research
+      - papers
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  pubmed:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Search and retrieve medical/life sciences papers from PubMed
+    title: PubMed Research
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - if [ -z "$PUBMED_EMAIL" ] || [ "$PUBMED_EMAIL" = "<UNKNOWN>" ]; then export
+      PUBMED_EMAIL="noreply@example.com"; fi; pip install -q mcp-simple-pubmed >/dev/null
+      2>&1 && exec mcp-simple-pubmed
+    metadata:
+      category: research
+      tags:
+      - medical
+      - science
+      - research
+    source: https://github.com/andybrandt/mcp-simple-pubmed
+    secrets:
+    - name: pubmed.email
+      env: PUBMED_EMAIL
+      description: Email required by NCBI usage policy for PubMed API access
+      example: you@example.com
+  mem0:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Persistent memory for coding preferences and patterns
+    title: Mem0
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mem0-mcp-server >/dev/null 2>&1 && exec mem0-mcp-server
+    secrets:
+    - name: mem0.key
+      env: MEM0_API_KEY
+    metadata:
+      category: knowledge
+      tags:
+      - memory
+      - personalization
+      - coding
+    source: https://github.com/mem0ai/mem0-mcp
+  ragdocs:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Retrieve technical documentation via vector search
+    title: RAGDocs
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode ragdocs
+    metadata:
+      category: knowledge
+      tags:
+      - docs
+      - rag
+      - search
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  react:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Create and modify React applications via natural language
+    title: React Developer
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode react
+    metadata:
+      category: frontend
+      tags:
+      - react
+      - javascript
+      - ui
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  vue:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Access Vue.js component tree, state, and Pinia stores
+    title: Vue Developer
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode vue
+    metadata:
+      category: frontend
+      tags:
+      - vue
+      - javascript
+      - ui
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  shadcn:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Install Shadcn UI components via natural language
+    title: Shadcn UI
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode shadcn
+    metadata:
+      category: frontend
+      tags:
+      - ui
+      - components
+      - styling
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  magic:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Generate crafted UI components inspired by 21st.dev
+    title: Magic UI
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - '@21st-dev/magic'
+    metadata:
+      category: frontend
+      tags:
+      - ui
+      - generation
+      - design
+    source: https://github.com/21st-dev/magic-mcp
+  registry:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Search NPM, PyPi, Cargo, and NuGet packages
+    title: Package Registry
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - package-registry-mcp
+    metadata:
+      category: devtools
+      tags:
+      - packages
+      - dependencies
+      - search
+    source: https://github.com/artmann/package-registry-mcp
+  augments:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Access documentation for 90+ frameworks (React, Next.js, etc.)
+    title: Augments Framework Docs
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode augments
+    metadata:
+      category: devtools
+      tags:
+      - docs
+      - frameworks
+      - reference
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  vscode:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Advanced VS Code integration (read workspace, linter, edits)
+    title: VS Code MCP
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - vscode-mcp-server
+    metadata:
+      category: devtools
+      tags:
+      - ide
+      - editor
+      - vscode
+    source: https://github.com/juehang/vscode-mcp-server
+  codegraph:
+    dateAdded: '2025-12-29T00:00:00Z'
+    description: Index local code into a graph DB for visualization
+    title: Code Graph Context
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode codegraph
+    metadata:
+      category: devtools
+      tags:
+      - visualization
+      - graph
+      - analysis
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  semgrep:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: Code security scanning - finds vulnerabilities and bugs
+    title: Semgrep
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode semgrep
+    metadata:
+      category: security
+      tags:
+      - security
+      - scanning
+      - sast
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  claude-faf-mcp:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: Persistent project context with 33+ tools - maintains Project DNA
+      across sessions
+    title: Claude FAF (Project Context)
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - claude-faf-mcp
+    metadata:
+      category: development
+      tags:
+      - context
+      - memory
+      - project
+      - free
+    source: https://github.com/Wolfe-Jam/claude-faf-mcp
+  filescopemcp:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: Analyzes codebase identifying important files based on dependency
+      relationships
+    title: FileScope (Dependency Analysis)
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode filescopemcp
+    metadata:
+      category: development
+      tags:
+      - analysis
+      - dependencies
+      - diagrams
+      - free
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  repomapper:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: Aider-style dynamic map of relevant files with function prototypes
+    title: RepoMapper
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode repomapper
+    metadata:
+      category: development
+      tags:
+      - mapping
+      - context
+      - aider
+      - free
+    source: local-adapter
+    volumes:
+    - D:/Coding:/workspace
+  mcp-security-audit:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: NPM vulnerability scanning with CVE references and fix recommendations
+    title: Security Audit (NPM)
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - mcp-security-audit
+    metadata:
+      category: security
+      tags:
+      - npm
+      - vulnerabilities
+      - audit
+      - free
+    source: https://github.com/qianniuspace/mcp-security-audit
+  octocode:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: AI-powered GitHub ecosystem research, analysis and discovery
+    title: OctoCode (GitHub Research)
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - octocode-mcp
+    metadata:
+      category: development
+      tags:
+      - github
+      - research
+      - discovery
+      - free
+    source: https://github.com/bgauryy/octocode-mcp
+  mindpilot:
+    dateAdded: '2025-12-30T00:00:00Z'
+    description: Visualizes code and architecture as Mermaid diagrams in a local web
+      app
+    title: MindPilot (Diagrams)
+    type: server
+    image: node:20-slim
+    command:
+    - npx
+    - -y
+    - '@mindpilot/mcp'
+    metadata:
+      category: development
+      tags:
+      - diagrams
+      - mermaid
+      - visualization
+      - free
+    source: https://github.com/abrinsmead/mindpilot-mcp
+  gitleaks:
+    dateAdded: '2026-01-31T00:00:00Z'
+    description: Secret detection - scans repos for hardcoded secrets, API keys, and
+      passwords (500+ detection patterns)
+    title: Gitleaks (Secret Scanner)
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q mcp requests docker >/dev/null 2>&1 && exec python /workspace/Tools/mcp-docker-stack/MCP-Servers/adapters/mcp_adapter_server.py
+      --mode gitleaks
+    volumes:
+    - D:/Coding:/workspace
+    metadata:
+      category: security
+      owner: zricethezav
+      tags:
+      - security
+      - secrets
+      - leaks
+      - scanning
+      - free
+    tools:
+    - name: detect
+      description: Scan for hardcoded secrets in files
+    - name: protect
+      description: Pre-commit hook to prevent secret commits
+    source: local-adapter
+  qdrant:
+    dateAdded: '2026-01-31T00:00:00Z'
+    description: High-performance vector database for semantic search and RAG applications
+    title: Qdrant (Vector DB)
+    type: server
+    image: python:3.11-slim
+    command:
+    - sh
+    - -lc
+    - pip install -q qdrant-client mcp-server-qdrant >/dev/null 2>&1 && exec mcp-server-qdrant
+      --transport stdio
+    secrets:
+    - name: qdrant.url
+      env: QDRANT_URL
+      description: Qdrant server URL (cloud or local)
+      example: https://xyz.qdrant.cloud:6333
+    - name: qdrant.api_key
+      env: QDRANT_API_KEY
+      description: Qdrant API key (for cloud instances)
+      example: your_qdrant_api_key
+    metadata:
+      category: database
+      owner: qdrant
+      tags:
+      - vector
+      - embedding
+      - rag
+      - search
+      - freemium
+    tools:
+    - name: store
+      description: Store embeddings in collection
+    - name: search
+      description: Semantic search in collection
+    source: https://github.com/qdrant/mcp-server-qdrant
